@@ -1,14 +1,16 @@
-package com.example.jobis.presentation.signup.ui.login
+package com.example.jobis.presentation.signup.ui.signup
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
 import com.example.jobis.R
-import com.example.jobis.presentation.signup.data.LoginRepository
+import com.example.jobis.presentation.signup.data.SignupRepository
 import com.example.jobis.presentation.signup.data.Result
+import kotlinx.coroutines.*
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class SignupViewModel(private val signupRepository: SignupRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -18,13 +20,26 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
+        CoroutineScope(Dispatchers.Main).launch {
+            val job1 = CoroutineScope(Dispatchers.IO).async {
+                signupRepository.signup(username, password)
+            }
+            val job2 = CoroutineScope(Dispatchers.IO).async {
+                signupRepository.createAccount(username, password)
+            }
+            val a = job1.await()
+            Log.d("test", "job1 수행 : ${a}")
+            if (a) {
+                if (job2.await() is Result.Success) {
+                    _loginResult.value =
+                        LoginResult(success = SignedUpUserView(displayName = "회원가입 성공"))
+                } else {
+                    _loginResult.value = LoginResult(error = R.string.login_failed)
+                }
+            } else {
+                _loginResult.value = LoginResult(error = R.string.login_failed)
+            }
 
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.jobis.presentation.signup.ui.login
+package com.example.jobis.presentation.signup.ui.signup
 
 import android.content.Context
 import androidx.lifecycle.Observer
@@ -12,9 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.jobis.R
 import com.example.jobis.databinding.FragmentSignupBinding
@@ -22,7 +19,7 @@ import com.example.jobis.presentation.login.UserActivity
 
 class SignupFragment : Fragment() {
     private var userActivty: UserActivity? = null
-    private lateinit var loginViewModel: LoginViewModel
+    private lateinit var signupViewModel: SignupViewModel
     private var _binding: FragmentSignupBinding? = null
 
     // This property is only valid between onCreateView and
@@ -42,15 +39,15 @@ class SignupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+        signupViewModel = ViewModelProvider(this, SignupViewModelFactory())
+            .get(SignupViewModel::class.java)
 
-        val usernameEditText = binding.username
-        val passwordEditText = binding.password
+        val usernameEditText = binding.userEmail
+        val passwordEditText = binding.userPassword
         val loginButton = binding.login
         val loadingProgressBar = binding.loading
 
-        loginViewModel.loginFormState.observe(viewLifecycleOwner,
+        signupViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {
                     return@Observer
@@ -64,7 +61,7 @@ class SignupFragment : Fragment() {
                 }
             })
 
-        loginViewModel.loginResult.observe(viewLifecycleOwner,
+        signupViewModel.loginResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 loadingProgressBar.visibility = View.GONE
@@ -86,7 +83,7 @@ class SignupFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                loginViewModel.loginDataChanged(
+                signupViewModel.loginDataChanged(
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
@@ -96,7 +93,7 @@ class SignupFragment : Fragment() {
         passwordEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                loginViewModel.login(
+                signupViewModel.login(
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
@@ -106,20 +103,20 @@ class SignupFragment : Fragment() {
 
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
-            loginViewModel.login(
+            signupViewModel.login(
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
         }
 
         // 뒤로가기 버튼
-//        signupBackButton.setOnClickListener {
-//            userActivty.goLogin()
-//        }
+        binding.signupBackButton.setOnClickListener {
+            userActivty?.goLogin()
+        }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
+    private fun updateUiWithUser(model: SignedUpUserView) {
+        val welcome = model.displayName
         // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
