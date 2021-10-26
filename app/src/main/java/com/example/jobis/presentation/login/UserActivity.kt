@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.example.jobis.R
 import com.example.jobis.databinding.ActivityUserBinding
 import com.example.jobis.presentation.login.ui.login.LoginFragment
-import com.example.jobis.presentation.signup.ui.login.SignupFragment
+import com.example.jobis.presentation.signup.ui.signup.SignupFragment
 
 class UserActivity : AppCompatActivity() {
 

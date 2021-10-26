@@ -1,21 +1,22 @@
-package com.example.jobis.presentation.signup.ui.login
+package com.example.jobis.presentation.signup.ui.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.jobis.presentation.signup.data.LoginDataSource
-import com.example.jobis.presentation.signup.data.LoginRepository
+import com.example.jobis.presentation.signup.data.SignupRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */
-class LoginViewModelFactory : ViewModelProvider.Factory {
+// viewmodelfactory를 이용해서 초기화해야 viewmodel에서 액티비티의 생명주기를 사용할 수 있다.
+class SignupViewModelFactory : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            return LoginViewModel(
-                loginRepository = LoginRepository(
+        if (modelClass.isAssignableFrom(SignupViewModel::class.java)) {
+            return SignupViewModel(
+                signupRepository = SignupRepository(
                     dataSource = LoginDataSource()
                 )
             ) as T
