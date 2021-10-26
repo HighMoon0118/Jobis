@@ -1,13 +1,25 @@
 package com.example.jobis.presentation.signup.data
 
+import android.util.Log
+import com.example.jobis.R
 import com.example.jobis.presentation.signup.data.model.LoggedInUser
+import com.example.jobis.presentation.signup.data.model.User
+import com.example.jobis.presentation.signup.ui.signup.LoginResult
+import com.example.jobis.presentation.signup.ui.signup.SignedUpUserView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(val dataSource: LoginDataSource) {
+class SignupRepository(val dataSource: LoginDataSource) {
 
     // in-memory cache of the loggedInUser object
     var user: LoggedInUser? = null
@@ -27,15 +39,12 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        // handle login
-        val result = dataSource.login(username, password)
+    suspend fun signup(username: String, password: String): Boolean {
+        return dataSource.signup(username, password)
+    }
 
-        if (result is Result.Success) {
-            setLoggedInUser(result.data)
-        }
-
-        return result
+    suspend fun createAccount(username: String, password: String): Result<String>? {
+        return dataSource.saveAccount(username, password)
     }
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
