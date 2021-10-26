@@ -1,4 +1,4 @@
-package com.example.jobis.presentation.signup.ui.login
+package com.example.jobis.presentation.signup.ui.signup
 
 /**
  * Data validation state of the login form.
