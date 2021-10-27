@@ -1,6 +1,7 @@
 package com.example.jobis.presentation.login.ui.login
 
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.annotation.StringRes
@@ -18,6 +19,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.jobis.R
 import com.example.jobis.databinding.FragmentLoginBinding
+import com.example.jobis.presentation.MainActivity
 import com.example.jobis.presentation.login.UserActivity
 
 class LoginFragment : Fragment() {
@@ -47,7 +49,7 @@ class LoginFragment : Fragment() {
         val usernameEditText = binding.userEmail
         val passwordEditText = binding.userPassword
         val loginButton = binding.login
-        val loadingProgressBar = binding.loading
+//        val loadingProgressBar = binding.loading
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
@@ -66,7 +68,8 @@ class LoginFragment : Fragment() {
         loginViewModel.loginResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
-                loadingProgressBar.visibility = View.GONE
+                userActivity?.loadingOff()
+//                loadingProgressBar.visibility = View.GONE
                 loginResult.error?.let {
                     showLoginFailed(it)
                 }
@@ -104,7 +107,8 @@ class LoginFragment : Fragment() {
         }
 
         loginButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
+            userActivity?.loadingOn()
+//            loadingProgressBar.visibility = View.VISIBLE
             loginViewModel.login(
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
@@ -121,6 +125,7 @@ class LoginFragment : Fragment() {
         // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        userActivity?.goMain()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
