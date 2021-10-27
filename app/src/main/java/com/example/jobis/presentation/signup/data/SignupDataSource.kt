@@ -14,23 +14,30 @@ import java.io.IOException
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-class LoginDataSource {
-    suspend fun saveAccount(username: String, password: String): Result<String>? {
+class SignupDataSource {
+    suspend fun saveAccount(username: String, nickname: String, password: String): Result<String>? {
         return try {
             var result: Result<String>? = null
             var firestore = FirebaseFirestore.getInstance()
-            var user = User(email = username, password = password)
+            var user = User(email = username, password = password, nickname = nickname)
             firestore.collection("users")
                 .add(user)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("test", "db sucess ${documentReference}")
-                    result = Result.Success("success")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("test", "db error")
-                    e.printStackTrace()
-                    result = Result.Error(IOException("Error logging in", e))
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        result = Result.Success("success")
+                    } else {
+                        result = Result.Error(IOException("Error logging in"))
+                    }
                 }.await()
+//                .addOnSuccessListener { documentReference ->
+//                    Log.d("test", "db sucess ${documentReference}")
+//                    result = Result.Success("success")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("test", "db error")
+//                    e.printStackTrace()
+//                    result = Result.Error(IOException("Error logging in", e))
+//                }.await()
             result
         } catch (e: Throwable) {
             Result.Error(IOException("Error logging in", e))
@@ -47,11 +54,9 @@ class LoginDataSource {
                     if (task.isSuccessful) {
                         Log.d("test", "계정 생성됨!")
                         result = true
+                    } else {
+                        result = false
                     }
-                }
-                .addOnFailureListener { e ->
-                    Log.d("test", "안됨")
-                    result = false
                 }
                 .await()
             result

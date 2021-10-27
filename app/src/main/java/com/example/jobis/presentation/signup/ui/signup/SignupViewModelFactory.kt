@@ -2,7 +2,7 @@ package com.example.jobis.presentation.signup.ui.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.jobis.presentation.signup.data.LoginDataSource
+import com.example.jobis.presentation.signup.data.SignupDataSource
 import com.example.jobis.presentation.signup.data.SignupRepository
 
 /**
@@ -17,7 +17,7 @@ class SignupViewModelFactory : ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(SignupViewModel::class.java)) {
             return SignupViewModel(
                 signupRepository = SignupRepository(
-                    dataSource = LoginDataSource()
+                    dataSource = SignupDataSource()
                 )
             ) as T
         }
