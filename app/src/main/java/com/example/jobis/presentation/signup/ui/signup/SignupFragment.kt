@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,15 +45,15 @@ class SignupFragment : Fragment() {
 
         val usernameEditText = binding.userEmail
         val passwordEditText = binding.userPassword
-        val loginButton = binding.login
-        val loadingProgressBar = binding.loading
-
+        val nicknameEditText = binding.userNickName
+        val signupButton = binding.login
+//        val loadingProgressBar = binding.loading
         signupViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {
                     return@Observer
                 }
-                loginButton.isEnabled = loginFormState.isDataValid
+                signupButton.isEnabled = loginFormState.isDataValid
                 loginFormState.usernameError?.let {
                     usernameEditText.error = getString(it)
                 }
@@ -64,9 +65,10 @@ class SignupFragment : Fragment() {
         signupViewModel.loginResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
-                loadingProgressBar.visibility = View.GONE
+                userActivty?.loadingOff()
+//                loadingProgressBar.visibility = View.GONE
                 loginResult.error?.let {
-                    showLoginFailed(it)
+                    showSignupFailed(it)
                 }
                 loginResult.success?.let {
                     updateUiWithUser(it)
@@ -95,16 +97,20 @@ class SignupFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 signupViewModel.login(
                     usernameEditText.text.toString(),
+                    nicknameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
             }
             false
         }
 
-        loginButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
+        signupButton.setOnClickListener {
+            Log.d("test", "회원가입버튼 클릭 시 : ${userActivty}")
+            userActivty?.loadingOn()
+//            loadingProgressBar.visibility = View.VISIBLE
             signupViewModel.login(
                 usernameEditText.text.toString(),
+                nicknameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
         }
@@ -117,12 +123,12 @@ class SignupFragment : Fragment() {
 
     private fun updateUiWithUser(model: SignedUpUserView) {
         val welcome = model.displayName
-        // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        userActivty?.goLogin()
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
+    private fun showSignupFailed(@StringRes errorString: Int) {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
     }
