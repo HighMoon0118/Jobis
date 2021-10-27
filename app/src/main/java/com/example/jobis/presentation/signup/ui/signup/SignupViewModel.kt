@@ -18,17 +18,16 @@ class SignupViewModel(private val signupRepository: SignupRepository) : ViewMode
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
+    fun login(username: String, nickname: String, password: String) {
         // can be launched in a separate asynchronous job
         CoroutineScope(Dispatchers.Main).launch {
             val job1 = CoroutineScope(Dispatchers.IO).async {
                 signupRepository.signup(username, password)
             }
             val job2 = CoroutineScope(Dispatchers.IO).async {
-                signupRepository.createAccount(username, password)
+                signupRepository.createAccount(username, nickname, password)
             }
             val a = job1.await()
-            Log.d("test", "job1 수행 : ${a}")
             if (a) {
                 if (job2.await() is Result.Success) {
                     _loginResult.value =

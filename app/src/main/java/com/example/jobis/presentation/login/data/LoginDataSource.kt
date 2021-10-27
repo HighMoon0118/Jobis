@@ -1,6 +1,9 @@
 package com.example.jobis.presentation.login.data
 
 import com.example.jobis.presentation.login.data.model.LoggedInUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
 /**
@@ -8,11 +11,24 @@ import java.io.IOException
  */
 class LoginDataSource {
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        try {
+    suspend fun login(username: String, password: String): Result<LoggedInUser>? {
+        return try {
+            var user: LoggedInUser
+            var result: Result<LoggedInUser>? = null
+            var auth = Firebase.auth
+            auth.signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener() { task ->
+                    if (task.isSuccessful) {
+                        result = Result.Success(LoggedInUser(auth.currentUser?.email, "임시"))
+                    } else {
+                        result = Result.Error(IOException("Error logging in"))
+                    }
+                }
+                .addOnFailureListener { e ->
+                    result = Result.Error(IOException("Error logging in", e))
+                }.await()
             // TODO: handle loggedInUser authentication
-            val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "Jane Doe")
-            return Result.Success(fakeUser)
+            return result
         } catch (e: Throwable) {
             return Result.Error(IOException("Error logging in", e))
         }
