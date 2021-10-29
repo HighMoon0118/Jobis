@@ -1,5 +1,6 @@
 package com.example.jobis.presentation.signup.data
 
+import android.util.Log
 import com.example.jobis.presentation.signup.data.model.LoggedInUser
 
 /**
@@ -32,6 +33,7 @@ class SignupRepository(val dataSource: SignupDataSource) {
     }
 
     suspend fun createAccount(username: String, nickname: String, password: String): Result<String>? {
+        Log.d("test", "createAccount")
         return dataSource.saveAccount(username, nickname, password)
     }
 

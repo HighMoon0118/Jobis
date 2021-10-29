@@ -4,6 +4,7 @@ import android.text.BoringLayout
 import android.util.Log
 import com.example.jobis.presentation.signup.data.model.LoggedInUser
 import com.example.jobis.presentation.signup.data.model.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -15,13 +16,17 @@ import java.io.IOException
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 class SignupDataSource {
+    lateinit var auth: FirebaseAuth
     suspend fun saveAccount(username: String, nickname: String, password: String): Result<String>? {
+        auth = Firebase.auth
+        Log.d("test", "saveAccount!! ${auth.currentUser?.uid}")
         return try {
             var result: Result<String>? = null
             var firestore = FirebaseFirestore.getInstance()
             var user = User(email = username, password = password, nickname = nickname)
             firestore.collection("users")
-                .add(user)
+                .document(auth.currentUser!!.uid)
+                .set(user)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         result = Result.Success("success")
@@ -47,12 +52,13 @@ class SignupDataSource {
         return try {
             // TODO: handle loggedInUser authentication
             var result: Boolean = false
-            var auth = Firebase.auth
+            auth = Firebase.auth
             // 1. 계정생성 -> db에 사용자 문서 생성 요청(이걸 백에서 해라..?)
             auth.createUserWithEmailAndPassword(username, password)
                 .addOnCompleteListener() {task ->
                     if (task.isSuccessful) {
                         Log.d("test", "계정 생성됨!")
+                        Log.d("test", "uid:: ${auth.currentUser?.uid}")
                         result = true
                     } else {
                         result = false
