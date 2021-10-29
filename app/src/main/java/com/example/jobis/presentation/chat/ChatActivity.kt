@@ -39,11 +39,19 @@ class ChatActivity: AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {  // 툴바의 메뉴를 눌럿을 때
         when (item.itemId) {
             android.R.id.home -> onBackPressed()  // 뒤로가기
-            R.id.item_open_nav -> binding.dlChat.openDrawer(GravityCompat.END)  // 네비게이션바 오픈
+            R.id.item_open_nav -> binding.dlChat.openDrawer(GravityCompat.END)  // 네비게이션바 오픈. END가 아니라 START이고 NavigationView의 layout_gravity를 start로 바꾸면 오른쪽에서 생김
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {  // 뒤로가기를 눌렀을 때
+        if (binding.dlChat.isDrawerOpen(GravityCompat.END)) {  // 네이게이션 뷰가 열려있다면 닫아 주고 아니라면 뒤로가기
+            binding.dlChat.closeDrawer(GravityCompat.END)
+        } else {
+            super.onBackPressed()
+        }
     }
 }
