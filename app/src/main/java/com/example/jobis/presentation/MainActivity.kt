@@ -1,8 +1,9 @@
 package com.example.jobis.presentation
 
-import android.content.pm.PackageManager
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.content.pm.PackageManager
 import android.util.Base64
 import android.util.Log
 import com.example.jobis.R
@@ -10,13 +11,13 @@ import com.example.jobis.databinding.ActivityMainBinding
 import com.example.jobis.presentation.calendar.CalendarFragment
 import com.example.jobis.presentation.community.CommunityFragment
 import com.example.jobis.presentation.job.JobFragment
+import com.example.jobis.presentation.login.UserActivity
 import com.example.jobis.presentation.myPage.MyPageFragment
 import com.example.jobis.presentation.study.MyStudyFragment
 import com.example.jobis.presentation.study.StudyFragment
 import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
-
 
     private lateinit var binding: ActivityMainBinding
 
@@ -50,6 +51,12 @@ class MainActivity : AppCompatActivity() {
                 true
             }
         }
+    }
+
+    fun goUserActivity() {
+        val intent = Intent(this, UserActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }
