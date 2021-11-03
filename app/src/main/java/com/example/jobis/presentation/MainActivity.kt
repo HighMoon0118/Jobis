@@ -3,6 +3,8 @@ package com.example.jobis.presentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.content.pm.PackageManager
+import android.util.Base64
 import android.util.Log
 import com.example.jobis.R
 import com.example.jobis.databinding.ActivityMainBinding
@@ -11,7 +13,9 @@ import com.example.jobis.presentation.community.CommunityFragment
 import com.example.jobis.presentation.job.JobFragment
 import com.example.jobis.presentation.login.UserActivity
 import com.example.jobis.presentation.myPage.MyPageFragment
+import com.example.jobis.presentation.study.MyStudyFragment
 import com.example.jobis.presentation.study.StudyFragment
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                         supportFragmentManager.beginTransaction().replace(R.id.frame_main, CalendarFragment()).commit()
                     }
                     R.id.item_study -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, StudyFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, MyStudyFragment()).commit()
                     }
                     R.id.item_job -> {
                         supportFragmentManager.beginTransaction().replace(R.id.frame_main, JobFragment()).commit()
@@ -54,4 +58,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
 }
