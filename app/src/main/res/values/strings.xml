@@ -8,10 +8,12 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="invalid_username">이메일이 정확하지 않습니다.</string>
+    <string name="invalid_password">비밀번호를 6자리 이상 입력해주세요.</string>
+    <string name="login_failed">"로그인 실패"</string>
     <string name="signup_failed">"회원가입 실패"</string>
+    <string name="invalid_nickname">닉네임을 빈 칸을 제외하고 두자리 이상 입력해주세요.</string>
+    <string name="invalid_password_comfirmation">비밀번호가 일치하지 않습니다.</string>
 
     <!-- Calendar-->
     <string name="sunday"><font color="#D0312D">일</font></string>
@@ -25,4 +27,5 @@
         <item>금</item>
         <item>@string/saturday</item>
     </array>
+
 </resources>

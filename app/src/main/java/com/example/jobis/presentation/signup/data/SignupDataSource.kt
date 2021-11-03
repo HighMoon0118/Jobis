@@ -1,14 +1,11 @@
 package com.example.jobis.presentation.signup.data
 
-import android.text.BoringLayout
 import android.util.Log
-import com.example.jobis.presentation.signup.data.model.LoggedInUser
-import com.example.jobis.presentation.signup.data.model.User
+import com.example.jobis.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
