@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import com.example.jobis.R
 import com.example.jobis.databinding.FragmentSignupBinding
 import com.example.jobis.presentation.login.UserActivity
 
@@ -45,10 +44,11 @@ class SignupFragment : Fragment() {
 
         val usernameEditText = binding.userEmail
         val passwordEditText = binding.userPassword
+        val passwordConfirmationEditText = binding.userPasswordConfirmation
         val nicknameEditText = binding.userNickName
         val signupButton = binding.login
 //        val loadingProgressBar = binding.loading
-        signupViewModel.loginFormState.observe(viewLifecycleOwner,
+        signupViewModel.signupFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {
                     return@Observer
@@ -60,9 +60,12 @@ class SignupFragment : Fragment() {
                 loginFormState.passwordError?.let {
                     passwordEditText.error = getString(it)
                 }
+                loginFormState.passwordConfirmationError?.let {
+                    passwordConfirmationEditText.error = getString(it)
+                }
             })
 
-        signupViewModel.loginResult.observe(viewLifecycleOwner,
+        signupViewModel.signupResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 userActivty?.loadingOff()
@@ -87,11 +90,14 @@ class SignupFragment : Fragment() {
             override fun afterTextChanged(s: Editable) {
                 signupViewModel.loginDataChanged(
                     usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    nicknameEditText.text.toString(),
+                    passwordEditText.text.toString(),
+                    passwordConfirmationEditText.text.toString()
                 )
             }
         }
         usernameEditText.addTextChangedListener(afterTextChangedListener)
+        nicknameEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {

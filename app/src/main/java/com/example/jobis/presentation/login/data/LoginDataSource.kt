@@ -19,7 +19,7 @@ class LoginDataSource {
             auth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
-                        result = Result.Success(LoggedInUser(auth.currentUser?.email, "임시"))
+                        result = Result.Success(LoggedInUser(auth.currentUser?.email, auth.currentUser?.email.toString()))
                     } else {
                         result = Result.Error(IOException("Error logging in"))
                     }

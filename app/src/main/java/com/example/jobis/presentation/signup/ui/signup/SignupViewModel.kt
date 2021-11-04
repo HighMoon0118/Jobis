@@ -1,6 +1,5 @@
 package com.example.jobis.presentation.signup.ui.signup
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +11,11 @@ import kotlinx.coroutines.*
 
 class SignupViewModel(private val signupRepository: SignupRepository) : ViewModel() {
 
-    private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState> = _loginForm
+    private val _loginForm = MutableLiveData<SignupFormState>()
+    val signupFormState: LiveData<SignupFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _loginResult = MutableLiveData<SignupResult>()
+    val signupResult: LiveData<SignupResult> = _loginResult
 
     fun login(username: String, nickname: String, password: String) {
         // can be launched in a separate asynchronous job
@@ -32,24 +31,28 @@ class SignupViewModel(private val signupRepository: SignupRepository) : ViewMode
                 val job2 = signupRepository.createAccount(username, nickname, password)
                 if (job2 is Result.Success) {
                     _loginResult.value =
-                        LoginResult(success = SignedUpUserView(displayName = "회원가입 성공"))
+                        SignupResult(success = SignedUpUserView(displayName = "회원가입 성공"))
                 } else {
-                    _loginResult.value = LoginResult(error = R.string.signup_failed)
+                    _loginResult.value = SignupResult(error = R.string.signup_failed)
                 }
             } else {
-                _loginResult.value = LoginResult(error = R.string.signup_failed)
+                _loginResult.value = SignupResult(error = R.string.signup_failed)
             }
 
         }
     }
 
-    fun loginDataChanged(username: String, password: String) {
+    fun loginDataChanged(username: String, nickname: String, password: String, passwordConfirmation: String) {
         if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
+            _loginForm.value = SignupFormState(usernameError = R.string.invalid_username)
+        } else if (!isNickNameValid(nickname)) {
+            _loginForm.value = SignupFormState(nicknameError = R.string.invalid_nickname)
         } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            _loginForm.value = SignupFormState(passwordError = R.string.invalid_password)
+        } else if (!isPasswordConfirmationValid(password, passwordConfirmation)) {
+            _loginForm.value = SignupFormState(passwordConfirmationError = R.string.invalid_password_comfirmation)
         } else {
-            _loginForm.value = LoginFormState(isDataValid = true)
+            _loginForm.value = SignupFormState(isDataValid = true)
         }
     }
 
@@ -62,8 +65,17 @@ class SignupViewModel(private val signupRepository: SignupRepository) : ViewMode
         }
     }
 
+    private fun isNickNameValid(nickname: String): Boolean {
+        val trimmedNickName = nickname.replace(" ", "")
+        return trimmedNickName.length >= 2
+    }
+
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
+    }
+
+    private fun isPasswordConfirmationValid(password: String, passwordConfirmation: String): Boolean {
+        return password == passwordConfirmation
     }
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,10 @@ import com.example.jobis.R
 import com.example.jobis.databinding.FragmentLoginBinding
 import com.example.jobis.presentation.MainActivity
 import com.example.jobis.presentation.login.UserActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginFragment : Fragment() {
     private var userActivity: UserActivity? = null
@@ -115,8 +120,29 @@ class LoginFragment : Fragment() {
             )
         }
 
+        binding.findPasswordButton.setOnClickListener {
+            findPassword(binding.userEmail.text.toString())
+        }
+
         binding.signUpButton.setOnClickListener {
             userActivity?.goSignUp()
+        }
+    }
+
+    private fun findPassword(userEmail: String) {
+        val appContext = context?.applicationContext ?: return
+        if (loginViewModel.isUserNameValid(userEmail)){
+            Firebase.auth.sendPasswordResetEmail(userEmail)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(appContext, "비밀번호 재설정 이메일이 전송되었습니다.", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        Toast.makeText(appContext, "비밀번호 재설정 이메일 전송 실패", Toast.LENGTH_LONG).show()
+                    }
+                }
+        } else {
+            Toast.makeText(appContext, "이메일을 입력하신 뒤 다시 버튼을 눌러주세요.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -141,5 +167,15 @@ class LoginFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is UserActivity) userActivity = context
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser: FirebaseUser? = Firebase.auth.currentUser
+        if(currentUser != null) {
+            val appContext = context?.applicationContext ?: return
+            Toast.makeText(appContext, currentUser.email, Toast.LENGTH_LONG).show()
+            userActivity?.goMain()
+        }
     }
 }
