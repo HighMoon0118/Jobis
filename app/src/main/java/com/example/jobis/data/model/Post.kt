@@ -9,7 +9,8 @@ data class Post(
     val created_at: Timestamp = Timestamp(Date()),
     val updated_at: Timestamp = Timestamp(Date()),
     val comment_list: MutableList<Any> = mutableListOf(),
-    val user_id: Long
+    val user_id: String,
+    val like: MutableList<Any> = mutableListOf()
 ) {
     companion object {
         fun from(map: Map<String, Any>) = object {
@@ -19,13 +20,14 @@ data class Post(
             val updated_at by map
             val comment_list by map
             val user_id by map
-
+            val like by map
             val data = Post(title as String,
                 content as String,
                 created_at as Timestamp,
                 updated_at as Timestamp,
                 comment_list as MutableList<Any>,
-                user_id as Long
+                user_id as String,
+                like as MutableList<Any>
             )
         }.data
     }
