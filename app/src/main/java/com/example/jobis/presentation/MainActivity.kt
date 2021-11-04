@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.content.pm.PackageManager
 import android.util.Base64
 import android.util.Log
+import androidx.fragment.app.Fragment
 import com.example.jobis.R
 import com.example.jobis.databinding.ActivityMainBinding
 import com.example.jobis.presentation.calendar.CalendarFragment
 import com.example.jobis.presentation.community.CommunityFragment
+import com.example.jobis.presentation.community.create.PostCreateFragment
 import com.example.jobis.presentation.job.JobFragment
 import com.example.jobis.presentation.login.UserActivity
 import com.example.jobis.presentation.myPage.MyPageFragment
@@ -59,4 +61,17 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    fun goPostCreateFragment() {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.frame_main, PostCreateFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    fun goCommunityFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .remove(fragment)
+            .replace(R.id.frame_main, CommunityFragment())
+            .commit()
+    }
 }
