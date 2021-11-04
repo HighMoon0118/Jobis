@@ -4,9 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/drawable/calendar_border.xml" value="0.11666666666666667" />
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/activity_chat.xml" value="0.1296875" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/calendar_item.xml" value="0.1296875" />
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/calendar_viewpager.xml" value="0.1296875" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.1175925925925926" />
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_calendar_viewpager.xml" value="0.21557971014492755" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_study.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/item_viewpager.xml" value="0.1296875" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable-v24/radius.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/back_button.xml" value="0.32222222222222224" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/curve.xml" value="0.337037037037037" />
