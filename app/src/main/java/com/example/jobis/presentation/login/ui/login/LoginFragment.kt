@@ -22,6 +22,8 @@ import com.example.jobis.R
 import com.example.jobis.databinding.FragmentLoginBinding
 import com.example.jobis.presentation.MainActivity
 import com.example.jobis.presentation.login.UserActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -165,5 +167,15 @@ class LoginFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is UserActivity) userActivity = context
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser: FirebaseUser? = Firebase.auth.currentUser
+        if(currentUser != null) {
+            val appContext = context?.applicationContext ?: return
+            Toast.makeText(appContext, currentUser.email, Toast.LENGTH_LONG).show()
+            userActivity?.goMain()
+        }
     }
 }

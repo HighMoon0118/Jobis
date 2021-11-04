@@ -22,6 +22,7 @@ class CommunityPagerAdapter: RecyclerView.Adapter<Holder>() {
     override fun getItemCount(): Int {
         return postList.size
     }
+
 }
 
 class Holder(val binding: PostViewpagerBinding): RecyclerView.ViewHolder(binding.root) {
