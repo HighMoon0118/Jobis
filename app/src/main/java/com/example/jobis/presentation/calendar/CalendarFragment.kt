@@ -33,10 +33,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         savedInstanceState: Bundle?
     ): View? {
 
-
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
-
-        var calendar_fragment = layoutInflater.inflate(R.layout.fragment_calendar, container)
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
