@@ -20,4 +20,11 @@
         android:layout_gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/calendar_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
+
+
 </LinearLayout>

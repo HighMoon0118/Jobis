@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
 
-        <activity android:name=".presentation.login.UserActivity"
+        <activity android:name=".presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.chat.ChatActivity"/>
-        <activity android:name=".presentation.MainActivity"/>
+        <activity android:name=".presentation.login.UserActivity"/>
     </application>
 
 </manifest>
