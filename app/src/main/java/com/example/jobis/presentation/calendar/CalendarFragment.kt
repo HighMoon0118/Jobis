@@ -75,27 +75,22 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         // 뷰페이저2 사용
         // 첫 화면에서 보여줄 달의 정보를 가지고 있는 뷰를 여기서 만들어줘야 한다.
         var calendarDates = ArrayList<Int>()
-        for (i: Int in 1..31)
+        val calc = Calendar.getInstance()
+        var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
+        for (i: Int in 1..lastDay)
             calendarDates.add(i)
+
+        var firstYear = calc.get(Calendar.YEAR)
+        var firstMonth = calc.get(Calendar.MONTH)
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
         binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 0) {
-                    var cal = Calendar.getInstance()
-                    cal.set(2021, 10, 1)
-                    // you are on the first page
-                    binding.calendarView.setSelectedDate(cal)
-                }
-                else if (position == 1) {
-                    // you are on the second page
-                    var cal = Calendar.getInstance()
-                    cal.set(2021, 10, 2)
-                    binding.calendarView.setSelectedDate(cal)
-                }
+                calc.set(firstYear, firstMonth, position+1)
+                // you are on the first page
+                binding.calendarView.setSelectedDate(calc)
             }
         })
-
         return binding.root
     }
 
@@ -113,6 +108,25 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         })
         // 뷰페이저도 초기화 해주고 정보 다시 가져와야 한다
         // 코드 추가
+        var calendarDates = ArrayList<Int>()
+        var year = date?.year
+        var month = date?.month
+        var day = date?.day
+        var calc = Calendar.getInstance()
+        calc.set(year!!, month!!, day!!)
+        var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
+        for (i: Int in 1..lastDay)
+            calendarDates.add(i)
+        binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
+        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
+                // you are on the first page
+                binding.calendarView.setSelectedDate(calc)
+
+            }
+        })
     }
 
     override fun onDateSelected(
