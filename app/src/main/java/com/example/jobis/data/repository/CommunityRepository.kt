@@ -2,21 +2,22 @@ package com.example.jobis.data.repository
 
 import android.util.Log
 import com.example.jobis.data.model.Post
-import com.example.jobis.presentation.community.PostList
+import com.example.jobis.data.response.PostResponse
+import com.example.jobis.data.response.PostResponseList
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class CommunityRepository {
-    suspend fun loadAllPosts(): PostList {
-        var postList = PostList()
+    suspend fun loadAllPosts(): PostResponseList {
+        var postList = PostResponseList()
         return try {
             var db = FirebaseFirestore.getInstance()
             db.collection("posts")
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        postList.add(Post.from(document.data))
+                        postList.add(PostResponse.from(document.data, document.id))
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -29,8 +30,8 @@ class CommunityRepository {
         }
     }
 
-    suspend fun loadRecentPosts(): PostList {
-        var postList = PostList()
+    suspend fun loadRecentPosts(): PostResponseList {
+        var postList = PostResponseList()
         return try {
             val db = FirebaseFirestore.getInstance()
             db.collection("posts")
@@ -38,7 +39,8 @@ class CommunityRepository {
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        postList.add(Post.from(document.data))
+                        document.data
+                        postList.add(PostResponse.from(document.data, document.id))
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -51,8 +53,8 @@ class CommunityRepository {
         }
     }
 
-    suspend fun loadPopularPosts(): PostList {
-        var postList = PostList()
+    suspend fun loadPopularPosts(): PostResponseList {
+        var postList = PostResponseList()
         return try {
             val db = FirebaseFirestore.getInstance()
             db.collection("posts")
@@ -60,7 +62,7 @@ class CommunityRepository {
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        postList.add(Post.from(document.data))
+                        postList.add(PostResponse.from(document.data, document.id))
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -70,6 +72,23 @@ class CommunityRepository {
         } catch(e: Throwable) {
             e.printStackTrace()
             postList
+        }
+    }
+
+    suspend fun loadPostDetail(id: String): PostResponse? {
+        var post: PostResponse? = null
+        return try {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("posts").document(id)
+                .get()
+                .addOnSuccessListener { result ->
+                    post = result.data?.let { PostResponse.from(it) }
+                }
+                .await()
+            post
+        } catch(e: Throwable) {
+            e.printStackTrace()
+            post
         }
     }
 }
