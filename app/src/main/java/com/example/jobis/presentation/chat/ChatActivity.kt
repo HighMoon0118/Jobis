@@ -8,7 +8,6 @@ import androidx.core.view.GravityCompat
 import com.example.jobis.R
 import com.example.jobis.databinding.ActivityChatBinding
 import com.example.jobis.presentation.chat.adapter.ChatAdapter
-import com.example.jobis.presentation.study.adapter.MyStudyAdapter
 
 class ChatActivity: AppCompatActivity() {
 
@@ -20,8 +19,9 @@ class ChatActivity: AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val recycler = binding.rvChat
         val chatAdapter = ChatAdapter()
-        binding.rvChat.adapter = chatAdapter
+        recycler.adapter = chatAdapter
 
         setSupportActionBar(binding.tbChat)  // 액션바 설정
         val actionbar = supportActionBar
@@ -32,6 +32,9 @@ class ChatActivity: AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_arrow_back_24)  // 뒤로가기 아이콘 설정
         }
 
+        recycler.post {
+            recycler.scrollToPosition(19)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

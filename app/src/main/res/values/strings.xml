@@ -28,4 +28,19 @@
         <item>@string/saturday</item>
     </array>
 
+    <string-array name="dayOfWeek">
+        <item>일요일</item>
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
+    </string-array>
+
+    <string-array name="routine">
+        <item>단일 일정</item>
+        <item>반복 일정</item>
+    </string-array>
+
 </resources>
