@@ -1,6 +1,7 @@
 package com.example.jobis.presentation.calendar
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.jobis.R
 import com.example.jobis.databinding.FragmentCalendarBinding
 import com.example.jobis.presentation.CalendarPagerAdapter
+import com.example.jobis.presentation.CalendarScheduleActivity
 import com.example.jobis.presentation.calendar.decorators.TextDecorator
 import com.example.materialcalendar.EventDecorator
 import com.example.materialcalendar.OneDayDecorator
@@ -39,6 +41,13 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     ): View? {
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
+        // 버튼 연결 test
+        binding.calendarBtn.setOnClickListener({
+            val intent = Intent(activity, CalendarScheduleActivity::class.java)
+            startActivity(intent)
+        })
+
+
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
