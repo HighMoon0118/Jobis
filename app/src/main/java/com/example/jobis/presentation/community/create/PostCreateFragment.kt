@@ -1,14 +1,12 @@
 package com.example.jobis.presentation.community.create
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.example.jobis.R
 import com.example.jobis.data.model.Post
 import com.example.jobis.databinding.PostCreateFragmentBinding
 import com.example.jobis.presentation.MainActivity
@@ -44,7 +42,8 @@ class PostCreateFragment : Fragment() {
                 val post = Post(
                     title=title,
                     content=content,
-                    user_id=currentUser.uid)
+                    user_id=currentUser.uid
+                )
                 var db = FirebaseFirestore.getInstance()
                 db.collection("posts")
                     .add(post)
@@ -53,7 +52,7 @@ class PostCreateFragment : Fragment() {
                             // 성공 시 현재 프래그먼트 닫기
                             val appContext = context?.applicationContext
                             Toast.makeText(appContext, "게시글이 등록되었습니다.", Toast.LENGTH_LONG).show()
-                            mainAcitivty?.goCommunityFragment(this)
+                            mainAcitivty?.goCommunityFragment()
 
                         } else {
                             // 실패 시 게시글 등록 실패 띄우기

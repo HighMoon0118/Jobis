@@ -8,12 +8,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.jobis.R
-import com.example.jobis.databinding.FragmentCommunityBinding
+import com.example.jobis.data.response.PostResponse
+import com.example.jobis.data.response.PostResponseList
 import com.example.jobis.databinding.FragmentRecentPostBinding
-import com.example.jobis.presentation.community.CommunityViewModel
+import com.example.jobis.presentation.MainActivity
 import com.example.jobis.presentation.community.CustomPostAdapter
-import com.example.jobis.presentation.community.PostList
 
 class RecentPostFragment : Fragment() {
 
@@ -45,9 +44,16 @@ class RecentPostFragment : Fragment() {
         recentPostViewModel.loadRecentPosts()
     }
 
-    fun updateRecentPost(recentPostList: PostList) {
+    fun updateRecentPost(recentPostList: PostResponseList) {
         val adapter = CustomPostAdapter()
         adapter.listData = recentPostList
+        adapter.setOnItemClickListener(object: CustomPostAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, post: PostResponse, pos: Int) {
+                if (post.id != null) {
+                    (activity as MainActivity).goCommunityDetailActivity(post.id)
+                }
+            }
+        })
         binding.recentRecyclerView.adapter = adapter
         binding.recentRecyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
