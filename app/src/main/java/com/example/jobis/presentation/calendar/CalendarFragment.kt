@@ -38,7 +38,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         savedInstanceState: Bundle?
     ): View? {
 
-
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
         // 캘린더 레이아웃
