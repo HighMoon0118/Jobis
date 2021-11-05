@@ -3,26 +3,29 @@ package com.example.jobis.presentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.pm.PackageManager
-import android.util.Base64
-import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.jobis.R
+import com.example.jobis.data.response.PostResponse
 import com.example.jobis.databinding.ActivityMainBinding
 import com.example.jobis.presentation.calendar.CalendarFragment
 import com.example.jobis.presentation.community.CommunityFragment
 import com.example.jobis.presentation.community.create.PostCreateFragment
+import com.example.jobis.presentation.community.detail.CommunityDetailActivity
 import com.example.jobis.presentation.job.JobFragment
 import com.example.jobis.presentation.login.UserActivity
 import com.example.jobis.presentation.myPage.MyPageFragment
 import com.example.jobis.presentation.study.MyStudyFragment
-import com.example.jobis.presentation.study.StudyFragment
-import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private val getResultCommunityDetail = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            goCommunityFragment()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,10 +71,15 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    fun goCommunityFragment(fragment: Fragment) {
+    fun goCommunityFragment() {
         supportFragmentManager.beginTransaction()
-            .remove(fragment)
             .replace(R.id.frame_main, CommunityFragment())
             .commit()
+    }
+
+    fun goCommunityDetailActivity(post_id: String) {
+        val intent = Intent(this, CommunityDetailActivity::class.java)
+        intent.putExtra("id", post_id)
+        getResultCommunityDetail.launch(intent)
     }
 }
