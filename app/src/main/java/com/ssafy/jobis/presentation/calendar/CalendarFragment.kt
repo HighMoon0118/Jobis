@@ -19,6 +19,11 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
+import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.Schedule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -36,12 +41,21 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
         // 버튼 연결 test
-        binding.calendarBtn.setOnClickListener({
+        binding.calendarBtn.setOnClickListener {
             val intent = Intent(activity, CalendarScheduleActivity::class.java)
             startActivity(intent)
-        })
+        }
 
-
+        // room test
+        binding.roomTest.setOnClickListener {
+            var newSchedule = Schedule("할 일", "2022 서류접수", "2022-03-18")
+            var db = CalendarDatabase.getInstance(this.context)
+            CoroutineScope(Dispatchers.IO).launch {
+                db!!.calendarDao().insert(newSchedule)
+                var dbList = db!!.calendarDao().getAll()
+                println("DB 결과: " + dbList)
+            }
+        }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView

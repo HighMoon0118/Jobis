@@ -26,6 +26,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" />
 
+    <Button
+        android:id="@+id/room_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="데이터 추가(임시)" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/calendar_btn"
         android:layout_width="wrap_content"
@@ -35,6 +41,5 @@
         android:backgroundTint="#3f51b5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
 </LinearLayout>
