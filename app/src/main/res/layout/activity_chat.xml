@@ -116,6 +116,29 @@
                     android:background="@drawable/view_circle"
                     android:layout_gravity="top|right"/>
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_left"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_left_24"
+                    android:layout_gravity="center_vertical|left"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_right"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_right_24"
+                    android:layout_gravity="center_vertical|right"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_viewpager_num"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="1/1"
+                    android:layout_gravity="bottom|right"
+                    />
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewpager_chat"
