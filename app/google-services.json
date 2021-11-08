@@ -41,6 +41,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868383230286:android:b4af5ac3ad853dfdefb61f",
+        "android_client_info": {
+          "package_name": "com.ssafy.jobis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868383230286-3q6orqjk6otii8a68fj7u3gi9cof65sv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssafy.jobis",
+            "certificate_hash": "46b1d78ec200db3f4026307df519a1d6d2b7fa9b"
+          }
+        },
+        {
+          "client_id": "868383230286-h5u5qb76ki9koklhkvuf6cg24maclhg1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2BLyjTXYhOLz4bY8jlLK7Lzdvp1B2PqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "868383230286-h5u5qb76ki9koklhkvuf6cg24maclhg1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

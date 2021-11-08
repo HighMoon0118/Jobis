@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.jobis.view.DrawingView
+    <com.ssafy.jobis.view.DrawingView
         android:id="@+id/drawing_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
