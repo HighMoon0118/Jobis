@@ -1,9 +1,12 @@
 package com.example.jobis.presentation.chat
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Color.parseColor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -23,13 +26,19 @@ import com.example.jobis.R
 import com.example.jobis.databinding.ActivityChatBinding
 import com.example.jobis.presentation.chat.adapter.ChatAdapter
 import com.example.jobis.presentation.chat.adapter.ViewPagerAdapter
+import com.example.jobis.view.DrawingView
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import kotlinx.coroutines.*
 
-class ChatActivity: AppCompatActivity(), View.OnClickListener {
+class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener {
 
     private lateinit var binding: ActivityChatBinding
     private val chatAdapter: ChatAdapter by lazy {
         ChatAdapter()
+    }
+    private val viewPagerAdapter: ViewPagerAdapter by lazy {
+        ViewPagerAdapter(this@ChatActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +54,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
 
         binding.viewpagerChat.apply {
             isUserInputEnabled = false
-            adapter = ViewPagerAdapter(this@ChatActivity)
+            adapter = viewPagerAdapter
         }
 
         setSupportActionBar(binding.tbChat)  // 액션바 설정
@@ -58,10 +67,15 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
         }
 
 
-        binding.imgAddChat.setOnClickListener(this)
-        binding.imgEmoticonChat.setOnClickListener(this)
-        binding.imgSendChat.setOnClickListener(this)
-        binding.editTextChat.setOnClickListener(this)
+        binding.apply {
+            imgAddChat.setOnClickListener(this@ChatActivity)
+            imgEmoticonChat.setOnClickListener(this@ChatActivity)
+            imgSendChat.setOnClickListener(this@ChatActivity)
+            editTextChat.setOnClickListener(this@ChatActivity)
+            imgSelectColor.setOnClickListener(this@ChatActivity)
+            imgLeft.setOnClickListener(this@ChatActivity)
+            imgRight.setOnClickListener(this@ChatActivity)
+        }
     }
 
     private fun goToRecentChat() {
@@ -89,6 +103,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
     }
 
 
+    @SuppressLint("ResourceType")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.img_add_chat -> {
@@ -97,9 +112,9 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
             R.id.img_emoticon_chat -> {
                 val scope = CoroutineScope(Dispatchers.Main)
                 scope.launch {
-                    if (binding.frameEmoticonChat.visibility == View.GONE) {                                // 1. 키보드가 보일 때
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {     // 1. 키보드가 보일 때
                         showCanvas(view)
-                    } else {                                                                            // 2. 캔버스가 보일 때
+                    } else {                                                     // 2. 캔버스가 보일 때
                         showKeyboard()
                     }
                 }
@@ -112,11 +127,38 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
                 scope.launch {
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-                    if (binding.frameEmoticonChat.visibility == View.GONE) {                                // 1. Edit Text만 보일 때
-                        imm.showSoftInput(binding.editTextChat, 0)                                 // 키보드를 보임
-                    } else {                                                                            // 2. 캔버스가 보일 때
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {      // 1. Edit Text만 보일 때
+                        imm.showSoftInput(binding.editTextChat, 0)           // 키보드를 보임
+                    } else {                                                      // 2. 캔버스가 보일 때
                         showKeyboard()
                     }
+                }
+            }
+            R.id.img_select_color -> {
+                ColorPickerDialog
+                    .newBuilder()
+                    .setDialogTitle(R.string.color_dialog_title)
+                    .setSelectedButtonText(R.string.select)
+                    .setCustomButtonText(R.string.custom)
+                    .setPresetsButtonText(R.string.presets)
+                    .show(this)
+            }
+            R.id.img_left -> {
+                binding.viewpagerChat.apply {
+                    if (currentItem > 0) {
+                        currentItem--
+                    }
+                    binding.textViewpagerNum.text = "$currentItem/$childCount"
+                }
+            }
+            R.id.img_right -> {
+                binding.viewpagerChat.apply {
+                    if (currentItem < childCount-1) {
+                        currentItem++
+                    } else if (currentItem == currentItem-1){
+                        viewPagerAdapter.addFragment(DrawingFragment())
+                    }
+                    binding.textViewpagerNum.text = "$currentItem/$childCount"
                 }
             }
         }
@@ -138,8 +180,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
     override fun onBackPressed() {  // 뒤로가기를 눌렀을 때
         if (binding.dlChat.isDrawerOpen(GravityCompat.END)) {  // 네이게이션 뷰가 열려있다면 닫아 주고 아니라면 뒤로가기
             binding.dlChat.closeDrawer(GravityCompat.END)
-        } else if(binding.viewpagerChat.visibility == View.VISIBLE) {
-            binding.viewpagerChat.visibility = View.GONE
+        } else if(binding.frameEmoticonChat.visibility == View.VISIBLE) {
+            binding.frameEmoticonChat.visibility = View.GONE
         } else {
             super.onBackPressed()
         }
@@ -190,5 +232,14 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        binding.imgSelectColor.background.setTint(color)
+        DrawingView.color = color
+    }
+
+    override fun onDialogDismissed(dialogId: Int) {
+
     }
 }

@@ -1,7 +1,9 @@
 package com.example.jobis.presentation.chat
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -9,16 +11,10 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import com.example.jobis.R
 import com.example.jobis.view.DrawingView
-import com.example.jobis.view.DrawingView.Companion.curShapee
-import com.example.jobis.view.DrawingView.Companion.PAN
-import com.example.jobis.view.DrawingView.Companion.LINE
-import com.example.jobis.view.DrawingView.Companion.CIRCLE
-import com.example.jobis.view.DrawingView.Companion.SQ
-import com.example.jobis.view.DrawingView.Companion.color
-import com.example.jobis.view.DrawingView.Companion.size
 import com.waynejo.androidndkgif.GifEncoder
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
 
 class DrawingFragment : Fragment() {
@@ -38,62 +34,6 @@ class DrawingFragment : Fragment() {
 
         setHasOptionsMenu(true)
         return view
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu?.add(0, 0, 0, "펜")
-        menu?.add(0, 1, 0, "선 그리기")
-        menu?.add(0, 2, 0, "원 그리기")
-        menu?.add(0, 3, 0, "사각형 그리기")
-
-        val sMenu = menu?.addSubMenu("색상변경==>")
-        sMenu?.add(0, 4, 0, "빨강색")
-        sMenu?.add(0, 5, 0, "파랑색")
-        sMenu?.add(0, 6, 0, "초록색")
-        sMenu?.add(0, 7, 0, "선 굵게")
-        sMenu?.add(0, 8, 0, "선 가늘게")
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item?.itemId) {
-            0 -> {
-                curShapee = PAN
-                return true
-            }
-            1 -> {
-                curShapee = LINE
-                return true
-            }
-            2 -> {
-                curShapee = CIRCLE
-                return true
-            }
-            3 -> {
-                curShapee = SQ
-                return true
-            }
-            4 -> {
-                color = 1
-                return true
-            }
-            5 -> {
-                color = 2
-                return true
-            }
-            6 -> {
-                color = 3
-                return true
-            }
-            7 -> {
-                size += 5
-                return true
-            }
-            8 -> {
-                size -= 5
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     fun addView() {
@@ -144,7 +84,9 @@ class DrawingFragment : Fragment() {
 
     fun encodeGIF() {
         val fileName = System.currentTimeMillis().toString()+".gif"
-        val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + File.separator + fileName
+        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
+//        val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + File.separator + fileName
+        val filePath = file.absolutePath
         val width = canvas.width
         val height = canvas.height
         val delayMs = 100;
@@ -156,5 +98,10 @@ class DrawingFragment : Fragment() {
             gifEncoder.encodeFrame(bm, delayMs)
         }
         gifEncoder.close()
+
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also {
+            it.data = Uri.fromFile(file)
+            context?.sendBroadcast(it)
+        }
     }
 }

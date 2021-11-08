@@ -12,16 +12,19 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
     init {
         df.add(DrawingFragment())
-        df.add(DrawingFragment())
-        df.add(DrawingFragment())
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return df.size
     }
 
-    override fun createFragment(position: Int): Fragment {
+    override fun createFragment(position: Int): DrawingFragment {
         return df[position]
+    }
+
+    fun addFragment(drawingFragment: DrawingFragment) {
+        df.add(drawingFragment)
+        notifyItemInserted(df.size-1)
     }
 
     fun addView(position: Int) {
