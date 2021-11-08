@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    스피너 관련 -->
+    <string-array name="study_region">
+        <item>지역</item>
+        <item>지역1</item>
+        <item>지역2</item>
+        <item>지역3</item>
+        <item>지역4</item>
+        <item>지역5</item>
+        <item>지역6</item>
+        <item>지역7</item>
+        <item>지역8</item>
+    </string-array>
+
+    <string-array name="study_topic">
+        <item>주제</item>
+        <item>주제1</item>
+        <item>주제2</item>
+        <item>주제3</item>
+        <item>주제4</item>
+        <item>주제5</item>
+        <item>주제6</item>
+        <item>주제7</item>
+        <item>주제8</item>
+    </string-array>
+
+    <string-array name="study_population">
+        <item>인구</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+</resources>

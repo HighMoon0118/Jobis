@@ -3,6 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/drawable/text_cursor.xml" value="0.125" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/activity_chat.xml" value="0.2" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/activity_create_study.xml" value="0.33" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/fragment_login.xml" value="0.5" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/fragment_my.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/fragment_my_study.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/fragment_study.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/item_my_study.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/study_regin.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt/S05P31B204/app/src/main/res/layout/study_region.xml" value="0.10648148148148148" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable-v24/radius.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/back_button.xml" value="0.32222222222222224" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/curve.xml" value="0.337037037037037" />
