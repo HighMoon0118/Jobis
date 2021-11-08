@@ -1,27 +1,52 @@
 package com.example.jobis.presentation.chat
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.example.jobis.R
 import com.example.jobis.databinding.ActivityChatBinding
 import com.example.jobis.presentation.chat.adapter.ChatAdapter
+import com.example.jobis.presentation.chat.adapter.ViewPagerAdapter
+import kotlinx.coroutines.*
 
-class ChatActivity: AppCompatActivity() {
+class ChatActivity: AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityChatBinding
+    private val chatAdapter: ChatAdapter by lazy {
+        ChatAdapter()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        requestPermissions()
+
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val recycler = binding.rvChat
-        val chatAdapter = ChatAdapter()
-        recycler.adapter = chatAdapter
+        binding.rvChat.adapter = chatAdapter
+        goToRecentChat()
+
+        binding.viewpagerChat.apply {
+            isUserInputEnabled = false
+            adapter = ViewPagerAdapter(this@ChatActivity)
+        }
 
         setSupportActionBar(binding.tbChat)  // 액션바 설정
         val actionbar = supportActionBar
@@ -32,8 +57,68 @@ class ChatActivity: AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_arrow_back_24)  // 뒤로가기 아이콘 설정
         }
 
-        recycler.post {
-            recycler.scrollToPosition(19)
+
+        binding.imgAddChat.setOnClickListener(this)
+        binding.imgEmoticonChat.setOnClickListener(this)
+        binding.imgSendChat.setOnClickListener(this)
+        binding.editTextChat.setOnClickListener(this)
+    }
+
+    private fun goToRecentChat() {
+        binding.rvChat.post {
+            binding.rvChat.scrollToPosition(19)
+        }
+    }
+
+    suspend fun showCanvas(view: View) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)   // 키보드가 layout에 영향을 주지 않게 함
+        binding.frameEmoticonChat.visibility = View.VISIBLE                                 // 캔버스를 보임
+        imm.hideSoftInputFromWindow(view.windowToken, 0)                           // 키보드를 숨김
+        delay(100)                                                              // 키보드가 전부 안보일 떄까지 기다림
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
+    }
+
+    suspend fun showKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)   // 키보드가 layout에 영향을 주지 않게 함
+        imm.showSoftInput(binding.editTextChat, 0)                                 // 키보드를 보임
+        delay(100)                                                              // 키보드가 전부 보일 떄까지 기다림
+        binding.frameEmoticonChat.visibility = View.GONE                                    // 캔버스를 숨김
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
+    }
+
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.img_add_chat -> {
+
+            }
+            R.id.img_emoticon_chat -> {
+                val scope = CoroutineScope(Dispatchers.Main)
+                scope.launch {
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {                                // 1. 키보드가 보일 때
+                        showCanvas(view)
+                    } else {                                                                            // 2. 캔버스가 보일 때
+                        showKeyboard()
+                    }
+                }
+            }
+            R.id.img_send_chat -> {
+
+            }
+            R.id.edit_text_chat -> {
+                val scope = CoroutineScope(Job() + Dispatchers.Main)
+                scope.launch {
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {                                // 1. Edit Text만 보일 때
+                        imm.showSoftInput(binding.editTextChat, 0)                                 // 키보드를 보임
+                    } else {                                                                            // 2. 캔버스가 보일 때
+                        showKeyboard()
+                    }
+                }
+            }
         }
     }
 
@@ -53,8 +138,57 @@ class ChatActivity: AppCompatActivity() {
     override fun onBackPressed() {  // 뒤로가기를 눌렀을 때
         if (binding.dlChat.isDrawerOpen(GravityCompat.END)) {  // 네이게이션 뷰가 열려있다면 닫아 주고 아니라면 뒤로가기
             binding.dlChat.closeDrawer(GravityCompat.END)
+        } else if(binding.viewpagerChat.visibility == View.VISIBLE) {
+            binding.viewpagerChat.visibility = View.GONE
         } else {
             super.onBackPressed()
+        }
+    }
+
+    private fun requestPermissions() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            val permissions: Array<String> = arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE)
+            ActivityCompat.requestPermissions(this, permissions, 0)
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode==0) {
+            if (grantResults.isNotEmpty()) {
+                var isAllGranted = true
+                for (grant in grantResults) {
+                    if (grant != PackageManager.PERMISSION_GRANTED) {
+                        isAllGranted = false
+                        break;
+                    }
+                }
+                Log.d("ㅇㅇㅇㅇ", isAllGranted.toString())
+                if (isAllGranted) {
+
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        AlertDialog
+                            .Builder(this)
+                            .setTitle("권한 설정")
+                            .setMessage("미디어 액세스를 허용해주세요")
+                            .setPositiveButton("권한 설정하러 가기"){ dialog, which ->
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                    .setData(Uri.parse("package:$packageName"))
+                                startActivity(intent);
+                            }
+                            .setNegativeButton("취소"){ dialog, which ->
+                                finish()
+                            }
+                            .create()
+                            .show()
+                    }
+                }
+            }
         }
     }
 }
