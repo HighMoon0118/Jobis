@@ -30,6 +30,7 @@ class ChatAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             else -> CHAT_ITEM
         }
     }
+
     override fun getItemCount(): Int {
         return 20
     }
