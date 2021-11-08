@@ -12,4 +12,13 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="signup_failed">"회원가입 실패"</string>
+
+
+
+    <string name="create_study_upperbar">스터디 생성</string>
+    <string name="create_study_title">제목</string>
+    <string name="create_study_describe">설명</string>
+    <string name="create_study_submit">만들기</string>
+
+
 </resources>
