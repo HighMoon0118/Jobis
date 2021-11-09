@@ -1,10 +1,12 @@
 package com.ssafy.jobis.presentation.login.ui.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
 import com.ssafy.jobis.R
+import com.ssafy.jobis.presentation.login.Jobis
 import com.ssafy.jobis.presentation.login.data.LoginRepository
 import com.ssafy.jobis.presentation.login.data.Result
 import kotlinx.coroutines.*
@@ -20,24 +22,19 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
         CoroutineScope(Dispatchers.Main).launch {
-            val job1 = CoroutineScope(Dispatchers.IO).async {
-                loginRepository.login(username, password)
-            }
-            val result = job1.await()
-            if (result is Result.Success) {
-                _loginResult.value =
-                    LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+
+            val job1 = loginRepository.login(username, password)
+            if (job1 is Result.Success) {
+                if (job1.data.userId != null) {
+                    val nickname = loginRepository.getUserInfo(job1.data.userId)
+                    Jobis.prefs.setString("nickname", nickname)
+                    val test = Jobis.prefs.getString("nickname", null)
+                }
+                _loginResult.value = LoginResult(success = LoggedInUserView(displayName = job1.data.displayName))
             } else {
                 _loginResult.value = LoginResult(error = R.string.login_failed)
             }
         }
-//        val result = loginRepository.login(username, password)
-//        if (result is Result.Success) {
-//            _loginResult.value =
-//                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-//        } else {
-//            _loginResult.value = LoginResult(error = R.string.login_failed)
-//        }
     }
 
     fun loginDataChanged(username: String, password: String) {

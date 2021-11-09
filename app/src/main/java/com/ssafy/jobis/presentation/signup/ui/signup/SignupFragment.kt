@@ -57,6 +57,9 @@ class SignupFragment : Fragment() {
                 loginFormState.usernameError?.let {
                     usernameEditText.error = getString(it)
                 }
+                loginFormState.nicknameError?.let {
+                    nicknameEditText.error = getString(it)
+                }
                 loginFormState.passwordError?.let {
                     passwordEditText.error = getString(it)
                 }
@@ -99,12 +102,13 @@ class SignupFragment : Fragment() {
         usernameEditText.addTextChangedListener(afterTextChangedListener)
         nicknameEditText.addTextChangedListener(afterTextChangedListener)
         passwordEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.setOnEditorActionListener { _, actionId, _ ->
+        passwordConfirmationEditText.addTextChangedListener(afterTextChangedListener)
+        passwordConfirmationEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 signupViewModel.login(
                     usernameEditText.text.toString(),
                     nicknameEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    passwordEditText.text.toString(),
                 )
             }
             false
