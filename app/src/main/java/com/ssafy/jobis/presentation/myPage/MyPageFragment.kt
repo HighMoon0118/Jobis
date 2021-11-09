@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.ssafy.jobis.presentation.login.Jobis
 
 class MyPageFragment: Fragment() {
 
@@ -50,6 +51,7 @@ class MyPageFragment: Fragment() {
             }
         binding.logoutButton.setOnClickListener {
             auth.signOut()
+            Jobis.prefs.setString("nickname", "??")
             mainActivity?.goUserActivity()
         }
     }
