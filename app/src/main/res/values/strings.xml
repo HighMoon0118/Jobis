@@ -18,6 +18,10 @@
     <!-- Calendar-->
     <string name="sunday"><font color="#D0312D">일</font></string>
     <string name="saturday"><font color="#3944BC">토</font></string>
+    <string name="color_dialog_title">색상</string>
+    <string name="select">선택</string>
+    <string name="custom">커스텀</string>
+    <string name="presets">이전</string>
     <array name="weekdays_custom">
         <item>@string/sunday</item>
         <item>월</item>

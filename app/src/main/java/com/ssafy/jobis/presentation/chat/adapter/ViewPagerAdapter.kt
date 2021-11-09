@@ -1,9 +1,10 @@
 package com.ssafy.jobis.presentation.chat.adapter
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+
 import androidx.viewpager2.widget.ViewPager2
+
 import com.ssafy.jobis.presentation.chat.DrawingFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
@@ -12,16 +13,19 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
     init {
         df.add(DrawingFragment())
-        df.add(DrawingFragment())
-        df.add(DrawingFragment())
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return df.size
     }
 
-    override fun createFragment(position: Int): Fragment {
+    override fun createFragment(position: Int): DrawingFragment {
         return df[position]
+    }
+
+    fun addFragment(drawingFragment: DrawingFragment) {
+        df.add(drawingFragment)
+        notifyItemInserted(df.size-1)
     }
 
     fun addView(position: Int) {
