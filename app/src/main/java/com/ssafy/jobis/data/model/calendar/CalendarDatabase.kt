@@ -7,7 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [Schedule::class], version = 1)
+@Database(entities = [Schedule::class], version = 2)
 abstract class CalendarDatabase : RoomDatabase() {
     abstract fun calendarDao() : CalendarDao
 

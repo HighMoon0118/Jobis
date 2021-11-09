@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey
 data class Schedule (
     @ColumnInfo var title: String,
     @ColumnInfo var content: String,
-    @ColumnInfo var date: String
+    @ColumnInfo var year: Int,
+    @ColumnInfo var month: Int,
+    @ColumnInfo var day: Int
     ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }
