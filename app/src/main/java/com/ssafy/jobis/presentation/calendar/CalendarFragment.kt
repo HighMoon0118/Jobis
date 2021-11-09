@@ -1,6 +1,7 @@
 package com.ssafy.jobis.presentation.calendar
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
+import com.ssafy.materialcalendar.EventDecorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,9 +48,9 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             startActivity(intent)
         }
 
-        // room test
+        // room 데이터 추가 test용
         binding.roomTest.setOnClickListener {
-            var newSchedule = Schedule("할 일", "2022 서류접수", "2022-03-18")
+            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 12)
             var db = CalendarDatabase.getInstance(this.context)
             CoroutineScope(Dispatchers.IO).launch {
                 db!!.calendarDao().insert(newSchedule)
@@ -59,6 +61,31 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
+
+        // 0. room에서 데이터 가져와서 점 찍어주기
+        var scheduleData = CalendarDatabase.getInstance(this.context)
+        CoroutineScope(Dispatchers.IO).launch {
+            var scheduleList = scheduleData!!.calendarDao().getAll()
+            if (scheduleList.size != 0) { // schedule이 있을 때만..
+                var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
+                for (i in 0..scheduleList.size-1) {
+                    var dot_year = scheduleList[i].year
+                    var dot_month = scheduleList[i].month-1
+                    var dot_day = scheduleList[i].day
+                    println("DB결과: " + scheduleList[i])
+                    // 점 찍기 => 여러 날에 표시하려고 days를 구성해서 추가해주는 방식..
+                    // 달력에 표시할 날짜 가져오기
+                    var date = Calendar.getInstance()
+                    date.set(dot_year, dot_month, dot_day)
+
+                    // 달력에 표시할 날짜 day List에 넣기
+                    var day = CalendarDay.from(date) // Calendar 자료형을 넣어주면 됨
+                    dates.add(day)
+                    calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
+                    calendar.addDecorator(TextDecorator(dates, scheduleList[i].title))
+                }
+            }
+        }
 
         // 1. 맨 처음 달력 "yyyy년 yy월"로 표기하기
         calendar.setTitleFormatter(TitleFormatter {
@@ -75,13 +102,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         // 토요일, 일요일 색칠
         calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
 
-        // 점 찍기 => 여러 날에 표시하려고 days를 구성해서 추가해주는 방식..
-        var currentDay = Calendar.getInstance() // 오늘 날짜에 점을 찍겠다면?
-        var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
-        val day = CalendarDay.from(currentDay) // Calendar 자료형을 넣어주면 됨
-        dates.add(day)
-        // calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
-        calendar.addDecorator(TextDecorator(dates, "채용공고1"))
 
 
         // 밑에 텍스트 표시(다음엔 뷰페이저 적용해야 함)
@@ -90,12 +110,38 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // 뷰페이저2 사용
         // 첫 화면에서 보여줄 달의 정보를 가지고 있는 뷰를 여기서 만들어줘야 한다.
-        var calendarDates = ArrayList<Int>()
+        var calendarDates = ArrayList<ArrayList<Schedule>>() // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
-        for (i: Int in 1..lastDay)
-            calendarDates.add(i)
+        // 1. 해당 날짜에 아무 데이터도 없을 때
+        // 2. 해당 날짜에 schedule이 있을 때
+        var currentMonth = calc.get(Calendar.MONTH)
+        var currentYear = calc.get(Calendar.YEAR)
+        CoroutineScope(Dispatchers.IO).launch {
+            var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
+            for (i in 1..lastDay) {
+                var temp_schedule = ArrayList<Schedule>()
+                // calendarDates의 원소를 하나하나 만들어 넣을 것임
+                if (scheduleList.size > 0) {
+                    for (j in 0..scheduleList.size-1) {
+                        println("scheduleListJ: " + scheduleList[j].month)
+                        println("Month: " + currentMonth)
+                        if (currentYear == scheduleList[j].year && currentMonth == scheduleList[j].month-1 && i == scheduleList[j].day) {
+                            temp_schedule.add(scheduleList[j])
+                        }
+                    }
+                }
+                if (temp_schedule.size == 0) {
+                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i )
+                    temp_schedule.add(empty_schedule)
+                }
+                calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
+            }
+            println("일정: " + calendarDates)
+        }
 
+
+        // 처음 보여줄 날짜
         var firstYear = calc.get(Calendar.YEAR)
         var firstMonth = calc.get(Calendar.MONTH)
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
@@ -123,26 +169,25 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             simpleDateFormat.format(date?.date?.time)
         })
         // 뷰페이저도 초기화 해주고 정보 다시 가져와야 한다
-        // 코드 추가
-        var calendarDates = ArrayList<Int>()
+        var calendarDates = ArrayList<Schedule>()
         var year = date?.year
         var month = date?.month
         var day = date?.day
         var calc = Calendar.getInstance()
         calc.set(year!!, month!!, day!!)
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
-        for (i: Int in 1..lastDay)
-            calendarDates.add(i)
-        binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
-        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
-                // you are on the first page
-                binding.calendarView.setSelectedDate(calc)
-
-            }
-        })
+//        for (i: Int in 1..lastDay)
+//            calendarDates.add(i)
+//        binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
+//        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
+//                // you are on the first page
+//                binding.calendarView.setSelectedDate(calc)
+//
+//            }
+//        })
     }
 
     override fun onDateSelected(
