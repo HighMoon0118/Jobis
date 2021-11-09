@@ -1,4 +1,4 @@
-package com.example.jobis.presentation.chat
+package com.ssafy.jobis.presentation.chat
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
