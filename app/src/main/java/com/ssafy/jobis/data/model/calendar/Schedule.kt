@@ -10,7 +10,9 @@ data class Schedule (
     @ColumnInfo var content: String,
     @ColumnInfo var year: Int,
     @ColumnInfo var month: Int,
-    @ColumnInfo var day: Int
+    @ColumnInfo var day: Int,
+    @ColumnInfo var startTime: String,
+    @ColumnInfo var endTime: String,
     ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }
