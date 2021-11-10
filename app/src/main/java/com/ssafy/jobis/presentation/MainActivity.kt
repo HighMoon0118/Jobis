@@ -10,6 +10,7 @@ import com.ssafy.jobis.presentation.calendar.CalendarFragment
 import com.ssafy.jobis.presentation.community.CommunityFragment
 import com.ssafy.jobis.presentation.community.create.PostCreateFragment
 import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
+import com.ssafy.jobis.presentation.community.search.CommunitySearchActivity
 import com.ssafy.jobis.presentation.job.JobFragment
 import com.ssafy.jobis.presentation.login.UserActivity
 import com.ssafy.jobis.presentation.myPage.MyPageFragment
@@ -73,6 +74,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_main, CommunityFragment())
             .commit()
+    }
+
+    fun goCommunitySearchActivity() {
+        val intent = Intent(this, CommunitySearchActivity::class.java)
+        getResultCommunityDetail.launch(intent)
     }
 
     fun goCommunityDetailActivity(post_id: String) {
