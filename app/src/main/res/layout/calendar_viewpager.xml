@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/viewpager_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
     <TextView
         android:id="@+id/calendar_view_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="date" />
-    <TextView
-        android:id="@+id/calendar_view_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="title" />
-    <TextView
-        android:id="@+id/calendar_view_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/viewpager_content_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="content" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_schedule"
+        android:orientation="vertical"/>
 </LinearLayout>

@@ -1,10 +1,13 @@
 package com.ssafy.jobis.presentation
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.CalendarViewpagerBinding
+import com.ssafy.jobis.presentation.calendar.CalendarFragment
+import com.ssafy.jobis.presentation.calendar.CalendarScheduleAdapter
 
 class CalendarPagerViewHolder(val binding: CalendarViewpagerBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -20,8 +23,9 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
         // 뷰에 데이터 출력
         var txt = dates[position][0].year.toString() + dates[position][0].month.toString() + dates[position][0].day.toString()
         binding.calendarViewDate.text = txt
-        binding.calendarViewTitle.text = dates[position][0].title // 이런 식으로 사용해야 함
-        binding.calendarViewContent.text = dates[position][0].content
+//        binding.calendarViewTitle.text = dates[position][0].title // 이런 식으로 사용해야 함
+//        binding.calendarViewContent.text = dates[position][0].content
+        binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
     }
 
     override fun getItemCount(): Int {
