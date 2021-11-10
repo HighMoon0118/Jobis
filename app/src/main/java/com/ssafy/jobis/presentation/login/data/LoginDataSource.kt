@@ -1,7 +1,9 @@
 package com.ssafy.jobis.presentation.login.data
 
+import android.util.Log
 import com.ssafy.jobis.presentation.login.data.model.LoggedInUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
@@ -19,7 +21,8 @@ class LoginDataSource {
             auth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
-                        result = Result.Success(LoggedInUser(auth.currentUser?.email, auth.currentUser?.email.toString()))
+                        Log.d("test", "lsdfd ${Firebase.auth.currentUser?.uid}")
+                        result = Result.Success(LoggedInUser(auth.currentUser?.uid.toString(), auth.currentUser?.email.toString()))
                     } else {
                         result = Result.Error(IOException("Error logging in"))
                     }
@@ -36,5 +39,27 @@ class LoginDataSource {
 
     fun logout() {
         // TODO: revoke authentication
+    }
+
+    suspend fun getUserInfo(uid: String): String? {
+        var nickName: String? = null
+        return try {
+            var db = FirebaseFirestore.getInstance()
+            db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener { result ->
+                    nickName = result.data?.get("nickname") as String?
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("test", "${exception}")
+                }
+                .await()
+            nickName
+
+        } catch(e: Throwable) {
+            e.printStackTrace()
+            nickName
+        }
     }
 }
