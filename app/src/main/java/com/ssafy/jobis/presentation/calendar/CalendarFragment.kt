@@ -49,15 +49,15 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         // room 데이터 추가 test용
-        binding.roomTest.setOnClickListener {
-            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 12)
-            var db = CalendarDatabase.getInstance(this.context)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.calendarDao().insert(newSchedule)
-                var dbList = db!!.calendarDao().getAll()
-                println("DB 결과: " + dbList)
-            }
-        }
+//        binding.roomTest.setOnClickListener {
+//            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 12)
+//            var db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                var dbList = db!!.calendarDao().getAll()
+//                println("DB 결과: " + dbList)
+//            }
+//        }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
@@ -106,11 +106,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         // 토요일, 일요일 색칠
         calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
 
-
-
-        // 밑에 텍스트 표시(다음엔 뷰페이저 적용해야 함)
-        var textView = binding.calendarText
-        textView.setText("선택 없음")
 
         // 뷰페이저2 사용
         // 첫 화면에서 보여줄 달의 정보를 가지고 있는 뷰를 여기서 만들어줘야 한다.
@@ -222,16 +217,12 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         date: CalendarDay,
         selected: Boolean
     ) {
-        var textView = binding.calendarText
         // 지금 11월달이 10월로, 1월달이 0월로 표기된다. Month에 +1을 하고 보여줘야 함
         var selectedDay = date.day
         var selectedMonth = date.month + 1
         var selectedYear = date.year
         if (selected) {
-            textView.setText("$selectedYear" + "년" + "$selectedMonth" + "월" + "$selectedDay" + "일")
             binding.calendarViewpager.setCurrentItem(selectedDay-1) // 선택한 날짜로 이동
-        } else {
-            textView.setText("선택 없음")
         }
     }
 }
