@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_single_schedule.*
 import kotlinx.android.synthetic.main.fragment_single_schedule.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 import java.text.SimpleDateFormat
@@ -57,6 +58,8 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
         var endDay = 0
         var endHour = 0
         var endMinute = 0
+        var title = ""
+        var content = ""
 
         // 시간 불러오는 두가지 방법
         // 1. System.currentTimeMillis()
@@ -223,35 +226,44 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
         view.singleScheduleAddBtn.setOnClickListener{
             println("-----------------------")
             println("일정 등록 버튼 클릭")
-            if (startYear == 0) {
-                startYear = SimpleDateFormat("yyyy").format(currentTime.time).toInt()
-                startMonth = SimpleDateFormat("MM").format(currentTime.time).toInt()
-                startDay = SimpleDateFormat("dd").format(currentTime.time).toInt()
-//                Log.d("날짜 안정함", "calendar 객체 시간 기준")
-//                Log.d("year", startYear.toString())
-//                Log.d("month", startMonth.toString())
-//                Log.d("day", startDay.toString())
-//                var title = view.scheduleTitleEditText.text
-//                var content = view.scheduleContentEditText.text
-//                Log.d("타이틀", title.toString())
-//                Log.d("내용", content.toString())
-            }
-//            Log.d("날짜 정함", "datePicker 기준")
-//            Log.d("year", startYear.toString())
-//            Log.d("month", startMonth.toString())
-//            Log.d("day", startDay.toString())
-            var title = view.scheduleTitleEditText.text.toString()
-            var content = view.scheduleContentEditText.text.toString()
-//            Log.d("타이틀", title.toString())
-//            Log.d("내용", content.toString())
-            // room 데이터 추가 test용
+            println("시작시간 $scheduleStartTime")
+            println("끝시간, $scheduleEndTime")
 
-            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
-            var db = CalendarDatabase.getInstance(this.context)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.calendarDao().insert(newSchedule)
-                var dbList = db!!.calendarDao().getAll()
-                println("DB 결과: " + dbList)
+            CoroutineScope(Dispatchers.Main).launch {
+                val temp = CoroutineScope(Dispatchers.Default).async {
+                    if (startYear == 0) {
+                        startYear = SimpleDateFormat("yyyy").format(currentTime.time).toInt()
+                        startMonth = SimpleDateFormat("MM").format(currentTime.time).toInt()
+                        startDay = SimpleDateFormat("dd").format(currentTime.time).toInt()
+
+                    }
+                    if (startTimeString == "") {
+                        startTimeString = scheduleStartTime
+                        println(startTimeString)
+
+                    }
+                    if (endTimeString == "") {
+                        endTimeString = scheduleEndTime
+                        println(endTimeString)
+                    }
+
+                    title = view.scheduleTitleEditText.text.toString()
+                    content = view.scheduleContentEditText.text.toString()
+
+                    println("시작, $startTimeString")
+                    println("끝, $endTimeString")
+                }.await()
+                println("바깥시작, $startTimeString")
+                println("바깥끝, $endTimeString")
+
+                var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString)
+                var db = CalendarDatabase.getInstance(activity)
+                CoroutineScope(Dispatchers.IO).launch {
+                    db!!.calendarDao().insert(newSchedule)
+                    var dbList = db!!.calendarDao().getAll()
+                    println("DB 결과: " + dbList)
+                }
+
             }
 
         }

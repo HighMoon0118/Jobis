@@ -1,5 +1,6 @@
 package com.ssafy.jobis.presentation.signup.ui.signup
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,14 +45,19 @@ class SignupViewModel(private val signupRepository: SignupRepository) : ViewMode
 
     fun loginDataChanged(username: String, nickname: String, password: String, passwordConfirmation: String) {
         if (!isUserNameValid(username)) {
+            Log.d("test", "아이디!")
             _loginForm.value = SignupFormState(usernameError = R.string.invalid_username)
         } else if (!isNickNameValid(nickname)) {
+            Log.d("test", "닉네임!!!")
             _loginForm.value = SignupFormState(nicknameError = R.string.invalid_nickname)
         } else if (!isPasswordValid(password)) {
+            Log.d("test", "비밀번호!!!")
             _loginForm.value = SignupFormState(passwordError = R.string.invalid_password)
         } else if (!isPasswordConfirmationValid(password, passwordConfirmation)) {
+            Log.d("test", "비밀번호확인!!!")
             _loginForm.value = SignupFormState(passwordConfirmationError = R.string.invalid_password_comfirmation)
         } else {
+            Log.d("test", "다 맞음!!!")
             _loginForm.value = SignupFormState(isDataValid = true)
         }
     }
@@ -76,6 +82,7 @@ class SignupViewModel(private val signupRepository: SignupRepository) : ViewMode
     }
 
     private fun isPasswordConfirmationValid(password: String, passwordConfirmation: String): Boolean {
+        Log.d("test", "${password} ${passwordConfirmation} ${password == passwordConfirmation}")
         return password == passwordConfirmation
     }
 }

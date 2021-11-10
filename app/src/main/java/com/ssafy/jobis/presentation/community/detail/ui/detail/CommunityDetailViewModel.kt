@@ -1,21 +1,66 @@
 package com.ssafy.jobis.presentation.community.detail.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.repository.CommunityRepository
 import com.ssafy.jobis.data.response.PostResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.HashMap
 
 class CommunityDetailViewModel(private val communityRepository: CommunityRepository) : ViewModel() {
     private val _post = MutableLiveData<PostResponse>()
     val post: LiveData<PostResponse> = _post
+    private val _isLiked = MutableLiveData<Boolean>()
+    val isLiked: LiveData<Boolean> = _isLiked
+    private val _likeCount = MutableLiveData<Int>()
+    val likeCount: LiveData<Int> = _likeCount
+    private val _comments = MutableLiveData<MutableList<Comment>>()
+    val comments: LiveData<MutableList<Comment>> = _comments
 
-    fun loadPost(id: String) {
+
+    fun loadPost(id: String, uid: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            _post.value = communityRepository.loadPostDetail(id)
+            val postResponse = communityRepository.loadPostDetail(id)
+            _post.value = postResponse!!
+            val commentList = mutableListOf<Comment>()
+            for (item in postResponse.comment_list) {
+                Log.d("test", "skdljflsdk ${item} ${item.javaClass.name}")
+                commentList.add(Comment.from(item as HashMap<String, Any>))
+            }
+            _comments.value = commentList
+            var flag = false
+            for (item in postResponse.like) {
+                if (item == uid) {
+                    flag = true
+                    break
+                }
+            }
+            _isLiked.value = flag
+            _likeCount.value = postResponse.like.size
+        }
+    }
+
+    fun updateLike(post_id: String, uid: String) {
+        communityRepository.updateLike(_isLiked.value!!, post_id, uid)
+        if (isLiked.value == true) {
+            _likeCount.value = _likeCount.value?.minus(1)
+        } else if (isLiked.value == false) {
+            _likeCount.value = _likeCount.value?.plus(1)
+        }
+        _isLiked.value = !_isLiked.value!!
+    }
+
+    fun createComment(text: String, post_id: String, uid: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val commentResponse = communityRepository.createComment(text, post_id, uid)
+            if (commentResponse == true) {
+                loadPost(post_id, uid)
+            }
         }
     }
 }
