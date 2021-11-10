@@ -13,6 +13,7 @@ import com.ssafy.jobis.data.model.community.Post
 import com.ssafy.jobis.databinding.PostCreateFragmentBinding
 import com.ssafy.jobis.presentation.MainActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.ssafy.jobis.R
@@ -27,7 +28,7 @@ class PostCreateFragment : Fragment() {
     private var _binding: PostCreateFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var category: String
-
+    private lateinit var uid: String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +41,6 @@ class PostCreateFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         showPopup()
-
         binding.createPostButton.setOnClickListener {
             val currentUser = Firebase.auth.currentUser
             if (currentUser != null) {
@@ -55,20 +55,19 @@ class PostCreateFragment : Fragment() {
                     category = category
                 )
                 var db = FirebaseFirestore.getInstance()
+                var userRef = db.collection("users").document(currentUser.uid)
                 db.collection("posts")
                     .add(post)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // 성공 시 현재 프래그먼트 닫기
-                            val appContext = context?.applicationContext
-                            Toast.makeText(appContext, "게시글이 등록되었습니다.", Toast.LENGTH_LONG).show()
-                            mainAcitivty?.goCommunityFragment()
-
-                        } else {
-                            // 실패 시 게시글 등록 실패 띄우기
-                            val appContext = context?.applicationContext
-                            Toast.makeText(appContext, "게시글 등록에 실패했습니다.", Toast.LENGTH_LONG).show()
-                        }
+                    .addOnSuccessListener { documentReference ->
+                        var post_id = documentReference.id
+                        userRef.update("article_list", FieldValue.arrayUnion(post_id))
+                        val appContext = context?.applicationContext
+                        Toast.makeText(appContext, "게시글이 등록되었습니다.", Toast.LENGTH_LONG).show()
+                        mainAcitivty?.goCommunityFragment()
+                    }
+                    .addOnFailureListener {
+                        val appContext = context?.applicationContext
+                        Toast.makeText(appContext, "게시글 등록에 실패했습니다.", Toast.LENGTH_LONG).show()
                     }
             } else {
                 val appContext = context?.applicationContext

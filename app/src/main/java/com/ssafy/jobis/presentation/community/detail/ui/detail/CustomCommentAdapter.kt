@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.databinding.CommentRecyclerBinding
+import kotlinx.android.synthetic.main.comment_recycler.view.*
 import java.text.SimpleDateFormat
 
 class CustomCommentAdapter: RecyclerView.Adapter<CustomCommentAdapter.Holder>() {
@@ -40,13 +41,22 @@ class CustomCommentAdapter: RecyclerView.Adapter<CustomCommentAdapter.Holder>() 
 
     inner class Holder(val binding: CommentRecyclerBinding): RecyclerView.ViewHolder(binding.root) {
         fun setComment(comment: Comment) {
-            val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm")
+            val sdf = SimpleDateFormat("MM-dd hh:mm")
             binding.commentContentTextView.text = comment.content
             binding.commentNickNameTextView.text = comment.user_nickname
             binding.commentTimeTextView.text = sdf.format(comment.created_at.toDate()).toString()
-            Log.d("test", "uid: ${uid}")
+
             if (comment.user_id == uid) {
                 binding.imageButton.visibility = View.VISIBLE
+
+                binding.imageButton.setOnClickListener {
+                    val pos = adapterPosition
+                    if (pos != RecyclerView.NO_POSITION) {
+                        itemView.imageButton.setOnClickListener {
+                            listener?.onItemClick(itemView, comment, pos)
+                        }
+                    }
+                }
             }
         }
     }

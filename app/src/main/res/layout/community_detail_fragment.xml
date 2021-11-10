@@ -17,7 +17,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp">
+            android:layout_marginTop="0dp"
+            app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,6 +41,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:text="TextView"
+                        android:textColor="@color/black"
                         android:textSize="24sp" />
 
                     <LinearLayout
@@ -51,14 +53,12 @@
                             android:id="@+id/detailNickNameTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="TextView" />
 
                         <TextView
                             android:id="@+id/detailCategoryTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="TextView" />
 
                     </LinearLayout>
@@ -82,6 +82,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:text="TextView"
+                        android:textColor="@color/black"
                         android:textSize="14sp" />
 
                     <LinearLayout
@@ -144,23 +145,26 @@
                 android:text="0" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/commentCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="TextView"
+            android:textColor="@color/primary"
+            android:textSize="14sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/box_border"
-                android:text="댓글" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/detailCommentRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white" />
+                android:layout_height="match_parent" />
         </LinearLayout>
 
         <LinearLayout
@@ -178,7 +182,7 @@
                 android:ems="15"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
-                android:minHeight="75dp"
+                android:minHeight="50dp"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <Button
@@ -189,7 +193,7 @@
                 android:backgroundTint="@color/primary_dark"
                 android:fontFamily="@font/comfortaa_bold"
                 android:text="입력"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
