@@ -81,9 +81,13 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     // 달력에 표시할 날짜 day List에 넣기
                     var day = CalendarDay.from(date) // Calendar 자료형을 넣어주면 됨
                     dates.add(day)
-                    calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
-                    calendar.addDecorator(TextDecorator(dates, scheduleList[i].title))
+
+                    // 글자 표시는 하루하루 해줘야 함
+                    var date_for_text = ArrayList<CalendarDay>()
+                    date_for_text.add(day)
+                    calendar.addDecorator(TextDecorator(date_for_text, scheduleList[i].title))
                 }
+                calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             }
         }
 
@@ -113,8 +117,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var calendarDates = ArrayList<ArrayList<Schedule>>() // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
-        // 1. 해당 날짜에 아무 데이터도 없을 때
-        // 2. 해당 날짜에 schedule이 있을 때
+
         var currentMonth = calc.get(Calendar.MONTH)
         var currentYear = calc.get(Calendar.YEAR)
         CoroutineScope(Dispatchers.IO).launch {
@@ -122,6 +125,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             for (i in 1..lastDay) {
                 var temp_schedule = ArrayList<Schedule>()
                 // calendarDates의 원소를 하나하나 만들어 넣을 것임
+                // 1. 해당 날짜에 스케줄이 있을 때
                 if (scheduleList.size > 0) {
                     for (j in 0..scheduleList.size-1) {
                         println("scheduleListJ: " + scheduleList[j].month)
@@ -131,6 +135,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                         }
                     }
                 }
+                // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
                     val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i )
                     temp_schedule.add(empty_schedule)
@@ -164,30 +169,52 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
     // 1. 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
     override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
             simpleDateFormat.format(date?.date?.time)
         })
         // 뷰페이저도 초기화 해주고 정보 다시 가져와야 한다
-        var calendarDates = ArrayList<Schedule>()
+        var calendarDates = ArrayList<ArrayList<Schedule>>()
         var year = date?.year
         var month = date?.month
         var day = date?.day
         var calc = Calendar.getInstance()
         calc.set(year!!, month!!, day!!)
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
-//        for (i: Int in 1..lastDay)
-//            calendarDates.add(i)
-//        binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
-//        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
-//                // you are on the first page
-//                binding.calendarView.setSelectedDate(calc)
-//
-//            }
-//        })
+
+        var scheduleData = CalendarDatabase.getInstance(this.context)
+        CoroutineScope(Dispatchers.IO).launch {
+            var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
+            for (i in 1..lastDay) {
+                var temp_schedule = ArrayList<Schedule>()
+                // calendarDates의 원소를 하나하나 만들어 넣을 것임
+                // 1. 해당 날짜에 스케줄이 있을 때
+                if (scheduleList.size > 0) {
+                    for (j in 0..scheduleList.size-1) {
+                        if (year == scheduleList[j].year && month == scheduleList[j].month-1 && i == scheduleList[j].day) {
+                            temp_schedule.add(scheduleList[j])
+                        }
+                    }
+                }
+                // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
+                if (temp_schedule.size == 0) {
+                    val empty_schedule = Schedule("일정 없음", "", year, month, i )
+                    temp_schedule.add(empty_schedule)
+                }
+                calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
+            }
+        }
+        binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
+        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
+                // you are on the first page
+                binding.calendarView.setSelectedDate(calc)
+
+            }
+        })
     }
 
     override fun onDateSelected(
