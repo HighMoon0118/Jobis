@@ -2,6 +2,9 @@ package com.ssafy.jobis.presentation.chat.adapter
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+
+import androidx.viewpager2.widget.ViewPager2
+
 import com.ssafy.jobis.presentation.chat.DrawingFragment
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
