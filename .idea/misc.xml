@@ -27,10 +27,12 @@
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/activity_main.xml" value="0.4" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/activity_user.xml" value="0.22" />
-        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/comment_recycler.xml" value="0.5" />
+        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/comment_recycler.xml" value="0.25" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/community_detail_activity.xml" value="0.41875" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/community_detail_fragment.xml" value="0.33" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/community_detail_fragment2.xml" value="0.31666666666666665" />
+        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/community_search_activity.xml" value="0.3484375" />
+        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/community_search_fragment.xml" value="0.3338541666666667" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.541025641025641" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_community.xml" value="0.33" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_drawing.xml" value="0.5494791666666666" />
