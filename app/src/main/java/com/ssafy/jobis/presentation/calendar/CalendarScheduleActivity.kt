@@ -1,5 +1,6 @@
 package com.ssafy.jobis.presentation
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -43,6 +44,9 @@ class CalendarScheduleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
+
+        var myData = intent.getStringExtra("my_data")
+        println("액티비티 데이터 전달: " + myData)
 
 
 
