@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.ssafy.jobis.databinding.FragmentMyBinding
 import com.ssafy.jobis.presentation.MainActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +18,7 @@ import com.ssafy.jobis.presentation.login.Jobis
 
 class MyPageFragment: Fragment() {
 
+    private lateinit var myPageViewModel: MyPageViewModel
     private var mainActivity: MainActivity? = null
     private var _binding: FragmentMyBinding? = null
     private val binding get() = _binding!!
@@ -33,28 +35,58 @@ class MyPageFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        myPageViewModel = ViewModelProvider(this, MyPageViewModelFactory())
+            .get(MyPageViewModel::class.java)
+
         val auth = Firebase.auth
-        val currentUser = auth.currentUser
-        Log.d("test","${currentUser} ${currentUser?.uid}")
-        val docRef = db.collection("users")
-            .document(currentUser!!.uid)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d("test", "성공 ${document.data}")
-                } else {
-                    Log.d("test", "no such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("test", "${exception}")
-            }
+
+
+
         binding.logoutButton.setOnClickListener {
             auth.signOut()
             Jobis.prefs.setString("nickname", "??")
             mainActivity?.goUserActivity()
         }
+
+        binding.jobToggleButton.setOnClickListener {
+            val isChecked = binding.jobToggleButton.isChecked
+            if (isChecked) {
+            } else {
+
+            }
+        }
+
+        binding.likeToggleButton.setOnClickListener {
+            val isChecked = binding.likeToggleButton.isChecked
+            // 체크되어있으면 리사이클러뷰를 활성화시킨다.
+            if (isChecked) {
+                myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+            } else {
+
+            }
+        }
+
+        binding.postToggleButton.setOnClickListener {
+            val isChecked = binding.postToggleButton.isChecked
+            if (isChecked) {
+
+            } else {
+
+            }
+        }
+
+        binding.commentToggleButton.setOnClickListener {
+            val isChecked = binding.commentToggleButton.isChecked
+            if (isChecked) {
+
+            } else {
+
+            }
+        }
+
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
