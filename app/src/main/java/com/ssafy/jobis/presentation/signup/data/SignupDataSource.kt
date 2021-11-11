@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.ssafy.jobis.presentation.login.Jobis
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
@@ -26,6 +27,7 @@ class SignupDataSource {
                 .set(user)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
+                        Jobis.prefs.setString("nickname", nickname)
                         result = Result.Success("success")
                     } else {
                         result = Result.Error(IOException("Error logging in"))

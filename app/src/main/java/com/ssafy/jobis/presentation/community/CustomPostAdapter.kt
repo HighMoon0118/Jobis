@@ -36,8 +36,8 @@ class CustomPostAdapter: RecyclerView.Adapter<CustomPostAdapter.Holder>() {
 
     inner class Holder(val binding: PostRecyclerBinding): RecyclerView.ViewHolder(binding.root) {
         fun setPost(post: PostResponse) {
-            val sdf = SimpleDateFormat("yyyy-MM-dd-hh-mm")
-            binding.postCategoryText.text = "임시"
+            val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm")
+            binding.postCategoryText.text = post.category
             binding.postCommentText.text = "댓글 " + post.comment_list.size.toString()
             binding.postContentText.text = post.content
             binding.postLikeText.text = "좋아요 " + post.like.size.toString()

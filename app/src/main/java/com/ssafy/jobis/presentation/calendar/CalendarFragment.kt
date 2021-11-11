@@ -132,7 +132,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
+<<<<<<< HEAD
                     val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i, "", "", -1, -1, "")
+=======
+                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i , "10:00", "12:00")
+>>>>>>> 65ee86d1330e65ad3b5e9b7d09c61c96bddceed6
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
@@ -194,7 +198,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
+<<<<<<< HEAD
                     val empty_schedule = Schedule("일정 없음", "", year, month, i, "", "",-1, -1, "")
+=======
+                    val empty_schedule = Schedule("일정 없음", "", year, month, i, "10:00", "12:00" )
+>>>>>>> 65ee86d1330e65ad3b5e9b7d09c61c96bddceed6
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
