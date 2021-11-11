@@ -1,5 +1,7 @@
 package com.ssafy.jobis.data.repository
 
+import android.content.ContentValues.TAG
+import android.text.BoringLayout
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.ssafy.jobis.data.response.PostResponse
@@ -95,13 +97,42 @@ class CommunityRepository {
         }
     }
 
+    suspend fun deletePost(post_id: String, uid: String): Boolean {
+        val db = FirebaseFirestore.getInstance()
+        var res = false
+        val postRef = db.collection("posts").document(post_id)
+        val userRef = db.collection("users").document(uid)
+        return try {
+            db.runBatch { batch ->
+                batch.delete(postRef)
+                batch.update(userRef, "article_list", FieldValue.arrayRemove(post_id))
+            }
+                .addOnSuccessListener {
+                    res = true
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "${e}")
+                }
+                .await()
+            res
+        } catch(e: Throwable) {
+            e.printStackTrace()
+            res
+        }
+    }
+
     fun updateLike(isLiked: Boolean, post_id: String, uid: String) {
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("posts").document(post_id)
-        if (isLiked) {
-            docRef.update("like", FieldValue.arrayRemove(uid))
-        } else {
-            docRef.update("like", FieldValue.arrayUnion(uid))
+        val userRef = db.collection("users").document(uid)
+        db.runBatch { batch ->
+            if (isLiked) {
+                batch.update(docRef,"like", FieldValue.arrayRemove(uid))
+                batch.update(userRef,"like_post_list", FieldValue.arrayRemove(post_id))
+            } else {
+                batch.update(docRef,"like", FieldValue.arrayUnion(uid))
+                batch.update(userRef,"like_post_list", FieldValue.arrayUnion(post_id))
+            }
         }
     }
 
@@ -109,6 +140,7 @@ class CommunityRepository {
         var commentResponse = false
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("posts").document(post_id)
+        val userRef = db.collection("users").document(uid)
         val comment = Comment(
             user_nickname= Jobis.prefs.getString("nickname", "???"),
             user_id=uid,
@@ -116,7 +148,10 @@ class CommunityRepository {
             content=text
         )
         return try {
-            docRef.update("comment_list", FieldValue.arrayUnion(comment))
+            db.runBatch { batch ->
+                batch.update(docRef, "comment_list", FieldValue.arrayUnion(comment))
+                batch.update(userRef, "comment_list", FieldValue.arrayUnion(comment))
+            }
                 .addOnSuccessListener {
                     commentResponse = true
                 }
@@ -130,4 +165,29 @@ class CommunityRepository {
             commentResponse
         }
     }
+
+    suspend fun deleteComment(post_id: String, comment: Comment, uid: String): Boolean {
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("posts").document(post_id)
+        val userRef = db.collection("users").document(uid)
+        var response = false
+        return try {
+            db.runBatch { batch ->
+                batch.update(docRef, "comment_list", FieldValue.arrayRemove(comment))
+                batch.update(userRef, "comment_list", FieldValue.arrayRemove(comment))
+            }
+                .addOnSuccessListener {
+                    response = true
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("test", "${exception}")
+                }
+                .await()
+            response
+        } catch(e: Throwable) {
+            e.printStackTrace()
+            response
+        }
+    }
+
 }
