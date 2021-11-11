@@ -108,6 +108,10 @@ java.lang.AssertionError: Method getAlpnSelectedProtocol not supported for objec
  println(arrayName.contentToString()) // [1, 2, 3]
 ```
 
+mutableListOf 으로 만든건 그냥 출력해도 나온다
+
+arrayof는 안됨
+
 ### 7. 버튼 클릭했을 때 모양 변경
 
 ```kotlin
