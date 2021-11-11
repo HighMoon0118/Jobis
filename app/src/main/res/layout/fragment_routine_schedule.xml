@@ -224,7 +224,17 @@
         android:gravity="top"
         android:privateImeOptions="defaultInputmode=korean"/>
 
-
+    <Button
+        android:id="@+id/routineScheduleAddBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="일정 등록(임시)"/>
+    <Button
+        android:id="@+id/routineScheduleList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="일정 확인(임시)"
+        />
 </LinearLayout>
 
 
