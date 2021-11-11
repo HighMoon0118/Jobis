@@ -40,6 +40,8 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".presentation.calendar.CalendarAlarmReceiver"/>
+
     </application>
 
 </manifest>
