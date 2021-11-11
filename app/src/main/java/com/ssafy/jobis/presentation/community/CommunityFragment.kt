@@ -42,6 +42,10 @@ class CommunityFragment: Fragment() {
         binding.postCreateButton.setOnClickListener {
             mainActivity?.goPostCreateFragment()
         }
+
+        binding.communitySearchButton.setOnClickListener {
+            mainActivity?.goCommunitySearchActivity()
+        }
     }
 
     override fun onDestroy() {
