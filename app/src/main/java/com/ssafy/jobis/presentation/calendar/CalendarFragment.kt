@@ -49,15 +49,15 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         // room 데이터 추가 test용
-//        binding.roomTest.setOnClickListener {
-//            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 12)
-//            var db = CalendarDatabase.getInstance(this.context)
-//            CoroutineScope(Dispatchers.IO).launch {
-//                db!!.calendarDao().insert(newSchedule)
-//                var dbList = db!!.calendarDao().getAll()
-//                println("DB 결과: " + dbList)
-//            }
-//        }
+        binding.roomTest.setOnClickListener {
+            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 11, "09:00", "18:00", -1, -1, "삼성전기")
+            var db = CalendarDatabase.getInstance(this.context)
+            CoroutineScope(Dispatchers.IO).launch {
+                db!!.calendarDao().insert(newSchedule)
+                var dbList = db!!.calendarDao().getAll()
+                println("DB 결과: " + dbList)
+            }
+        }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
@@ -132,7 +132,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
-                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i , "10:00", "12:00")
+                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i, "", "", -1, -1, "")
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
@@ -194,7 +194,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
-                    val empty_schedule = Schedule("일정 없음", "", year, month, i, "10:00", "12:00" )
+                    val empty_schedule = Schedule("일정 없음", "", year, month, i, "", "",-1, -1, "")
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가

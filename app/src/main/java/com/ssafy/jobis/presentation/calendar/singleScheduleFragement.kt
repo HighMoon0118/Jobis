@@ -256,7 +256,7 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
                 println("바깥시작, $startTimeString")
                 println("바깥끝, $endTimeString")
 
-                var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString)
+                var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
                 var db = CalendarDatabase.getInstance(activity)
                 CoroutineScope(Dispatchers.IO).launch {
                     db!!.calendarDao().insert(newSchedule)
@@ -264,6 +264,13 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
                     println("DB 결과: " + dbList)
                 }
 
+//            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
+//            var db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                var dbList = db!!.calendarDao().getAll()
+//                println("DB 결과: " + dbList)
+//            }
             }
 
         }
