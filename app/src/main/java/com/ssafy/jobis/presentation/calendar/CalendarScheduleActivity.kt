@@ -9,6 +9,7 @@ import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.jobis.R
+import com.ssafy.jobis.presentation.calendar.RoutineScheduleFragment
 import kotlinx.android.synthetic.main.activity_schedule.*
 
 
