@@ -246,13 +246,13 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
 //            Log.d("내용", content.toString())
             // room 데이터 추가 test용
 
-            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
-            var db = CalendarDatabase.getInstance(this.context)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.calendarDao().insert(newSchedule)
-                var dbList = db!!.calendarDao().getAll()
-                println("DB 결과: " + dbList)
-            }
+//            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
+//            var db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                var dbList = db!!.calendarDao().getAll()
+//                println("DB 결과: " + dbList)
+//            }
 
         }
 
