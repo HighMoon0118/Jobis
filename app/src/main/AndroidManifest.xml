@@ -45,6 +45,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+<<<<<<< HEAD
+=======
+
+        <receiver android:name=".presentation.calendar.CalendarAlarmReceiver"/>
+
+>>>>>>> 159532383f8942b85b1fd8d4521cec64a9e32b49
     </application>
 
 </manifest>

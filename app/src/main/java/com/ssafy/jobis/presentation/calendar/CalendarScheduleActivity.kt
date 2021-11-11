@@ -9,6 +9,7 @@ import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.jobis.R
+import com.ssafy.jobis.presentation.calendar.RoutineScheduleFragment
 import kotlinx.android.synthetic.main.activity_schedule.*
 
 
@@ -63,15 +64,15 @@ class CalendarScheduleActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val test = spinner.getItemAtPosition((position))
-                selected_text.text = "${test}"
+//                val test = spinner.getItemAtPosition((position))
+//                selected_text.text = "${test}"
                 if (position == 0){
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.scheduleFrameLayout, singleScheduleFragement())
+                        .replace(R.id.scheduleFrameLayout, singleScheduleFragement(this@CalendarScheduleActivity))
                         .commit()
                 } else if (position == 1) {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.scheduleFrameLayout, routineScheduleFragment())
+                        .replace(R.id.scheduleFrameLayout, RoutineScheduleFragment(this@CalendarScheduleActivity))
                         .commit()
                 }
             }

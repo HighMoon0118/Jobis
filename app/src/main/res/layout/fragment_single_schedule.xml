@@ -125,7 +125,17 @@
             android:hint="내용을 입력하세요"
             android:gravity="top"
             android:privateImeOptions="defaultInputmode=korean"/>
-
+        <Button
+            android:id="@+id/singleScheduleAddBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="일정 등록(임시)"/>
+        <Button
+            android:id="@+id/scheduleList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="일정 확인(임시)"
+            />
 
     </LinearLayout>
 
