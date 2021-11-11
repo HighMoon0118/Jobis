@@ -1,13 +1,24 @@
 package com.ssafy.jobis.presentation.calendar
 
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.getSystemServiceName
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.google.firebase.messaging.RemoteMessage
 import com.ssafy.jobis.databinding.FragmentCalendarBinding
 import com.ssafy.jobis.presentation.CalendarPagerAdapter
 import com.ssafy.jobis.presentation.CalendarScheduleActivity
@@ -42,9 +53,21 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     ): View? {
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
+
+        // 알람
+        binding.createNotification.setOnClickListener {
+            setAlarm()
+        }
+
+        binding.deleteNotification.setOnClickListener {
+            cancelAlarm()
+        }
+
+
         // 버튼 연결 test
         binding.calendarBtn.setOnClickListener {
-            val intent = Intent(activity, CalendarScheduleActivity::class.java)
+            val intent = Intent(this.context, CalendarScheduleActivity::class.java)
+            intent.putExtra("my_data", "5")
             startActivity(intent)
         }
 
@@ -132,11 +155,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
-<<<<<<< HEAD
                     val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i, "", "", -1, -1, "")
-=======
-                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i , "10:00", "12:00")
->>>>>>> 65ee86d1330e65ad3b5e9b7d09c61c96bddceed6
+
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
@@ -158,6 +178,46 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             }
         })
         return binding.root
+    }
+
+    private fun cancelAlarm() {
+//        var alarmManager = this.context?.let { getSystemService(it, AlarmManager::class.java) }
+        val alarmManager = getSystemService(requireContext(), AlarmManager::class.java) as AlarmManager
+        val intent = Intent(this.context, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        alarmManager.cancel(pendingIntent) // 알람 취소
+        pendingIntent.cancel() // pendingIntent 취소
+
+        Toast.makeText(this.context, "Alaram Cancelled", Toast.LENGTH_LONG).show()
+    }
+
+    private fun setAlarm() {
+        var alarmCalendar = Calendar.getInstance()
+        alarmCalendar.set(Calendar.YEAR, 2021)
+        alarmCalendar.set(Calendar.MONTH, 10)
+        alarmCalendar.set(Calendar.DAY_OF_MONTH, 11)
+        alarmCalendar.set(Calendar.HOUR_OF_DAY, 14)
+        alarmCalendar.set(Calendar.MINUTE, 39)
+        alarmCalendar.set(Calendar.SECOND, 0)
+
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this.context, AlarmReceiver::class.java)  // 1
+        var pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+        }
+        else {
+            if (Build.VERSION.SDK_INT >= 19) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+            }
+        }
+
+
+        Toast.makeText(this.context, "Alarm set Successfully", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
@@ -198,11 +258,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
-<<<<<<< HEAD
                     val empty_schedule = Schedule("일정 없음", "", year, month, i, "", "",-1, -1, "")
-=======
-                    val empty_schedule = Schedule("일정 없음", "", year, month, i, "10:00", "12:00" )
->>>>>>> 65ee86d1330e65ad3b5e9b7d09c61c96bddceed6
+
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
