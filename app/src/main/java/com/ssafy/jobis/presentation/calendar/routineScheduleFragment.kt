@@ -70,7 +70,7 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
         var endDay = 0
         var endHour = 0
         var endMinute = 0
-        val routineDaySelect = mutableListOf<Int>()
+
         val dayOfWeekSelect = arrayOf(false, view.dayOfWeek1.isSelected ,view.dayOfWeek2.isSelected,view.dayOfWeek3.isSelected,view.dayOfWeek4.isSelected,view.dayOfWeek5.isSelected,view.dayOfWeek6.isSelected,view.dayOfWeek7.isSelected)
 
 
@@ -123,17 +123,23 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
         val scheduleStartDate = dateFormat1.format(currentCal.time)
         val scheduleStartTime = dateFormat2.format(currentCal.time)
         val scheduleEndDate = dateFormat1.format(calendar.time) // 이거 없어도 되겠는데?
-        var scheduleEndTime: String
+        var scheduleEndTime = ""
 
         // 현재 시간 50~59분 이면 59로 강제 지정 -> 안그러면 날짜 변경됨
         if (SimpleDateFormat("HH").format(calendar.time) == "23" ){
             if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
                 scheduleEndTime = "59"
                 calendar.set(Calendar.MINUTE, 59)
-            } 
+                println("여기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                val test = calendar.get(Calendar.MINUTE)
+                println("에휴, $test")
+                scheduleEndTime = "23:59"
+            }
+        } else{
+            calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
+            scheduleEndTime = dateFormat2.format(calendar.time)
         }
-        calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
-        scheduleEndTime = dateFormat2.format(calendar.time)
+
 
         // 화면 로딩시 보이는 시간! +10분 후가 기본. 23:50~59 일때는 23:59로 픽스
         view.startDateBtn.text = scheduleStartDate
@@ -201,23 +207,34 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
 
             // TimePicker Dialog 띄움
             if (startTimeString == "") { // 시간 처음 정하는거라면 현재 cal 객체에서 시간 분 받아와서 기본으로 설정
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    currentCal.get(Calendar.HOUR_OF_DAY),
-                    currentCal.get(Calendar.MINUTE),
-                    true,
-                ).show()
+                startHour = currentCal.get(Calendar.HOUR_OF_DAY)
+                startMinute = currentCal.get(Calendar.MINUTE)
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    currentCal.get(Calendar.HOUR_OF_DAY),
+//                    currentCal.get(Calendar.MINUTE),
+//                    true,
+//                ).show()
             }
-            else { // 다시 정하는 거라면, 이전에 선택해 저장한 값 불러와서 사용
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    startHour,
-                    startMinute,
-                    true,
-                ).show()
-            }
+//            else { // 다시 정하는 거라면, 이전에 선택해 저장한 값 불러와서 사용
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    startHour,
+//                    startMinute,
+//                    true,
+//                ).show()
+//            }
+
+            TimePickerDialog(
+                activity,
+                3,
+                timeSetListener,
+                startHour,
+                startMinute,
+                true,
+            ).show()
         }
         // 끝날짜 선택 버튼
         view.endDateBtn.setOnClickListener {
@@ -268,35 +285,42 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                 endTimeBtn.text = endTimeString
             }
             if (endTimeString == "") {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE),
-                    true,
-                ).show()
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
+                endMinute = calendar.get(Calendar.MINUTE)
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    endHour,
+//                    endMinute,
+//                    true,
+//                ).show()
             }
-            else {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    endHour,
-                    endMinute,
-                    true,
-                ).show()
-
-            }
+//            else {
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    endHour,
+//                    endMinute,
+//                    true,
+//                ).show()
+//            }
+            TimePickerDialog(
+                activity,
+                timeSetListener,
+                endHour,
+                endMinute,
+                true,
+            ).show()
         }
 
         // 일정 등록 버튼
         view.routineScheduleAddBtn.setOnClickListener {
 
-
             // 시작 날짜 따로 안정했으면
             if (startYear == 0) {
                 // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장. 그냥 calendar 써도 됨
                 startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
-                startMonth = SimpleDateFormat("MM").format(calendar.time).toInt()
+                startMonth = SimpleDateFormat("MM").format(calendar.time).toInt() - 1
                 startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
             }
             // 시작 시간 안정했으면
@@ -323,7 +347,7 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             /////////////////////////////////////// 분리하고 에러 메세지 띄우기 ////////////////
             if (title=="" || content==""){
                 println("채워주세요")
-                return@setOnClickListener
+//                return@setOnClickListener
             }
 
             // Calendar 객체에 시작 날짜 넣어서 저장
@@ -340,19 +364,25 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
 
 
-            if (startDayOfYear <= endDayOfYear){
+            if (startDayOfYear >= endDayOfYear){
                 println("날짜 다시 선택")
-                return@setOnClickListener
+                println(startDayOfYear)
+                println(endDayOfYear)
+//                return@setOnClickListener
             }
-            /////////////////////////////////
-            // 시간 잘못된 경우 edge 케이스 추가 //
-            /////////////////////////////////
 
-            /////////////////////////////////
-            // 정해진 기간 내에서 요일 조회했을 때 비어있을 경우 edge케이스추가 //
-            //////////////////////////////////
+            if (endHour<startHour){
+                println("시작 HH가 더 늦습니다 ")
+            } else if (endHour == startHour && endMinute < startMinute) {
+                println("hh는 같고, 시작 M이 더 늦습니다.")
+//                return@setOnClickListener
+            }
 
+
+
+            // 버튼 클릭할때마다 새로 담아야해서 안쪽에서 선언
             // 1~7까지 순회하면서
+            val routineDaySelect = mutableListOf<Int>()
             for(i in 1..7) {
                 if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                     when {
@@ -382,6 +412,15 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                     }
                 }
             }
+            if (routineDaySelect.size == 0) {
+                println("선택된 날짜가 없어!")
+                println("$startDayOfYear")
+                println("$endDayOfYear")
+                println("$startDayOfWeek")
+
+            }
+            println("------선택된 날----")
+            println(routineDaySelect)
             routineDaySelect.sort()
 
             // db 저장
