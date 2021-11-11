@@ -21,6 +21,7 @@ data class Schedule (
     // 일정이 주간일정이라면 groupId를 추가
     @ColumnInfo var groupId: Int,
     @ColumnInfo var companyName: String
+
     ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }
