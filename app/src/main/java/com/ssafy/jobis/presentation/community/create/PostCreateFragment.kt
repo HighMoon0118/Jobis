@@ -78,6 +78,11 @@ class PostCreateFragment : Fragment() {
         binding.categoryButton.setOnClickListener {
             showPopup()
         }
+
+        binding.postCreateBackButton.setOnClickListener {
+            mainAcitivty.supportFragmentManager.beginTransaction().remove(this)
+                .commit()
+        }
     }
 
     override fun onAttach(context: Context) {
