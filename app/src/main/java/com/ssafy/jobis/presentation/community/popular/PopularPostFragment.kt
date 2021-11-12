@@ -63,6 +63,7 @@ class PopularPostFragment : Fragment() {
             1,
             StaggeredGridLayoutManager.VERTICAL)
         binding.popularProgressBar.visibility = View.GONE
+        binding.popularPostCountTextView.text = "총 ${popularPostList.size.toString()}개 "
     }
 
 }

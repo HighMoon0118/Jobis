@@ -25,6 +25,12 @@ class MainActivity : AppCompatActivity() {
             goCommunityFragment()
         }
     }
+    private val getResultMyPageDetail = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            goMyPageFragment()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,6 +82,12 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    fun goMyPageFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_main, MyPageFragment())
+            .commit()
+    }
+
     fun goCommunitySearchActivity() {
         val intent = Intent(this, CommunitySearchActivity::class.java)
         getResultCommunityDetail.launch(intent)
@@ -85,5 +97,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, CommunityDetailActivity::class.java)
         intent.putExtra("id", post_id)
         getResultCommunityDetail.launch(intent)
+    }
+
+    fun goMyPageDetail(post_id: String) {
+        val intent = Intent(this, CommunityDetailActivity::class.java)
+        intent.putExtra("id", post_id)
+        getResultMyPageDetail.launch(intent)
     }
 }
