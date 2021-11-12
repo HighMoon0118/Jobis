@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.ssafy.jobis.R
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.data.response.PostResponseList
 import com.ssafy.jobis.databinding.FragmentRecentPostBinding
@@ -41,6 +44,8 @@ class RecentPostFragment : Fragment() {
                 updateRecentPost(recentPostList)
             })
         binding.recentProgressBar.visibility = View.VISIBLE
+
+        setUpSpinner()
         recentPostViewModel.loadRecentPosts()
     }
 
@@ -59,5 +64,21 @@ class RecentPostFragment : Fragment() {
             1,
             StaggeredGridLayoutManager.VERTICAL)
         binding.recentProgressBar.visibility = View.GONE
+        binding.recentPostCountTextView.text = "총 ${recentPostList.size.toString()}개 "
     }
+
+    fun setUpSpinner() {
+        val categories = resources.getStringArray(R.array.post_category)
+        val adapter = ArrayAdapter((activity as MainActivity), R.layout.support_simple_spinner_dropdown_item, categories)
+        binding.recentPostSpinner.adapter = adapter
+        binding.recentPostSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                recentPostViewModel.filterPost(p2)
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+    }
+
 }
