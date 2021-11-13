@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import java.util.*
 
 @Entity
 data class RoutineSchedule(
@@ -12,7 +13,7 @@ data class RoutineSchedule(
     @ColumnInfo var content: String,
 //    @ColumnInfo var year: Int,
 //    @ColumnInfo var month: Int,
-    @ColumnInfo var dayList: List<Int> ?= null,
+    @ColumnInfo var dayList: List<Calendar> ?= null,
     @ColumnInfo var startTime: String,
     @ColumnInfo var endTime: String,
     @ColumnInfo var groupId: Int,
@@ -24,8 +25,8 @@ data class RoutineSchedule(
 
 class Converters {
     @TypeConverter
-    fun listToJson(value: List<Int>?) = Gson().toJson(value)
+    fun listToJson(value: List<Calendar>?) = Gson().toJson(value)
 
     @TypeConverter
-    fun jsonToList(value:String) = Gson().fromJson(value, Array<Int>::class.java).toList()
+    fun jsonToList(value:String) = Gson().fromJson(value, Array<Calendar>::class.java).toList()
 }
