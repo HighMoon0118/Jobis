@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
@@ -29,6 +30,9 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
 
     private val binding get() = _binding!!
 
+    fun testfun(){
+        println("함수호출입니다")
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -229,7 +233,6 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
 
             TimePickerDialog(
                 activity,
-                3,
                 timeSetListener,
                 startHour,
                 startMinute,
@@ -344,10 +347,14 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             val title = view.scheduleTitleEditText.text.toString()
             val content = view.scheduleContentEditText.text.toString()
 
-            /////////////////////////////////////// 분리하고 에러 메세지 띄우기 ////////////////
-            if (title=="" || content==""){
-                println("채워주세요")
-//                return@setOnClickListener
+            if (title==""){
+                Toast.makeText(context,R.string.empty_title, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+
+            }
+            if (content==""){
+                Toast.makeText(context,R.string.empty_content, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
             // Calendar 객체에 시작 날짜 넣어서 저장
@@ -364,18 +371,22 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
 
 
-            if (startDayOfYear >= endDayOfYear){
-                println("날짜 다시 선택")
-                println(startDayOfYear)
-                println(endDayOfYear)
-//                return@setOnClickListener
+            if (startDayOfYear > endDayOfYear){
+                Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (startDayOfYear == endDayOfYear){
+                Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
+
             if (endHour<startHour){
-                println("시작 HH가 더 늦습니다 ")
+                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             } else if (endHour == startHour && endMinute < startMinute) {
-                println("hh는 같고, 시작 M이 더 늦습니다.")
-//                return@setOnClickListener
+                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
 
@@ -413,10 +424,8 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                 }
             }
             if (routineDaySelect.size == 0) {
-                println("선택된 날짜가 없어!")
-                println("$startDayOfYear")
-                println("$endDayOfYear")
-                println("$startDayOfWeek")
+                Toast.makeText(context,R.string.empty_routine_select, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
 
             }
             println("------선택된 날----")
