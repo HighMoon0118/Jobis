@@ -12,7 +12,11 @@
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/calendar_viewpager.xml" value="0.1296875" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.176" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_calendar_viewpager.xml" value="0.21557971014492755" />
+<<<<<<< HEAD
+        <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_routine_schedule.xml" value="0.3263888888888889" />
+=======
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_routine_schedule.xml" value="0.1793478260869565" />
+>>>>>>> f67ec5b6b0a913953d7d170d2d9cd034718bdd8a
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_single_schedule.xml" value="0.1793478260869565" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_study.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/item_viewpager.xml" value="0.1296875" />
