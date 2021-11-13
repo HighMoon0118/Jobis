@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.firebase.auth.ktx.auth
@@ -15,6 +16,7 @@ import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.databinding.CommunityDetailFragmentBinding
+import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
 import java.text.SimpleDateFormat
 
 class CommunityDetailFragment : Fragment() {
@@ -59,9 +61,19 @@ class CommunityDetailFragment : Fragment() {
                 comments ?: return@Observer
                 updateCommentsUi(comments)
             })
+        communityDetailViewModel.deleted.observe(viewLifecycleOwner,
+            Observer { deleted ->
+                deleted ?: return@Observer
+                (activity as CommunityDetailActivity).loadingOff()
+                if (deleted) {
+                    Toast.makeText(context, "게시글이 삭제되었습니다.", Toast.LENGTH_LONG).show()
+                    (activity as CommunityDetailActivity).onBackPressed()
+                } else {
+                    Toast.makeText(context, "게시글이 삭제 실패", Toast.LENGTH_LONG).show()
+                }
+            })
         id = arguments?.getString("id")
         uid = Firebase.auth.currentUser?.uid
-        Log.d("test", "testet ${id} ${uid}")
         binding.detailLikeImageView.setOnClickListener {
             communityDetailViewModel.updateLike(id!!, uid!!)
         }
@@ -73,6 +85,16 @@ class CommunityDetailFragment : Fragment() {
                 binding.commentEditText.text.clear()
             }
         }
+
+        binding.postDeleteButton.setOnClickListener {
+            (activity as CommunityDetailActivity).loadingOn()
+            communityDetailViewModel.deletePost(id!!, uid!!)
+        }
+
+        binding.postEditButton.setOnClickListener {
+            (activity as CommunityDetailActivity).goPostEditFragment(id!!, uid!!)
+        }
+
         if (id != null && uid != null) {
             communityDetailViewModel.loadPost(id!!, uid!!)
         }
@@ -85,7 +107,8 @@ class CommunityDetailFragment : Fragment() {
         val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm")
         binding.detailDateTextView.text = sdf.format(post.created_at.toDate()).toString()
         binding.detailLikeCountTextView.text = post.like.size.toString()
-        binding.detailNickNameTextView.text = post.user_nickname
+        binding.detailNickNameTextView.text = "by " + post.user_nickname + "  |  "
+        binding.commentCountTextView.text = "댓글 " +post.comment_list.size.toString() + "개"
         if (post.user_id == uid) {
             binding.postEditButton.visibility = View.VISIBLE
             binding.postDeleteButton.visibility = View.VISIBLE
@@ -102,8 +125,14 @@ class CommunityDetailFragment : Fragment() {
 
     private fun updateCommentsUi(comments: MutableList<Comment>) {
         val adapter = CustomCommentAdapter()
-        Log.d("test", "updatecommentUI ${comments[0].javaClass}")
         adapter.listData = comments
+        adapter.setOnItemClickListener(object: CustomCommentAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, comment: Comment, pos: Int) {
+                if ( comment.user_id == uid) {
+                    communityDetailViewModel.deleteComment(id!!, comment, uid!!)
+                }
+            }
+        })
         binding.detailCommentRecyclerView.adapter = adapter
         binding.detailCommentRecyclerView.layoutManager = StaggeredGridLayoutManager(
             1,

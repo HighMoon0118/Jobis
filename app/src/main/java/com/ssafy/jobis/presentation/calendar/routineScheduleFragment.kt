@@ -1,5 +1,6 @@
-package com.ssafy.jobis.presentation
+package com.ssafy.jobis.presentation.calendar
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -8,31 +9,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
-import com.ssafy.jobis.data.model.calendar.CalendarDatabase
-import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
-import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.FragmentRoutineScheduleBinding
-import kotlinx.android.synthetic.main.activity_schedule.*
 import kotlinx.android.synthetic.main.fragment_routine_schedule.*
-import kotlinx.android.synthetic.main.fragment_routine_schedule.endDateBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.endTimeBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.startDateBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.startTimeBtn
 import kotlinx.android.synthetic.main.fragment_routine_schedule.view.*
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.endDateBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.endTimeBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.scheduleContentEditText
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.scheduleTitleEditText
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.startDateBtn
-import kotlinx.android.synthetic.main.fragment_routine_schedule.view.startTimeBtn
-import kotlinx.android.synthetic.main.fragment_single_schedule.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,7 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class RoutineScheduleFragment(val activity: Activity) : Fragment() {
+class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
     private var _binding: FragmentRoutineScheduleBinding? = null
 
     private val binding get() = _binding!!
@@ -56,30 +40,22 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("SimpleDateFormat")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentRoutineScheduleBinding.inflate(inflater, container, false)
         val view = binding.root
 
         // null 오류 > view binding 으로 해결했음 (왜?)
-
         ArrayAdapter.createFromResource(activity,
             R.array.dayOfWeek,
             android.R.layout.simple_spinner_item).also{adapter->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.testSpinner.adapter = adapter
         }
-        // 일~토
-        var day0 = true
-        var day1 = true
-        var day2 = true
-        var day3 = true
-        var day4 = true
-        var day5 = true
-        var day6 = true
-        var day7 = true
+
         var startDateString =""
         var startTimeString = ""
         var endDateString =""
@@ -94,74 +70,35 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
         var endDay = 0
         var endHour = 0
         var endMinute = 0
-        var title = ""
-        var content = ""
-        var routineDaySelect = mutableListOf<Int>()
 
-//        view.dayOfWeek0.setOnClickListener{
-//            if (day0 == true ){
-//                day0 = !day0
-//                "@drawable/schedule_day_of_week_btn_false".also { dayOfWeek0.background = it }
-//            }
-//        }
-        view.dayOfWeek0.setOnClickListener{
-            var dayOfWeekSelect = mutableListOf(1, 3, 5)
-            println(dayOfWeekSelect)
-            println("start, $startDateString")
-            println("end, $endDateString")
-            println("$startYear, $startMonth, $startDay")
-            println("$endYear, $endMonth, $endDay")
-            var startCal = Calendar.getInstance()
-            startCal.set(startYear, startMonth, startDay)
-            var endCal = Calendar.getInstance()
-            endCal.set(endYear, endMonth, endDay)
-            println(startCal)
-            println(endCal)
-            var startDayOfWeek= startCal.get(Calendar.DAY_OF_WEEK)
-            println("startDayOfWeek, $startDayOfWeek")
-            var startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
-            println("startDayOfYear, $startDayOfYear")
-            var endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
-            println("endDayOfYear, $endDayOfYear")
-            var addCal = Calendar.getInstance()
-            for(i in dayOfWeekSelect) {
-                println(i)
-                if (i == startDayOfWeek) {
-                    println("오늘 날짜 저장")
-                    var addDay = startDayOfYear
-                    while(addDay <= endDayOfYear){
-//                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
-                        println("addCal, $addCal")
-                        routineDaySelect.add(addDay)
-                        addDay += 7
-                    }
-                } else if (i > startDayOfWeek) {
-                    var tmp = i - startDayOfWeek
-                    var addDay = startDayOfYear + tmp
-                    println("$tmp 만큼 더해서 저장")
-                    while(addDay <= endDayOfYear){
-//                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
-//                        println("addCal, $addCal")
-                        routineDaySelect.add(addDay)
-                        addDay += 7
-                    }
-                } else {
-                    var tmp = 7 - startDayOfWeek + i
-                    var addDay = startDayOfYear + tmp
-                    println("$tmp 만큼 더해서 저장")
-                    while(addDay <= endDayOfYear){
-                        routineDaySelect.add(addDay)
-                        addDay += 7
-                    }
-                }
-            }
-            routineDaySelect.sort()
-            println(routineDaySelect)
+        val dayOfWeekSelect = arrayOf(false, view.dayOfWeek1.isSelected ,view.dayOfWeek2.isSelected,view.dayOfWeek3.isSelected,view.dayOfWeek4.isSelected,view.dayOfWeek5.isSelected,view.dayOfWeek6.isSelected,view.dayOfWeek7.isSelected)
 
-            // + 7씩 더해서 반복
-            // 날짜가 넘치면 멈추기
+
+        // 버튼 클릭시 해당 요일의 boolean 값이 전환됨 (기본 false), 이미지 변경
+        view.dayOfWeek1.setOnClickListener {
+            dayOfWeek1.isSelected = !dayOfWeek1.isSelected
+            dayOfWeekSelect[1] = !dayOfWeekSelect[1]
         }
-
+        view.dayOfWeek2.setOnClickListener {
+            dayOfWeek2.isSelected = !dayOfWeek2.isSelected
+            dayOfWeekSelect[2] = !dayOfWeekSelect[2]}
+        view.dayOfWeek3.setOnClickListener {
+            dayOfWeek3.isSelected = !dayOfWeek3.isSelected
+            dayOfWeekSelect[3] = !dayOfWeekSelect[3]}
+        view.dayOfWeek4.setOnClickListener {
+            dayOfWeek4.isSelected = !dayOfWeek4.isSelected
+            dayOfWeekSelect[4] = !dayOfWeekSelect[4]}
+        view.dayOfWeek5.setOnClickListener {
+            dayOfWeek5.isSelected = !dayOfWeek5.isSelected
+            dayOfWeekSelect[5] = !dayOfWeekSelect[5]}
+        view.dayOfWeek6.setOnClickListener {
+            dayOfWeek6.isSelected = !dayOfWeek6.isSelected
+            dayOfWeekSelect[6] = !dayOfWeekSelect[6]}
+        view.dayOfWeek7.setOnClickListener {
+            dayOfWeek7.isSelected = !dayOfWeek7.isSelected
+            dayOfWeekSelect[7] = !dayOfWeekSelect[7]
+//            println(dayOfWeekSelect.contentToString())
+        }
 
 //        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //            override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -176,221 +113,333 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
 //            }
 //        }
 
-
-        // 시간 불러오는 두가지 방법
-        // 1. System.currentTimeMillis()
-        // 2. date()
-        // 3. Calendar.getInstance()
-        // 각자 쓰이는 메소드가 다른듯? 뭐가 좋을지 모르겠지만 일단 calendar로 했음
-        // 어떤 형식으로 가져올지 선언
         val dateFormat1 = SimpleDateFormat("yyyy-MM-dd")
         val dateFormat2 = SimpleDateFormat("HH:mm")
-
-        val calendar = Calendar.getInstance()
-        //java.util.GregorianCalendar[time=1635832948816,areFieldsSet=true,areAllFieldsSet=true,lenient=true,zone=java.util.SimpleTimeZone[id=GMT,offset=0,dstSavings=3600000,useDaylight=false,startYear=0,startMode=0,startMonth=0,startDay=0,startDayOfWeek=0,startTime=0,startTimeMode=0,endMode=0,endMonth=0,endDay=0,endDayOfWeek=0,endTime=0,endTimeMode=0],firstDayOfWeek=1,minimalDaysInFirstWeek=1,ERA=1,YEAR=2021,MONTH=10,WEEK_OF_YEAR=45,WEEK_OF_MONTH=1,DAY_OF_MONTH=2,DAY_OF_YEAR=306,DAY_OF_WEEK=3,DAY_OF_WEEK_IN_MONTH=1,AM_PM=0,HOUR=6,HOUR_OF_DAY=6,MINUTE=2,SECOND=28,MILLISECOND=816,ZONE_OFFSET=0,DST_OFFSET=0]
-
+        val calendar = Calendar.getInstance() // 현재 날짜 및 시간 저장
         calendar.add(Calendar.HOUR, 9) // 기준 시간 +9 맞춤
-        // java.util.GregorianCalendar[time=1635865348813,areFieldsSet=true,areAllFieldsSet=true,lenient=true,zone=java.util.SimpleTimeZone[id=GMT,offset=0,dstSavings=3600000,useDaylight=false,startYear=0,startMode=0,startMonth=0,startDay=0,startDayOfWeek=0,startTime=0,startTimeMode=0,endMode=0,endMonth=0,endDay=0,endDayOfWeek=0,endTime=0,endTimeMode=0],firstDayOfWeek=1,minimalDaysInFirstWeek=1,ERA=1,YEAR=2021,MONTH=10,WEEK_OF_YEAR=45,WEEK_OF_MONTH=1,DAY_OF_MONTH=2,DAY_OF_YEAR=306,DAY_OF_WEEK=3,DAY_OF_WEEK_IN_MONTH=1,AM_PM=1,HOUR=3,HOUR_OF_DAY=15,MINUTE=2,SECOND=28,MILLISECOND=813,ZONE_OFFSET=0,DST_OFFSET=0]
+        val currentCal = calendar // 10분 추가한 cal 객체랑 따로 저장하고 싶어서 분리한건데 잘 안되는듯?
+        // 시작 날짜와 시간 받아옴
+        // 시작 날짜는 나중에 calendar fragment 에서 받아온 데이터로 변경할 예정
+        val scheduleStartDate = dateFormat1.format(currentCal.time)
+        val scheduleStartTime = dateFormat2.format(currentCal.time)
+        val scheduleEndDate = dateFormat1.format(calendar.time) // 이거 없어도 되겠는데?
+        var scheduleEndTime = ""
 
-        var currentTime = calendar // Tue Nov 02 15:02:28 GMT 2021
-        var scheduleStartDate = dateFormat1.format(currentTime.time)
-        var scheduleStartTime = dateFormat2.format(currentTime.time)
+        // 현재 시간 50~59분 이면 59로 강제 지정 -> 안그러면 날짜 변경됨
+        if (SimpleDateFormat("HH").format(calendar.time) == "23" ){
+            if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
+                scheduleEndTime = "59"
+                calendar.set(Calendar.MINUTE, 59)
+                println("여기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                val test = calendar.get(Calendar.MINUTE)
+                println("에휴, $test")
+                scheduleEndTime = "23:59"
+            }
+        } else{
+            calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
+            scheduleEndTime = dateFormat2.format(calendar.time)
+        }
 
-        calendar.add(Calendar.MINUTE, 10) // 10분 후
-        var afterTime = calendar
-        var scheduleEndDate = dateFormat1.format(afterTime.time)
-        var scheduleEndTime = dateFormat2.format(afterTime.time)
 
+        // 화면 로딩시 보이는 시간! +10분 후가 기본. 23:50~59 일때는 23:59로 픽스
+        view.startDateBtn.text = scheduleStartDate
+        view.startTimeBtn.text = scheduleStartTime
+        view.endDateBtn.text = scheduleEndDate
+        view.endTimeBtn.text = scheduleEndTime
 
-        // 화면 로딩시 보이는 시간! +10분 후가 기본  endTime
-        view.startDateBtn.setText(scheduleStartDate)
-        view.startTimeBtn.setText(scheduleStartTime)
-        view.endDateBtn.setText(scheduleEndDate)
-        view.endTimeBtn.setText(scheduleEndTime)
-        //
+        // 시작일 선택 버튼
         view.startDateBtn.setOnClickListener {
-            var cal = Calendar.getInstance() // 캘린더 뷰 만들기
-            // java.util.GregorianCalendar[time=1635835942840,areFieldsSet=true,areAllFieldsSet=true,lenient=true,zone=java.util.SimpleTimeZone[id=GMT,offset=0,dstSavings=3600000,useDaylight=false,startYear=0,startMode=0,startMonth=0,startDay=0,startDayOfWeek=0,startTime=0,startTimeMode=0,endMode=0,endMonth=0,endDay=0,endDayOfWeek=0,endTime=0,endTimeMode=0],firstDayOfWeek=1,minimalDaysInFirstWeek=1,ERA=1,YEAR=2021,MONTH=10,WEEK_OF_YEAR=45,WEEK_OF_MONTH=1,DAY_OF_MONTH=2,DAY_OF_YEAR=306,DAY_OF_WEEK=3,DAY_OF_WEEK_IN_MONTH=1,AM_PM=0,HOUR=6,HOUR_OF_DAY=6,MINUTE=52,SECOND=22,MILLISECOND=840,ZONE_OFFSET=0,DST_OFFSET=0]
-
             // OnDateSetListener : 사용자가 날짜 선택을 완료했음을 알림, 내부 기능 작성
-            // com.example.calendardetail.MainActivity$$ExternalSyntheticLambda0@bb1014f
-            val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                if (dayOfMonth<=9 && month <= 8) { // 1~9일 선택하더라도 포맷 맞추려고 설정
-                    startDateString ="${year}-0${month+1}-0${dayOfMonth}"
-                } else if (month <= 8) {
-                    startDateString ="${year}-0${month+1}-${dayOfMonth}"
-                } else if (dayOfMonth <= 9 ){
-                    startDateString ="${year}-${month+1}-0${dayOfMonth}"
-                } else {
-                    startDateString = "${year}-${month + 1}-${dayOfMonth}"
+            // view 대신 _ 쓰래서 바꾸긴 했는데 무슨 차인지 모름
+            val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                // 1~9일 선택하더라도 포맷 맞추려고 설정
+                startDateString = if (dayOfMonth<=9 && month <= 8) {  // 월 일 전부 한자리
+                    "${year}-0${month+1}-0${dayOfMonth}"
+                } else if (month <= 9) { // 월만 한자리
+                    "${year}-0${month+1}-${dayOfMonth}"
+                } else if (dayOfMonth <= 9 ){ // 일만 한자리
+                    "${year}-${month+1}-0${dayOfMonth}"
+                } else { // 처리할 필요 없음
+                    "${year}-${month + 1}-${dayOfMonth}"
                 }
+                // 시작 날짜를 선택했을 때 0에서 고른 날짜로 변경됨
                 startYear = year
                 startMonth = month
                 startDay = dayOfMonth
-                startDateBtn.setText(startDateString)
+                // 선택한 날짜로 글자 변경
+                startDateBtn.text = startDateString
             }
-            // Dialog 창 띄움
-            if (startDateString == "") {
-                DatePickerDialog(activity, dateSetListener, currentTime.get(Calendar.YEAR), currentTime.get(
-                    Calendar.MONTH),currentTime.get(Calendar.DAY_OF_MONTH), ).show()
-            } else {
+
+            // DatePicker Dialog 창 띄움
+            if (startDateString == "") { // 초기 (시작 날짜 안정했을 경우)
+                DatePickerDialog( // 10분 추가하기 전의 cal 객채에서 년 월 일을 기본으로 설정
+                    activity, dateSetListener, currentCal.get(Calendar.YEAR),
+                    currentCal.get(
+                        Calendar.MONTH
+                    ),
+                    currentCal.get(Calendar.DAY_OF_MONTH),
+                ).show()
+            } else { // 선택 후 다시 열 경우, 선택했던 날짜를 기본으로 설정해서 연다
                 DatePickerDialog(activity, dateSetListener, startYear, startMonth, startDay).show()
             }
 
         }
+        // 시작시간 선택 버튼
         view.startTimeBtn.setOnClickListener {
-            val cal = Calendar.getInstance()
-            val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                if (hourOfDay <= 9) {
-                    startTimeString = "0${hourOfDay}:"
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                startTimeString = if (hourOfDay <= 9) { // 시간 포맷 맞춰서 추가
+                    "0${hourOfDay}:"
                 } else {
-                    startTimeString = "${hourOfDay}:"
+                    "${hourOfDay}:"
                 }
-                if (minute <= 9) {
-                    startTimeString += "0${minute}"
+                startTimeString += if (minute <= 9) { // 분 포맷 맞춰서 추가
+                    val s = "0${minute}"
+                    s // 마지막 줄만 리턴됨
                 } else {
-                    startTimeString += "${minute}"
+                    "$minute"
                 }
+                // 재선택 할 때 쓰려고 변수에 저장
                 startHour = hourOfDay
                 startMinute = minute
-                startTimeBtn.setText(startTimeString)
+                // 버튼에 선택한 시간 보이게 하기
+                startTimeBtn.text = startTimeString
             }
-            if (startTimeString == "") {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    currentTime.get(Calendar.HOUR_OF_DAY),
-                    currentTime.get(Calendar.MINUTE),
-                    true,
-                ).show()
-            }
-            else {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    startHour,
-                    startMinute,
-                    true,
-                ).show()
 
+            // TimePicker Dialog 띄움
+            if (startTimeString == "") { // 시간 처음 정하는거라면 현재 cal 객체에서 시간 분 받아와서 기본으로 설정
+                startHour = currentCal.get(Calendar.HOUR_OF_DAY)
+                startMinute = currentCal.get(Calendar.MINUTE)
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    currentCal.get(Calendar.HOUR_OF_DAY),
+//                    currentCal.get(Calendar.MINUTE),
+//                    true,
+//                ).show()
             }
+//            else { // 다시 정하는 거라면, 이전에 선택해 저장한 값 불러와서 사용
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    startHour,
+//                    startMinute,
+//                    true,
+//                ).show()
+//            }
+
+            TimePickerDialog(
+                activity,
+                3,
+                timeSetListener,
+                startHour,
+                startMinute,
+                true,
+            ).show()
         }
-
+        // 끝날짜 선택 버튼
         view.endDateBtn.setOnClickListener {
             // OnDateSetListener : 사용자가 날짜 선택을 완료했음을 알림, 내부 기능 작성
-            // com.example.calendardetail.MainActivity$$ExternalSyntheticLambda0@bb1014f
-            val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                if (dayOfMonth<=9 && month <= 8) { // 1~9일 선택하더라도 포맷 맞추려고 설정
-                    endDateString ="${year}-0${month+1}-0${dayOfMonth}"
+            val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                endDateString = if (dayOfMonth<=9 && month <= 8) { // 1~9일 선택하더라도 포맷 맞추려고 설정
+                    "${year}-0${month+1}-0${dayOfMonth}"
                 } else if (month <= 8) {
-                    endDateString ="${year}-0${month+1}-${dayOfMonth}"
+                    "${year}-0${month+1}-${dayOfMonth}"
                 } else if (dayOfMonth <= 9 ){
-                    endDateString ="${year}-${month+1}-0${dayOfMonth}"
+                    "${year}-${month+1}-0${dayOfMonth}"
                 } else {
-                    endDateString = "${year}-${month + 1}-${dayOfMonth}"
+                    "${year}-${month + 1}-${dayOfMonth}"
                 }
                 endYear = year
                 endMonth = month
                 endDay = dayOfMonth
-                endDateBtn.setText(endDateString)
+                endDateBtn.text = endDateString
             }
             // Dialog 창 띄움
             if (endDateString == "") {
-                DatePickerDialog(activity, dateSetListener, afterTime.get(Calendar.YEAR), afterTime.get(
-                    Calendar.MONTH),afterTime.get(Calendar.DAY_OF_MONTH), ).show()
+                DatePickerDialog( // calendar = 10분 더한 객체, 50~59분일 경우 59로 맞춘 객체
+                    activity, dateSetListener, calendar.get(Calendar.YEAR),
+                    calendar.get(
+                        Calendar.MONTH
+                    ),
+                    calendar.get(Calendar.DAY_OF_MONTH),
+                ).show()
             } else {
                 DatePickerDialog(activity, dateSetListener, endYear, endMonth, endDay).show()
             }
         }
-
+        // 끝 시간 설정 버튼
         view.endTimeBtn.setOnClickListener {
-
-            val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                if (hourOfDay <= 9) {
-                    endTimeString = "0${hourOfDay}:"
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                endTimeString = if (hourOfDay <= 9) {
+                    "0${hourOfDay}:"
                 } else {
-                    endTimeString = "${hourOfDay}:"
+                    "${hourOfDay}:"
                 }
-                if (minute <= 9) {
-                    endTimeString += "0${minute}"
+                endTimeString += if (minute <= 9) {
+                    "0${minute}"
                 } else {
-                    endTimeString += "${minute}"
+                    "$minute"
                 }
                 endHour = hourOfDay
                 endMinute = minute
-                endTimeBtn.setText(endTimeString)
+                endTimeBtn.text = endTimeString
             }
             if (endTimeString == "") {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    afterTime.get(Calendar.HOUR_OF_DAY),
-                    afterTime.get(Calendar.MINUTE),
-                    true,
-                ).show()
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
+                endMinute = calendar.get(Calendar.MINUTE)
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    endHour,
+//                    endMinute,
+//                    true,
+//                ).show()
             }
-            else {
-                TimePickerDialog(
-                    activity,
-                    timeSetListener,
-                    endHour,
-                    endMinute,
-                    true,
-                ).show()
-
-            }
+//            else {
+//                TimePickerDialog(
+//                    activity,
+//                    timeSetListener,
+//                    endHour,
+//                    endMinute,
+//                    true,
+//                ).show()
+//            }
+            TimePickerDialog(
+                activity,
+                timeSetListener,
+                endHour,
+                endMinute,
+                true,
+            ).show()
         }
 
-
+        // 일정 등록 버튼
         view.routineScheduleAddBtn.setOnClickListener {
-            println("--------------------")
-            println("일정 등록 버튼 클릭")
-            println("시작 시간, $scheduleStartTime")
-            println("끝 시간, $scheduleEndTime")
 
             // 시작 날짜 따로 안정했으면
             if (startYear == 0) {
-                // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장
-                startYear = SimpleDateFormat("yyyy").format(currentTime.time).toInt()
-                startMonth = SimpleDateFormat("MM").format(currentTime.time).toInt()
-                startDay = SimpleDateFormat("dd").format(currentTime.time).toInt()
-
+                // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장. 그냥 calendar 써도 됨
+                startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
+                startMonth = SimpleDateFormat("MM").format(calendar.time).toInt() - 1
+                startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
             }
             // 시작 시간 안정했으면
             if (startTimeString == "") {
-                // 시작 시간 "" 이므로 현재 시간 할당한거 저장
+                // 시작 시간 "" 이므로 그냥 현재 시간 할당한거 저장
                 startTimeString = scheduleStartTime
-                println(startTimeString)
-
+            }
+            // 끝 날짜 안정했으면
+            if (endDateString==""){
+                endYear = startYear
+                endMonth = startMonth
+                endDay = startDay
             }
             // 끝 시간 안정했을경우
             if (endTimeString == "") {
-                endTimeString = scheduleEndTime
-                println(endTimeString)
+                endTimeString = scheduleEndTime // 현재시간 + 10분 시간을 저장
             }
 
-            title = view.scheduleTitleEditText.text.toString()
-            content = view.scheduleContentEditText.text.toString()
 
-            println("할당 후 시작, $startTimeString")
-            println("할당 후 끝, $endTimeString")
+            // 일정 제목 내용 받아오기
+            val title = view.scheduleTitleEditText.text.toString()
+            val content = view.scheduleContentEditText.text.toString()
+
+            /////////////////////////////////////// 분리하고 에러 메세지 띄우기 ////////////////
+            if (title=="" || content==""){
+                println("채워주세요")
+//                return@setOnClickListener
+            }
+
+            // Calendar 객체에 시작 날짜 넣어서 저장
+            val startCal = Calendar.getInstance()
+            startCal.set(startYear, startMonth, startDay)
+            // Calendar 객체에 끝 날짜 넣어서 저장
+            val endCal = Calendar.getInstance()
+            endCal.set(endYear, endMonth, endDay)
+            // 시작하는 날짜의 요일
+            val startDayOfWeek= startCal.get(Calendar.DAY_OF_WEEK)
+            // 시작하는 날짜의 날 (int, nnn) (1~365로 나타난다)
+            val startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
+            // 끝 날짜
+            val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
+
+
+            if (startDayOfYear >= endDayOfYear){
+                println("날짜 다시 선택")
+                println(startDayOfYear)
+                println(endDayOfYear)
+//                return@setOnClickListener
+            }
+
+            if (endHour<startHour){
+                println("시작 HH가 더 늦습니다 ")
+            } else if (endHour == startHour && endMinute < startMinute) {
+                println("hh는 같고, 시작 M이 더 늦습니다.")
+//                return@setOnClickListener
+            }
+
+
+
+            // 버튼 클릭할때마다 새로 담아야해서 안쪽에서 선언
+            // 1~7까지 순회하면서
+            val routineDaySelect = mutableListOf<Int>()
+            for(i in 1..7) {
+                if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
+                    when {
+                        i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
+                            var addDay = startDayOfYear
+                            while(addDay <= endDayOfYear){
+                                routineDaySelect.add(addDay)
+                                addDay += 7
+                            }
+                        }
+                        i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
+                            val tmp = i - startDayOfWeek
+                            var addDay = startDayOfYear + tmp
+                            while(addDay <= endDayOfYear){
+                                routineDaySelect.add(addDay)
+                                addDay += 7
+                            }
+                        }
+                        else -> { // 시작 날짜의 요일 > 반복 선택한 요일 중 지금 보고있는 거
+                            val tmp = 7 - startDayOfWeek + i
+                            var addDay = startDayOfYear + tmp
+                            while(addDay <= endDayOfYear){
+                                routineDaySelect.add(addDay)
+                                addDay += 7
+                            }
+                        }
+                    }
+                }
+            }
+            if (routineDaySelect.size == 0) {
+                println("선택된 날짜가 없어!")
+                println("$startDayOfYear")
+                println("$endDayOfYear")
+                println("$startDayOfWeek")
+
+            }
+            println("------선택된 날----")
+            println(routineDaySelect)
+            routineDaySelect.sort()
+
             // db 저장
-            println("routineDay")
-            var newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
-            var db = RoutineScheduleDatabase.getInstance(activity)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.routineScheduleDao().insert(newRoutineSchedule)
-                var dbList = db!!.routineScheduleDao().getAll()
-                println("DB 결과: " + dbList)
-            }
+//            val newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
+//            val db = RoutineScheduleDatabase.getInstance(activity)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.routineScheduleDao().insert(newRoutineSchedule)
+//                val dbList = db.routineScheduleDao().getAll()
+//                println("DB 결과: $dbList")
+//            }
+
         }
 
         view.routineScheduleList.setOnClickListener {
             println("일정 확인")
-            var db = RoutineScheduleDatabase.getInstance(this.context)
+            val db = RoutineScheduleDatabase.getInstance(this.context)
             CoroutineScope(Dispatchers.IO).launch {
-                var dbList = db!!.routineScheduleDao().getAll()
-                println("일정 결과: " + dbList)
+                val dbList = db!!.routineScheduleDao().getAll()
+                println("일정 결과: $dbList")
             }
         }
 

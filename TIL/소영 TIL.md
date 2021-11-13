@@ -92,4 +92,45 @@ Room cannot verify the data integrity. Looks like you've changed schema but forg
    }
    ```
 
-   
+### 5. 새 기기 등록시 뜨는 에러
+
+```kotlin
+java.lang.AssertionError: Method getAlpnSelectedProtocol not supported for object SSL socket over Socket[address=firestore.googleapis.com/34.64.4.10,port=443,localPort=38172]
+
+```
+
+- ???
+
+### 6. Array 한 줄 출력
+
+```kotlin
+ arrayName = arrayOf(1, 2, 3)
+ println(arrayName.contentToString()) // [1, 2, 3]
+```
+
+mutableListOf 으로 만든건 그냥 출력해도 나온다
+
+arrayof는 안됨
+
+### 7. 버튼 클릭했을 때 모양 변경
+
+```kotlin
+// drawble에 추가 > selected 이용
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true"
+        android:drawable="@drawable/schedule_day_of_week_btn_true"/>
+    <item android:drawable="@drawable/schedule_day_of_week_btn_false"/>
+</selector>
+```
+
+```kotlin
+// fragment.xml
+// 클릭시 isSelected 상태 변환
+view.dayOfWeek1.setOnClickListener {
+    dayOfWeek1.isSelected = !dayOfWeek1.isSelected
+}
+```
+
+
+
