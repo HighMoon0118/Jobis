@@ -410,16 +410,20 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                 if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                     when {
                         i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
-                            val cal1 = Calendar.getInstance()
+                            var cal1 = Calendar.getInstance()
                             cal1.set(startYear, startMonth, startDay)
                             val cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
                             println("cal1mtd, $cal1MilliToDate")
                             val diff = (endMilliToDate - cal1MilliToDate)/7
                             var tmp = 0
                             while(diff >= tmp){ //
+                                var cal1 = Calendar.getInstance()
+                                cal1.set(startYear, startMonth, startDay)
+                                cal1.add(Calendar.DATE, 7 * tmp)
                                 routineDaySelect.add(cal1)
+                                println("cal1: " + cal1)
                                 println(cal1.get(Calendar.DAY_OF_YEAR))
-                                cal1.add(Calendar.DATE, 7)
+
                                 tmp += 1
                             }
                         }
@@ -427,7 +431,7 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                         i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
                             // 며칠 차이인지 확인해서 + a
                             // 7일 더하면서 반복 저장
-                            val cal2 = Calendar.getInstance()
+                            var cal2 = Calendar.getInstance()
                             cal2.set(startYear, startMonth, startDay)
                             val add = i - startDayOfWeek
                             cal2.add(Calendar.DATE, add)
@@ -435,9 +439,13 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                             println("cal2mtd, $cal2MilliToDate")
                             val diff = (endMilliToDate - cal2MilliToDate)/7
                             var tmp = 0
-                            while(diff >= tmp ){
+                            while(diff >= tmp){ //
+                                var cal2 = Calendar.getInstance()
+                                cal2.set(startYear, startMonth, startDay)
+                                cal2.add(Calendar.DATE, add) // 요일 맞추기
+                                cal2.add(Calendar.DATE, 7 * tmp)
                                 routineDaySelect.add(cal2)
-                                cal2.add(Calendar.DATE, 7)
+
                                 tmp += 1
                             }
                         }
@@ -445,16 +453,20 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
                             // 며칠 차이인지 확인해서 + a
                             // 7일 더하면서 반복 저장
                             val add = 7 - startDayOfWeek + i
-                            val cal3 = Calendar.getInstance()
+                            var cal3 = Calendar.getInstance()
                             cal3.set(startYear, startMonth, startDay)
                             cal3.add(Calendar.DATE, add)
                             val cal3MilliToDate = cal3.timeInMillis / (24*60*60*1000)
                             println("cal3mtd, $cal3MilliToDate")
                             val diff = (endMilliToDate - cal3MilliToDate)/7
                             var tmp = 0
-                            while(diff >= tmp ){
+                            while(diff >= tmp){ //
+                                var cal3 = Calendar.getInstance()
+                                cal3.set(startYear, startMonth, startDay)
+                                cal3.add(Calendar.DATE, add) // 요일 맞추기
+                                cal3.add(Calendar.DATE, 7 * tmp)
                                 routineDaySelect.add(cal3)
-                                cal3.add(Calendar.DATE, 7)
+
                                 tmp += 1
                             }
                         }
