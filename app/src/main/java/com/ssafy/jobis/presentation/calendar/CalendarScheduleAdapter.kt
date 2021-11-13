@@ -17,7 +17,7 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>) : Recycler
 
         fun bind(item: Schedule) {
             title.text = item.title
-            time.text = "DB에 아직 저장하지 않음"
+            time.text = "09:00 - 16:00"
             content.text = item.content
         }
     }

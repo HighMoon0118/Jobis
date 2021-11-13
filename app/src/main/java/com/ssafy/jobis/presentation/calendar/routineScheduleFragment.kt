@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.databinding.FragmentRoutineScheduleBinding
 import kotlinx.android.synthetic.main.fragment_routine_schedule.*
@@ -433,13 +434,13 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             routineDaySelect.sort()
 
             // db 저장
-//            val newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
-//            val db = RoutineScheduleDatabase.getInstance(activity)
-//            CoroutineScope(Dispatchers.IO).launch {
-//                db!!.routineScheduleDao().insert(newRoutineSchedule)
-//                val dbList = db.routineScheduleDao().getAll()
-//                println("DB 결과: $dbList")
-//            }
+            val newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
+            val db = RoutineScheduleDatabase.getInstance(activity)
+            CoroutineScope(Dispatchers.IO).launch {
+                db!!.routineScheduleDao().insert(newRoutineSchedule)
+                val dbList = db.routineScheduleDao().getAll()
+                println("DB 결과: $dbList")
+            }
 
         }
 
