@@ -111,20 +111,34 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         // 사전작업2. room에서 반복 일정 데이터 가져와서 표시해주기
-//        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
-//        CoroutineScope(Dispatchers.IO).launch {
-//            var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
-//            println("테스트: " + routineScheduleList)
-//            for (i: Int in 0..routineScheduleList.size-1) {
-//                // 하나의 반복 일정에 대해
-//                for (j: Int in 0..routineScheduleList[i].dayList!!.size-1) {
-//                    var routine = routineScheduleList[i].dayList!![j] // 날짜
-//                    Calendar.DAY_OF_MONTH
-//                }
-//            }
+        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
+
+            println("테스트: " + routineScheduleList)
+            for (i: Int in 0..routineScheduleList.size-1) {
+                var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
+                // 하나의 반복 일정에 대해
+                for (j: Int in 0..routineScheduleList[i].dayList!!.size-1) {
+                    println("j:" + j)
+                    var routine = routineScheduleList[i].dayList!![j] // 날짜
+                    println("routine: " + routine)
+                    val routine_year = routine.get(Calendar.YEAR)
+                    val routine_month = routine.get(Calendar.MONTH)
+                    val routine_day = routine.get(Calendar.DAY_OF_MONTH)
+                    println("반복 일정 출력: " + routine_year + routine_month + routine_day)
+                    var date = Calendar.getInstance()
+                    date.set(routine_year, routine_month, routine_day)
+
+                    var day = CalendarDay.from(date) // Calendar 자료형을 넣어주면 됨
+                    dates.add(day)
+                }
+//                calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
+            }
 
 
-//        }
+        }
 
         // 1. 맨 처음 달력 "yyyy년 yy월"로 표기하기
         calendar.setTitleFormatter(TitleFormatter {
@@ -188,7 +202,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         binding.calendarBtn.setOnClickListener {
             val intent = Intent(this.context, CalendarScheduleActivity::class.java)
             intent.putExtra("selected_year", firstYear)
-            intent.putExtra("selected_month", firstMonth)
+            intent.putExtra("selected_month", firstMonth+1)
             intent.putExtra("selected_day", firstDay)
             startActivity(intent)
         }
