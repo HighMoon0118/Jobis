@@ -10,12 +10,14 @@
         android:id="@+id/calendar_view_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="date" />
+        android:text="date"
+        android:padding="10dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/viewpager_content_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_schedule"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:padding="10dp"/>
 </LinearLayout>

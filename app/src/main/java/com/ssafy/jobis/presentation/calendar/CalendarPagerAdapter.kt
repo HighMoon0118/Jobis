@@ -3,6 +3,8 @@ package com.ssafy.jobis.presentation
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.CalendarViewpagerBinding
@@ -21,11 +23,15 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val binding = (holder as CalendarPagerViewHolder).binding
         // 뷰에 데이터 출력
-        var txt = dates[position][0].year.toString() + dates[position][0].month.toString() + dates[position][0].day.toString()
+        var txt = (dates[position][0].month+1).toString() + "월 " + dates[position][0].day.toString() + "일"
         binding.calendarViewDate.text = txt
 //        binding.calendarViewTitle.text = dates[position][0].title // 이런 식으로 사용해야 함
 //        binding.calendarViewContent.text = dates[position][0].content
         binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
+
+        // 구분선 추가
+        val dividerItemDecoration = DividerItemDecoration(binding.viewpagerContentRecycler.context , LinearLayoutManager.VERTICAL);
+        binding.viewpagerContentRecycler.addItemDecoration(dividerItemDecoration)
     }
 
     override fun getItemCount(): Int {

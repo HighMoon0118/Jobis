@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item_schedule_frame"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,17 +15,22 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="title"
+            android:textColor="@color/black"
+            android:textSize="20sp"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/schedule_time"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="time"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:layout_weight="2" />
     </LinearLayout>
     <TextView
         android:id="@+id/schedule_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="content" />
+        android:text="content"
+        android:textColor="@color/black"/>
 </LinearLayout>

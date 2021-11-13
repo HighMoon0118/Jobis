@@ -32,6 +32,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.materialcalendar.EventDecorator
 import kotlinx.coroutines.CoroutineScope
@@ -55,13 +56,13 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
         // 알람
-        binding.createNotification.setOnClickListener {
-            setAlarm()
-        }
-
-        binding.deleteNotification.setOnClickListener {
-            cancelAlarm()
-        }
+//        binding.createNotification.setOnClickListener {
+//            setAlarm()
+//        }
+//
+//        binding.deleteNotification.setOnClickListener {
+//            cancelAlarm()
+//        }
 
 
         // 버튼 연결 test
@@ -72,20 +73,20 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         // room 데이터 추가 test용
-        binding.roomTest.setOnClickListener {
-            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 11, "09:00", "18:00", -1, -1, "삼성전기")
-            var db = CalendarDatabase.getInstance(this.context)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.calendarDao().insert(newSchedule)
-                var dbList = db!!.calendarDao().getAll()
-                println("DB 결과: " + dbList)
-            }
-        }
+//        binding.roomTest.setOnClickListener {
+//            var newSchedule = Schedule("할 일", "2022 서류접수", 2021, 11, 11, "09:00", "18:00", -1, -1, "삼성전기")
+//            var db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                var dbList = db!!.calendarDao().getAll()
+//                println("DB 결과: " + dbList)
+//            }
+//        }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
 
-        // 0. room에서 데이터 가져와서 점 찍어주기
+        // 사전작업1. room에서 단일 일정 데이터 가져와서 표시해주기
         var scheduleData = CalendarDatabase.getInstance(this.context)
         CoroutineScope(Dispatchers.IO).launch {
             var scheduleList = scheduleData!!.calendarDao().getAll()
@@ -93,7 +94,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
                 for (i in 0..scheduleList.size-1) {
                     var dot_year = scheduleList[i].year
-                    var dot_month = scheduleList[i].month-1
+                    var dot_month = scheduleList[i].month
                     var dot_day = scheduleList[i].day
                     println("DB결과: " + scheduleList[i])
                     // 점 찍기 => 여러 날에 표시하려고 days를 구성해서 추가해주는 방식..
@@ -112,6 +113,15 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             }
+        }
+
+        // 사전작업2. room에서 반복 일정 데이터 가져와서 표시해주기
+        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
+        CoroutineScope(Dispatchers.IO).launch {
+            var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
+            println("테스트: " + routineScheduleList)
+            
+
         }
 
         // 1. 맨 처음 달력 "yyyy년 yy월"로 표기하기
@@ -147,8 +157,9 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 if (scheduleList.size > 0) {
                     for (j in 0..scheduleList.size-1) {
                         println("scheduleListJ: " + scheduleList[j].month)
+                        println("currentMonth: " + currentMonth)
                         println("Month: " + currentMonth)
-                        if (currentYear == scheduleList[j].year && currentMonth == scheduleList[j].month-1 && i == scheduleList[j].day) {
+                        if (currentYear == scheduleList[j].year && currentMonth == scheduleList[j].month && i == scheduleList[j].day) {
                             temp_schedule.add(scheduleList[j])
                         }
                     }
@@ -176,6 +187,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 binding.calendarView.setSelectedDate(calc)
             }
         })
+
         return binding.root
     }
 
@@ -250,7 +262,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 // 1. 해당 날짜에 스케줄이 있을 때
                 if (scheduleList.size > 0) {
                     for (j in 0..scheduleList.size-1) {
-                        if (year == scheduleList[j].year && month == scheduleList[j].month-1 && i == scheduleList[j].day) {
+                        if (year == scheduleList[j].year && month == scheduleList[j].month && i == scheduleList[j].day) {
                             temp_schedule.add(scheduleList[j])
                         }
                     }
