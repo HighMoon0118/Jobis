@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="MyTimePickerTheme" parent="android:Widget.Material.Light.TimePicker">
+    <style name="MyTimePickerTheme" parent="android:Widget.Material.TimePicker">
         <item name="android:timePickerMode">spinner</item>
+        <item name="android:headerBackground">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/TimePickerButtonText</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/TimePickerButtonText</item>
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+<!--        <item name="android:buttonBarPositiveButtonStyle">@style/PickerButtonStyle</item>-->
+<!--        <item name="android:buttonBarNegativeButtonStyle">@style/PickerButtonStyle</item>-->
+<!--        <item name="android:dialogTheme">@style/MyDatePickerDialogTheme</item>-->
+<!--        <item name="android:textColor">@color/black</item>-->
+<!--        <item name="android:textColorPrimary">@color/black</item>-->
+<!--        <item name="colorPrimary">@color/colorAccent</item>-->
+<!--        <item name="colorPrimaryDark">@color/colorAccent</item>-->
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+<!--        <item name="colorOnPrimary">@color/colorAccent</item>-->
+<!--        <item name="colorOnSurface">@color/colorAccent</item>-->
+
+
     </style>
+
+
+    <!--    <style name="MyDatePickerTheme" parent="android:Widget.Material.Light.DatePicker">-->
+    <!--        <item name="android:headerBackground"> @color/primary</item>-->
+    <!--        <item name="android:calendarTextColor">@color/primary</item>-->
+    <!--        <item name="android:yearListSelectorColor"> @color/colorAccent</item>-->
+    <!--        <item name="android:dayOfWeekBackground">@color/cardview_dark_background</item>-->
+    <!--        <item name="android:yearListSelectorColor">@color/browser_actions_title_color</item>-->
+    <!--    </style>-->
+
+
+    <style name="MyDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+<!--선택된 날짜의 동그라미 색상-->
+        <item name="colorAccent">@color/primary_dark</item>
+<!--달력 헤더 / headerBackground 로도 적용 가능-->
+        <item name="android:colorAccent">@color/primary</item>
+<!--버튼-->
+<!--        <item name="android:buttonBarPositiveButtonStyle">@style/PickerButtonStyle</item>-->
+<!--        <item name="android:buttonBarNegativeButtonStyle">@style/PickerButtonStyle</item>-->
+    </style>
+
+    <style name="PickerButtonStyle" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="TimePickerButtonText" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@android:color/holo_red_light</item>
+    </style>
+
+<!--    <style name="themeOnverlay_timePicker" parent="@style/ThemeOverlay.MaterialComponents.Dialog">-->
+<!--        <item name="colorControlActivated">@color/black</item>-->
+<!--        <item name="colorAccent">@color/light_gray</item>-->
+<!--        <item name="android:textColorPrimary">@color/primary_light</item>-->
+<!--        <item name="android:textColorSecondary">#cfcf66</item>-->
+<!--    </style>-->
+
+
 </resources>

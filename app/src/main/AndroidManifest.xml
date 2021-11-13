@@ -2,42 +2,51 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ssafy.jobis">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".presentation.login.Jobis"
         android:allowBackup="true"
         android:icon="@mipmap/ic_main"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_main_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
-        android:name=".presentation.login.Jobis">
-
+        android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity
-            android:name="com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity"
+            android:name=".presentation.community.search.CommunitySearchActivity"
             android:exported="true" />
         <activity
-            android:name="com.ssafy.jobis.presentation.MainActivity"
+            android:name=".presentation.community.detail.CommunityDetailActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustNothing"/>
-        <activity android:name="com.ssafy.jobis.presentation.login.UserActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".presentation.login.UserActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.ssafy.jobis.presentation.chat.ChatActivity" />
-        <activity android:name="com.ssafy.jobis.presentation.CalendarScheduleActivity">
-            android:windowSoftInputMode="adjustResize">
+        <activity android:name=".presentation.chat.ChatActivity" />
+        <activity android:name=".presentation.CalendarScheduleActivity"
+            android:theme="@style/Theme.Jobis">
+<!--            android:windowSoftInputMode="adjustResize">-->
+
         </activity>
 
-        <service android:name="com.ssafy.jobis.presentation.MyFCMService"
+
+        <service
+            android:name=".presentation.MyFCMService"
             android:exported="true"
             android:stopWithTask="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

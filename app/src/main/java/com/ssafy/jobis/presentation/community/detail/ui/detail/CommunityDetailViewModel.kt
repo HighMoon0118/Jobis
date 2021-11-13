@@ -21,7 +21,8 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
     val likeCount: LiveData<Int> = _likeCount
     private val _comments = MutableLiveData<MutableList<Comment>>()
     val comments: LiveData<MutableList<Comment>> = _comments
-
+    private val _deleted = MutableLiveData<Boolean>()
+    val deleted: LiveData<Boolean> = _deleted
 
     fun loadPost(id: String, uid: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -29,7 +30,6 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
             _post.value = postResponse!!
             val commentList = mutableListOf<Comment>()
             for (item in postResponse.comment_list) {
-                Log.d("test", "skdljflsdk ${item} ${item.javaClass.name}")
                 commentList.add(Comment.from(item as HashMap<String, Any>))
             }
             _comments.value = commentList
@@ -42,6 +42,12 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
             }
             _isLiked.value = flag
             _likeCount.value = postResponse.like.size
+        }
+    }
+
+    fun deletePost(id: String, uid: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            _deleted.value = communityRepository.deletePost(id, uid)
         }
     }
 
@@ -59,6 +65,16 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
         CoroutineScope(Dispatchers.Main).launch {
             val commentResponse = communityRepository.createComment(text, post_id, uid)
             if (commentResponse == true) {
+                loadPost(post_id, uid)
+            }
+        }
+    }
+
+    fun deleteComment(post_id: String, comment: Comment, uid: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            Log.d("test", "${post_id} ${comment} ${uid}")
+            val response = communityRepository.deleteComment(post_id, comment, uid)
+            if (response == true) {
                 loadPost(post_id, uid)
             }
         }
