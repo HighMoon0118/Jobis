@@ -64,13 +64,16 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 //            cancelAlarm()
 //        }
 
+        // 일정 추가 버튼 연결
+//        binding.calendarBtn.setOnClickListener {
+//            val intent = Intent(this.context, CalendarScheduleActivity::class.java)
+//            intent.putExtra("selected_year", )
+//            intent.putExtra("selected_month", )
+//            intent.putExtra("selected_day", )
+//            startActivity(intent)
+//        }
 
-        // 버튼 연결 test
-        binding.calendarBtn.setOnClickListener {
-            val intent = Intent(this.context, CalendarScheduleActivity::class.java)
-            intent.putExtra("my_data", "5")
-            startActivity(intent)
-        }
+
 
         // room 데이터 추가 test용
 //        binding.roomTest.setOnClickListener {
@@ -116,13 +119,20 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         // 사전작업2. room에서 반복 일정 데이터 가져와서 표시해주기
-        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
-        CoroutineScope(Dispatchers.IO).launch {
-            var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
-            println("테스트: " + routineScheduleList)
-            
+//        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
+//        CoroutineScope(Dispatchers.IO).launch {
+//            var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
+//            println("테스트: " + routineScheduleList)
+//            for (i: Int in 0..routineScheduleList.size-1) {
+//                // 하나의 반복 일정에 대해
+//                for (j: Int in 0..routineScheduleList[i].dayList!!.size-1) {
+//                    var routine = routineScheduleList[i].dayList!![j] // 날짜
+//                    Calendar.DAY_OF_MONTH
+//                }
+//            }
 
-        }
+
+//        }
 
         // 1. 맨 처음 달력 "yyyy년 yy월"로 표기하기
         calendar.setTitleFormatter(TitleFormatter {
@@ -178,6 +188,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         // 처음 보여줄 날짜
         var firstYear = calc.get(Calendar.YEAR)
         var firstMonth = calc.get(Calendar.MONTH)
+        var firstDay = calc.get(Calendar.DATE)
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
         binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -187,6 +198,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 binding.calendarView.setSelectedDate(calc)
             }
         })
+
 
         return binding.root
     }
@@ -298,6 +310,15 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var selectedYear = date.year
         if (selected) {
             binding.calendarViewpager.setCurrentItem(selectedDay-1) // 선택한 날짜로 이동
+
+            binding.calendarBtn.setOnClickListener {
+                val intent = Intent(this.context, CalendarScheduleActivity::class.java)
+                intent.putExtra("selected_year", selectedYear)
+                intent.putExtra("selected_month", selectedMonth)
+                intent.putExtra("selected_day", selectedDay)
+                startActivity(intent)
+            }
+
         }
     }
 }

@@ -23,8 +23,10 @@ class CalendarScheduleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-        var myData = intent.getStringExtra("my_data")
-        println("액티비티 데이터 전달: " + myData)
+        var year = intent.getIntExtra("selected_year", 0)
+        var month = intent.getIntExtra("selected_month", 0)
+        var day = intent.getIntExtra("selected_day", 0)
+        println("액티비티 데이터 전달: " + year + month + day)
 
 
         scheduleTopAppBar.setOnMenuItemClickListener { menuItem ->
