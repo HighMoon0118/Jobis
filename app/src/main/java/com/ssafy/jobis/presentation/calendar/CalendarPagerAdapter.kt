@@ -27,7 +27,13 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
         binding.calendarViewDate.text = txt
 //        binding.calendarViewTitle.text = dates[position][0].title // 이런 식으로 사용해야 함
 //        binding.calendarViewContent.text = dates[position][0].content
-        binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
+
+        if (dates[position][0].title == "일정 없음") {
+            binding.emptyText.layoutParams.height = 100
+            binding.emptyText.text = "예정된 일정이 없습니다."
+        } else {
+            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
+        }
 
         // 구분선 추가
         val dividerItemDecoration = DividerItemDecoration(binding.viewpagerContentRecycler.context , LinearLayoutManager.VERTICAL);

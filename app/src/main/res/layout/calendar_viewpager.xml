@@ -12,6 +12,14 @@
         android:layout_height="wrap_content"
         android:text="date"
         android:padding="10dp"/>
+    <TextView
+        android:id="@+id/empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/black"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/viewpager_content_recycler"
         android:layout_width="match_parent"
