@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.getSystemServiceName
 import androidx.fragment.app.Fragment
+import androidx.room.ColumnInfo
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.messaging.RemoteMessage
 import com.ssafy.jobis.databinding.FragmentCalendarBinding
@@ -115,26 +116,21 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         CoroutineScope(Dispatchers.IO).launch {
             var routineScheduleList = routineScheduleData!!.routineScheduleDao().getAll()
-
-            println("테스트: " + routineScheduleList)
             for (i: Int in 0..routineScheduleList.size-1) {
                 var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
                 // 하나의 반복 일정에 대해
                 for (j: Int in 0..routineScheduleList[i].dayList!!.size-1) {
-                    println("j:" + j)
                     var routine = routineScheduleList[i].dayList!![j] // 날짜
-                    println("routine: " + routine)
                     val routine_year = routine.get(Calendar.YEAR)
                     val routine_month = routine.get(Calendar.MONTH)
                     val routine_day = routine.get(Calendar.DAY_OF_MONTH)
-                    println("반복 일정 출력: " + routine_year + routine_month + routine_day)
                     var date = Calendar.getInstance()
                     date.set(routine_year, routine_month, routine_day)
 
                     var day = CalendarDay.from(date) // Calendar 자료형을 넣어주면 됨
                     dates.add(day)
                 }
-//                calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
+                calendar.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             }
 
 
@@ -166,39 +162,70 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var currentYear = calc.get(Calendar.YEAR)
         CoroutineScope(Dispatchers.IO).launch {
             var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
-            for (i in 1..lastDay) {
+            var routineList = routineScheduleData!!.routineScheduleDao().getAll() // 모든 루틴 가져오기
+            for (k in 1..lastDay) {
+
                 var temp_schedule = ArrayList<Schedule>()
+
+                // 반복 일정 처리
+                if (routineList.size > 0) {
+                    // i는 반복 일정 한 세트
+                    for (i in 0..routineList.size-1) {
+                        var title = routineList[i].title
+                        var content = routineList[i].content
+                        // j는 각 반복 일정의 날짜를 구하기 위함
+                        for (j in 0..routineList[i].dayList!!.size-1) {
+                            var routine_year = routineList[i].dayList!![j].get(Calendar.YEAR)
+                            var routine_month = routineList[i].dayList!![j].get(Calendar.MONTH)
+                            var routine_day = routineList[i].dayList!![j].get(Calendar.DATE)
+                            if (currentYear == routine_year && currentMonth == routine_month && k == routine_day) { // 이번 달의 일정일 때만 아래 동작을 수행한다.
+                                var startTime = ""
+                                var endTime = ""
+                                var studyId = 0
+                                var groupId = 0
+                                var companyName = ""
+                                var routine_schedule = Schedule(title, content, routine_year, routine_month, routine_day, startTime, endTime, studyId, groupId, companyName)
+                                temp_schedule.add(routine_schedule)
+                            }
+                        }
+                    }
+                }
+
+                // 단일 일정 처리
                 // calendarDates의 원소를 하나하나 만들어 넣을 것임
                 // 1. 해당 날짜에 스케줄이 있을 때
                 if (scheduleList.size > 0) {
                     for (j in 0..scheduleList.size-1) {
-                        println("scheduleListJ: " + scheduleList[j].month)
-                        println("currentMonth: " + currentMonth)
-                        println("Month: " + currentMonth)
-                        if (currentYear == scheduleList[j].year && currentMonth == scheduleList[j].month && i == scheduleList[j].day) {
+                        if (currentYear == scheduleList[j].year && currentMonth == scheduleList[j].month && k == scheduleList[j].day) {
                             temp_schedule.add(scheduleList[j])
                         }
                     }
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
+                println("TEMP_SCHEDULE: " + temp_schedule.size)
                 if (temp_schedule.size == 0) {
-                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, i, "", "", -1, -1, "")
+                    val empty_schedule = Schedule("일정 없음", "", currentYear, currentMonth, k, "", "", -1, -1, "")
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
             }
-            println("일정: " + calendarDates)
         }
 
+        // coroutine이 끝나고 나서 뷰페이저를 구성해야 빈 화면이 보이지 않으므로..
+        while (calendarDates.size == 0) {
+            println("아직 coroutine")
+        }
 
         // 처음 보여줄 날짜
         var firstYear = calc.get(Calendar.YEAR)
         var firstMonth = calc.get(Calendar.MONTH) + 1
         var firstDay = calc.get(Calendar.DATE)
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
+        binding.calendarViewpager.currentItem = firstDay-1 // 선택한 날짜로 이동
 
         // 처음 선택되어 있는 날짜 = 현재 날짜, + 버튼에 연결된 날짜 = 현재 날짜
         binding.calendarView.setSelectedDate(calc)
+
         binding.calendarBtn.setOnClickListener {
             val intent = Intent(this.context, CalendarScheduleActivity::class.java)
             intent.putExtra("selected_year", firstYear)
@@ -206,15 +233,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             intent.putExtra("selected_day", firstDay)
             startActivity(intent)
         }
-//        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                calc.set(firstYear, firstMonth, position+1)
-//                // you are on the first page
-//                binding.calendarView.setSelectedDate(calc)
-//            }
-//        })
-
 
         return binding.root
     }
@@ -272,6 +290,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
             simpleDateFormat.format(date?.date?.time)
         })
+
         // 뷰페이저도 초기화 해주고 정보 다시 가져와야 한다
         var calendarDates = ArrayList<ArrayList<Schedule>>()
         var year = date?.year
@@ -282,26 +301,60 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
 
         var scheduleData = CalendarDatabase.getInstance(this.context)
+        var routineScheduleData = RoutineScheduleDatabase.getInstance(this.context)
+
         CoroutineScope(Dispatchers.IO).launch {
             var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
-            for (i in 1..lastDay) {
+            var routineList = routineScheduleData!!.routineScheduleDao().getAll() // 모든 루틴 가져오기
+            for (k in 1..lastDay) {
+
                 var temp_schedule = ArrayList<Schedule>()
+
+                // 반복 일정 처리
+                if (routineList.size > 0) {
+                    // i는 반복 일정 한 세트
+                    for (i in 0..routineList.size-1) {
+                        var title = routineList[i].title
+                        var content = routineList[i].content
+                        // j는 각 반복 일정의 날짜를 구하기 위함
+                        for (j in 0..routineList[i].dayList!!.size-1) {
+                            var routine_year = routineList[i].dayList!![j].get(Calendar.YEAR)
+                            var routine_month = routineList[i].dayList!![j].get(Calendar.MONTH)
+                            var routine_day = routineList[i].dayList!![j].get(Calendar.DATE)
+                            if (year == routine_year && month == routine_month && k == routine_day) { // 이번 달의 일정일 때만 아래 동작을 수행한다.
+                                var startTime = ""
+                                var endTime = ""
+                                var studyId = 0
+                                var groupId = 0
+                                var companyName = ""
+                                var routine_schedule = Schedule(title, content, routine_year, routine_month, routine_day, startTime, endTime, studyId, groupId, companyName)
+                                temp_schedule.add(routine_schedule)
+                            }
+                        }
+                    }
+                }
+                // 단일 일정 처리
                 // calendarDates의 원소를 하나하나 만들어 넣을 것임
                 // 1. 해당 날짜에 스케줄이 있을 때
                 if (scheduleList.size > 0) {
                     for (j in 0..scheduleList.size-1) {
-                        if (year == scheduleList[j].year && month == scheduleList[j].month && i == scheduleList[j].day) {
+                        if (year == scheduleList[j].year && month == scheduleList[j].month && k == scheduleList[j].day) {
                             temp_schedule.add(scheduleList[j])
                         }
                     }
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
+                println("TEMP_SCHEDULE: " + temp_schedule.size)
                 if (temp_schedule.size == 0) {
-                    val empty_schedule = Schedule("일정 없음", "", year, month, i, "", "",-1, -1, "")
+                    val empty_schedule = Schedule("일정 없음", "", year, month, k, "", "", -1, -1, "")
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가
             }
+        }
+
+        while (calendarDates.size == 0) {
+            println("아직 coroutine")
         }
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
         binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -325,7 +378,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var selectedMonth = date.month + 1
         var selectedYear = date.year
         if (selected) {
-            binding.calendarViewpager.setCurrentItem(selectedDay-1) // 선택한 날짜로 이동
+            binding.calendarViewpager.currentItem = selectedDay-1 // 선택한 날짜로 이동
 
             binding.calendarBtn.setOnClickListener {
                 val intent = Intent(this.context, CalendarScheduleActivity::class.java)
