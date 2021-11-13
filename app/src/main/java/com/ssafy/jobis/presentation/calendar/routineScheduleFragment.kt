@@ -15,6 +15,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.RoutineSchedule
+import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.FragmentRoutineScheduleBinding
 import kotlinx.android.synthetic.main.activity_schedule.*
@@ -24,6 +26,16 @@ import kotlinx.android.synthetic.main.fragment_routine_schedule.endTimeBtn
 import kotlinx.android.synthetic.main.fragment_routine_schedule.startDateBtn
 import kotlinx.android.synthetic.main.fragment_routine_schedule.startTimeBtn
 import kotlinx.android.synthetic.main.fragment_routine_schedule.view.*
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.endDateBtn
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.endTimeBtn
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.scheduleContentEditText
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.scheduleTitleEditText
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.startDateBtn
+import kotlinx.android.synthetic.main.fragment_routine_schedule.view.startTimeBtn
+import kotlinx.android.synthetic.main.fragment_single_schedule.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -84,6 +96,7 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
         var endMinute = 0
         var title = ""
         var content = ""
+        var routineDaySelect = mutableListOf<Int>()
 
 //        view.dayOfWeek0.setOnClickListener{
 //            if (day0 == true ){
@@ -92,8 +105,8 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
 //            }
 //        }
         view.dayOfWeek0.setOnClickListener{
-            var dayofWeekSelect = mutableListOf(1, 3, 5)
-            println(dayofWeekSelect)
+            var dayOfWeekSelect = mutableListOf(1, 3, 5)
+            println(dayOfWeekSelect)
             println("start, $startDateString")
             println("end, $endDateString")
             println("$startYear, $startMonth, $startDay")
@@ -108,17 +121,16 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
             println("startDayOfWeek, $startDayOfWeek")
             var startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
             println("startDayOfYear, $startDayOfYear")
-            var routineDaySelect = mutableListOf<Int>()
             var endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
             println("endDayOfYear, $endDayOfYear")
             var addCal = Calendar.getInstance()
-            for(i in dayofWeekSelect) {
+            for(i in dayOfWeekSelect) {
                 println(i)
                 if (i == startDayOfWeek) {
                     println("오늘 날짜 저장")
                     var addDay = startDayOfYear
                     while(addDay <= endDayOfYear){
-                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
+//                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
                         println("addCal, $addCal")
                         routineDaySelect.add(addDay)
                         addDay += 7
@@ -128,8 +140,8 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
                     var addDay = startDayOfYear + tmp
                     println("$tmp 만큼 더해서 저장")
                     while(addDay <= endDayOfYear){
-                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
-                        println("addCal, $addCal")
+//                        addCal.set(Calendar.DAY_OF_YEAR, addDay)
+//                        println("addCal, $addCal")
                         routineDaySelect.add(addDay)
                         addDay += 7
                     }
@@ -146,10 +158,11 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
             routineDaySelect.sort()
             println(routineDaySelect)
 
-
             // + 7씩 더해서 반복
             // 날짜가 넘치면 멈추기
         }
+
+
 //        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //            override fun onNothingSelected(parent: AdapterView<*>?) {
 //            }
@@ -329,7 +342,57 @@ class RoutineScheduleFragment(val activity: Activity) : Fragment() {
         }
 
 
+        view.routineScheduleAddBtn.setOnClickListener {
+            println("--------------------")
+            println("일정 등록 버튼 클릭")
+            println("시작 시간, $scheduleStartTime")
+            println("끝 시간, $scheduleEndTime")
 
+            // 시작 날짜 따로 안정했으면
+            if (startYear == 0) {
+                // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장
+                startYear = SimpleDateFormat("yyyy").format(currentTime.time).toInt()
+                startMonth = SimpleDateFormat("MM").format(currentTime.time).toInt()
+                startDay = SimpleDateFormat("dd").format(currentTime.time).toInt()
+
+            }
+            // 시작 시간 안정했으면
+            if (startTimeString == "") {
+                // 시작 시간 "" 이므로 현재 시간 할당한거 저장
+                startTimeString = scheduleStartTime
+                println(startTimeString)
+
+            }
+            // 끝 시간 안정했을경우
+            if (endTimeString == "") {
+                endTimeString = scheduleEndTime
+                println(endTimeString)
+            }
+
+            title = view.scheduleTitleEditText.text.toString()
+            content = view.scheduleContentEditText.text.toString()
+
+            println("할당 후 시작, $startTimeString")
+            println("할당 후 끝, $endTimeString")
+            // db 저장
+            println("routineDay")
+            var newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
+            var db = RoutineScheduleDatabase.getInstance(activity)
+            CoroutineScope(Dispatchers.IO).launch {
+                db!!.routineScheduleDao().insert(newRoutineSchedule)
+                var dbList = db!!.routineScheduleDao().getAll()
+                println("DB 결과: " + dbList)
+            }
+        }
+
+        view.routineScheduleList.setOnClickListener {
+            println("일정 확인")
+            var db = RoutineScheduleDatabase.getInstance(this.context)
+            CoroutineScope(Dispatchers.IO).launch {
+                var dbList = db!!.routineScheduleDao().getAll()
+                println("일정 결과: " + dbList)
+            }
+        }
 
         return view
 

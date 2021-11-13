@@ -272,7 +272,6 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
 //                var dbList = db!!.calendarDao().getAll()
 //                println("DB 결과: " + dbList)
 //            }
-
             }
 
         }
