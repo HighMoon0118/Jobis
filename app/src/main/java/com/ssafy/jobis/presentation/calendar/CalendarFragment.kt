@@ -64,14 +64,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 //            cancelAlarm()
 //        }
 
-        // 일정 추가 버튼 연결
-//        binding.calendarBtn.setOnClickListener {
-//            val intent = Intent(this.context, CalendarScheduleActivity::class.java)
-//            intent.putExtra("selected_year", )
-//            intent.putExtra("selected_month", )
-//            intent.putExtra("selected_day", )
-//            startActivity(intent)
-//        }
 
 
 
@@ -187,17 +179,27 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // 처음 보여줄 날짜
         var firstYear = calc.get(Calendar.YEAR)
-        var firstMonth = calc.get(Calendar.MONTH)
+        var firstMonth = calc.get(Calendar.MONTH) + 1
         var firstDay = calc.get(Calendar.DATE)
         binding.calendarViewpager.adapter = CalendarPagerAdapter(calendarDates)
-        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                calc.set(firstYear, firstMonth, position+1)
-                // you are on the first page
-                binding.calendarView.setSelectedDate(calc)
-            }
-        })
+
+        // 처음 선택되어 있는 날짜 = 현재 날짜, + 버튼에 연결된 날짜 = 현재 날짜
+        binding.calendarView.setSelectedDate(calc)
+        binding.calendarBtn.setOnClickListener {
+            val intent = Intent(this.context, CalendarScheduleActivity::class.java)
+            intent.putExtra("selected_year", firstYear)
+            intent.putExtra("selected_month", firstMonth)
+            intent.putExtra("selected_day", firstDay)
+            startActivity(intent)
+        }
+//        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                calc.set(firstYear, firstMonth, position+1)
+//                // you are on the first page
+//                binding.calendarView.setSelectedDate(calc)
+//            }
+//        })
 
 
         return binding.root
