@@ -361,64 +361,101 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             // Calendar 객체에 시작 날짜 넣어서 저장
             val startCal = Calendar.getInstance()
             startCal.set(startYear, startMonth, startDay)
+            println(startCal)
             // Calendar 객체에 끝 날짜 넣어서 저장
             val endCal = Calendar.getInstance()
             endCal.set(endYear, endMonth, endDay)
             // 시작하는 날짜의 요일
             val startDayOfWeek= startCal.get(Calendar.DAY_OF_WEEK)
-            // 시작하는 날짜의 날 (int, nnn) (1~365로 나타난다)
-            val startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
-            // 끝 날짜
-            val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
+//            // 시작하는 날짜의 날 (int, nnn) (1~365로 나타난다)
+//            val startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
+//            // 끝 날짜
+//            val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
 
+//
+//            if (startDayOfYear > endDayOfYear){
+//                Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//            if (startDayOfYear == endDayOfYear){
+//                Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//
+//            if (endHour<startHour){
+//                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            } else if (endHour == startHour && endMinute < startMinute) {
+//                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
 
-            if (startDayOfYear > endDayOfYear){
-                Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (startDayOfYear == endDayOfYear){
-                Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-
-            if (endHour<startHour){
-                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (endHour == startHour && endMinute < startMinute) {
-                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-
-
+//            var cal1 = Calendar.getInstance()
+//            cal1.set(startYear, startMonth, startDay)
+//            println("-----------------------")
+//            println(startCal)
+//            println(cal1)
+//            var cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
+//            println("cal1mtd, $cal1MilliToDate")
+//            println(endCal)
+            val endMilli = endCal.timeInMillis
+//            println("끝밀리, $endMilli")
+            val endMilliToDate = endMilli / (24*60*60*1000)
+            println("끝밀리투데이트,$endMilliToDate")
             // 버튼 클릭할때마다 새로 담아야해서 안쪽에서 선언
             // 1~7까지 순회하면서
-            val routineDaySelect = mutableListOf<Int>()
+            val routineDaySelect = mutableListOf<Calendar>()
             for(i in 1..7) {
                 if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                     when {
                         i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
-                            var addDay = startDayOfYear
-                            while(addDay <= endDayOfYear){
-                                routineDaySelect.add(addDay)
-                                addDay += 7
+                            val cal1 = Calendar.getInstance()
+                            cal1.set(startYear, startMonth, startDay)
+                            val cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
+                            println("cal1mtd, $cal1MilliToDate")
+                            val diff = (endMilliToDate - cal1MilliToDate)/7
+                            var tmp = 0
+                            while(diff >= tmp){ //
+                                routineDaySelect.add(cal1)
+                                println(cal1.get(Calendar.DAY_OF_YEAR))
+                                cal1.add(Calendar.DATE, 7)
+                                tmp += 1
                             }
                         }
+
                         i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
-                            val tmp = i - startDayOfWeek
-                            var addDay = startDayOfYear + tmp
-                            while(addDay <= endDayOfYear){
-                                routineDaySelect.add(addDay)
-                                addDay += 7
+                            // 며칠 차이인지 확인해서 + a
+                            // 7일 더하면서 반복 저장
+                            val cal2 = Calendar.getInstance()
+                            cal2.set(startYear, startMonth, startDay)
+                            val add = i - startDayOfWeek
+                            cal2.add(Calendar.DATE, add)
+                            val cal2MilliToDate = cal2.timeInMillis / (24*60*60*1000)
+                            println("cal2mtd, $cal2MilliToDate")
+                            val diff = (endMilliToDate - cal2MilliToDate)/7
+                            var tmp = 0
+                            while(diff >= tmp ){
+                                routineDaySelect.add(cal2)
+                                cal2.add(Calendar.DATE, 7)
+                                tmp += 1
                             }
                         }
                         else -> { // 시작 날짜의 요일 > 반복 선택한 요일 중 지금 보고있는 거
-                            val tmp = 7 - startDayOfWeek + i
-                            var addDay = startDayOfYear + tmp
-                            while(addDay <= endDayOfYear){
-                                routineDaySelect.add(addDay)
-                                addDay += 7
+                            // 며칠 차이인지 확인해서 + a
+                            // 7일 더하면서 반복 저장
+                            val add = 7 - startDayOfWeek + i
+                            val cal3 = Calendar.getInstance()
+                            cal3.set(startYear, startMonth, startDay)
+                            cal3.add(Calendar.DATE, add)
+                            val cal3MilliToDate = cal3.timeInMillis / (24*60*60*1000)
+                            println("cal3mtd, $cal3MilliToDate")
+                            val diff = (endMilliToDate - cal3MilliToDate)/7
+                            var tmp = 0
+                            while(diff >= tmp ){
+                                routineDaySelect.add(cal3)
+                                cal3.add(Calendar.DATE, 7)
+                                tmp += 1
                             }
                         }
                     }
@@ -431,6 +468,8 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
             }
             println("------선택된 날----")
             println(routineDaySelect)
+            var size1 = routineDaySelect.size
+            println("사이즈,$size1")
             routineDaySelect.sort()
 
             // db 저장
