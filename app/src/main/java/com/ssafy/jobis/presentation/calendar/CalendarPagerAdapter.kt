@@ -10,6 +10,8 @@ import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.CalendarViewpagerBinding
 import com.ssafy.jobis.presentation.calendar.CalendarFragment
 import com.ssafy.jobis.presentation.calendar.CalendarScheduleAdapter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CalendarPagerViewHolder(val binding: CalendarViewpagerBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -29,9 +31,11 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
 //        binding.calendarViewContent.text = dates[position][0].content
 
         if (dates[position][0].title == "일정 없음") {
-            binding.emptyText.layoutParams.height = 100
+            binding.emptyText.layoutParams.height = 300
             binding.emptyText.text = "예정된 일정이 없습니다."
+            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(ArrayList<Schedule>())
         } else {
+            binding.emptyText.layoutParams.height = 0
             binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
         }
 
