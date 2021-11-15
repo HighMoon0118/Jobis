@@ -25,6 +25,10 @@ class MyStudyFragment: Fragment() {
         val myStudyAdapter = MyStudyAdapter{adapterOnClick()}
         binding.rvMyStudy.adapter = myStudyAdapter
 
+        binding.fabMyStudy.setOnClickListener {
+            val intent = Intent(context, CreateStudy::class.java)
+            startActivity(intent)
+        }
         return binding.root
     }
 

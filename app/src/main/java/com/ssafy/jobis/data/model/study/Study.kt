@@ -16,7 +16,8 @@ data class Study(
     var max_user: Int?,
     var current_user: Int = 1,
     var user_list: List<Crew>? = null,
-    var created_at: String
+    var created_at: String,
+    var unread_chat_cnt : Int? = 0
 )
 
 @Entity(tableName = "crew")
