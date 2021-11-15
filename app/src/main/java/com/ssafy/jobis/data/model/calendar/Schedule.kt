@@ -22,6 +22,7 @@ data class Schedule (
     @ColumnInfo var groupId: Int,
     @ColumnInfo var companyName: String
 
+
     ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }
