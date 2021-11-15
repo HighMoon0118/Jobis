@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ssafy.jobis">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -20,21 +22,21 @@
             android:name="com.ssafy.jobis.presentation.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustNothing"/>
-        <activity android:name="com.ssafy.jobis.presentation.login.UserActivity"
+        <activity
+            android:name="com.ssafy.jobis.presentation.login.UserActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.ssafy.jobis.presentation.chat.ChatActivity" />
+        <activity android:name="com.ssafy.jobis.presentation.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity android:name="com.ssafy.jobis.presentation.CalendarScheduleActivity">
-            android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <service android:name="com.ssafy.jobis.presentation.MyFCMService"
-            android:exported="true"
-            android:stopWithTask="false">
+        <service android:name="com.ssafy.jobis.presentation.chat.MyFCMService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
