@@ -3,6 +3,7 @@ package com.ssafy.jobis.presentation.calendar
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Looper
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -14,20 +15,25 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.OnDeleteClick
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
+import com.ssafy.jobis.databinding.ActivityUserBinding
 import com.ssafy.jobis.databinding.FragmentCalendarBinding
 import com.ssafy.jobis.presentation.CalendarPagerAdapter
+import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.logging.Handler
 import kotlin.collections.ArrayList
+import kotlin.concurrent.timer
 
-class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>) : RecyclerView.Adapter<CalendarScheduleAdapter.ViewHolder>() {
+class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private var frag: CalendarFragment) : RecyclerView.Adapter<CalendarScheduleAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var title: TextView = itemView.findViewById(R.id.schedule_title)
         private var time: TextView = itemView.findViewById(R.id.schedule_time)
@@ -63,7 +69,7 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>) : Recycler
                 var day = datas[position].day
                 var scheduleData = CalendarDatabase.getInstance(holder.itemView.context)
                 var routineScheduleData = RoutineScheduleDatabase.getInstance(holder.itemView.context)
-
+                var calendarDay = CalendarDay.from(year, month, day)
                 // room으로 db에서 삭제
                 CoroutineScope(Dispatchers.IO).launch {
                     var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
@@ -76,7 +82,13 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>) : Recycler
                     }
                 }
 
-                this.notifyDataSetChanged() // 여기서 신호 보내서 뷰페이저 자체를 갱신하면 좋을듯
+                android.os.Handler(Looper.getMainLooper()).postDelayed({
+                    frag.onMonthChanged(frag.calendar_view, calendarDay)
+                    frag.selectedDate(day)
+                }, 0)
+
+
+
 
             })
             builder.setNegativeButton("취소") {
