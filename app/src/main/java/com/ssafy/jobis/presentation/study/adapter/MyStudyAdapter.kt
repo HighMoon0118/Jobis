@@ -41,5 +41,4 @@ class MyStudyAdapter(private val onClick: () -> Unit): RecyclerView.Adapter<Recy
     override fun getItemCount(): Int {
         return 5
     }
-
 }

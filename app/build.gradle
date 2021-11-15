@@ -51,6 +51,8 @@ dependencies {
 
     // 칼라 피커(Color Picker)
     implementation 'com.jaredrummler:colorpicker:1.1.0'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.2'
     // GIF 라이브러리
     compile('com.waynejo:androidndkgif:0.3.3')
 
@@ -96,4 +98,6 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     // circle image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+
 }

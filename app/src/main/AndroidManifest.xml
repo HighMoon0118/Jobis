@@ -14,6 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity
+            android:name=".presentation.chat.ChatLogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.study.CreateStudy"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".presentation.MainActivity" />
+        </activity>
+        <activity
+            android:name=".presentation.study.viewholder.converter"
+            android:exported="false" />
+        <activity
             android:name=".presentation.community.search.CommunitySearchActivity"
             android:exported="true" />
         <activity
