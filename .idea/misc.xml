@@ -12,6 +12,28 @@
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_calendar_viewpager.xml" value="0.21557971014492755" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/fragment_study.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/S05P31B204/app/src/main/res/layout/item_viewpager.xml" value="0.1296875" />
+<<<<<<< HEAD
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable-v23/calendar_not_selected_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable-v23/calendar_selected_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_border.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_not_selected_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_selected_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/custom_dialog_background.xml" value="0.19322916666666667" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_schedule.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/calendar_background.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/calendar_viewpager.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/custom_dialog.xml" value="0.4" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.2" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_login.xml" value="0.25181159420289856" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_my.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_routine_schedule.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_chat.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_my_study_header.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_schedule.xml" value="0.12335359675785208" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/schedule_item.xml" value="0.2513586956521739" />
+=======
+>>>>>>> a13fa1beb801eccb01bd5b748e7adf8254463b19
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable-v24/radius.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/alarm.xml" value="0.5579487179487179" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/drawable/back_button.xml" value="0.32222222222222224" />
@@ -46,7 +68,7 @@
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_my.xml" value="0.4346103038309115" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_my_study.xml" value="0.41875" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_popular_post.xml" value="0.33" />
-        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_post_edit.xml" value="0.22191011235955055" />
+        <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_post_edit.xml" value="0.5505208333333333" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_recent_post.xml" value="0.33" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_signup.xml" value="0.33" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_study.xml" value="0.41875" />
