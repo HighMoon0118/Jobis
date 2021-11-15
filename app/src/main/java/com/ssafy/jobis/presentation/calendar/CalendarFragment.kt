@@ -232,8 +232,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({
+            // 점은 처음부터 다시 찍어야 함
             calendar!!.removeDecorators()
             calendar!!.invalidateDecorators()
+            // 토, 일 색칠 + 오늘 날짜 표시
+            calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
             if (dates.size > 0) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             }
@@ -266,6 +269,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         Handler(Looper.getMainLooper()).postDelayed({
             calendar!!.removeDecorators()
             calendar!!.invalidateDecorators()
+            calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
             for (v: Int in 0..routineDates.size-1) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
             }
