@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class singleScheduleFragement(val activity: Activity, val year: Int, val month: Int, val day: Int) : Fragment() {
+class SingleScheduleFragement(val activity: Activity, val year: Int, val month: Int, val day: Int) : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
