@@ -1,7 +1,6 @@
 package com.ssafy.jobis.presentation.chat
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,20 +22,17 @@ import androidx.core.view.GravityCompat
 import com.ssafy.jobis.R
 import com.ssafy.jobis.databinding.ActivityChatBinding
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
+//import com.ssafy.jobis.R
+//import com.ssafy.jobis.databinding.ActivityChatBinding
+//import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
-import com.ssafy.jobis.view.DrawingView
-import com.jaredrummler.android.colorpicker.ColorPickerDialog
-import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import kotlinx.coroutines.*
 
-class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener {
+class ChatActivity: AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityChatBinding
     private val chatAdapter: ChatAdapter by lazy {
         ChatAdapter()
-    }
-    private val viewPagerAdapter: ViewPagerAdapter by lazy {
-        ViewPagerAdapter(this@ChatActivity)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +48,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         binding.viewpagerChat.apply {
             isUserInputEnabled = false
-            adapter = viewPagerAdapter
+            adapter = ViewPagerAdapter(this@ChatActivity)
         }
 
         setSupportActionBar(binding.tbChat)  // 액션바 설정
@@ -101,7 +97,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
 
 
-    @SuppressLint("ResourceType")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.img_add_chat -> {
@@ -130,33 +125,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     } else {                                                      // 2. 캔버스가 보일 때
                         showKeyboard()
                     }
-                }
-            }
-            R.id.img_select_color -> {
-                ColorPickerDialog
-                    .newBuilder()
-                    .setDialogTitle(R.string.color_dialog_title)
-                    .setSelectedButtonText(R.string.select)
-                    .setCustomButtonText(R.string.custom)
-                    .setPresetsButtonText(R.string.presets)
-                    .show(this)
-            }
-            R.id.img_left -> {
-                binding.viewpagerChat.apply {
-                    if (currentItem > 0) {
-                        currentItem--
-                    }
-                    binding.textViewpagerNum.text = "$currentItem/$childCount"
-                }
-            }
-            R.id.img_right -> {
-                binding.viewpagerChat.apply {
-                    if (currentItem < childCount-1) {
-                        currentItem++
-                    } else if (currentItem == currentItem-1){
-                        viewPagerAdapter.addFragment(DrawingFragment())
-                    }
-                    binding.textViewpagerNum.text = "$currentItem/$childCount"
                 }
             }
         }
@@ -230,14 +198,5 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                 }
             }
         }
-    }
-
-    override fun onColorSelected(dialogId: Int, color: Int) {
-        binding.imgSelectColor.background.setTint(color)
-        DrawingView.color = color
-    }
-
-    override fun onDialogDismissed(dialogId: Int) {
-
     }
 }

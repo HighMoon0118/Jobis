@@ -63,4 +63,13 @@
         <item>기타</item>
     </string-array>
 
+
+    <!--    스터디 생성 -->
+    <string name="create_study_upperbar">스터디 생성</string>
+    <string name="create_study_title">제목</string>
+    <string name="create_study_describe">설명</string>
+    <string name="create_study_submit">만들기</string>
+    <string name="create_study_cancel">취소</string>
+
+
 </resources>
