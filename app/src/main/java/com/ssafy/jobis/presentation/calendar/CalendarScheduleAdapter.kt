@@ -43,7 +43,12 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
             var startTime = item.start_time
             var endTime = item.end_time
             title.text = item.title
-            time.text = "${startTime} - ${endTime}"
+            if (startTime != "") {
+                time.text = "${startTime} - ${endTime}"
+            } else {
+                time.text = "${endTime} 마감"
+            }
+
             content.text = item.content
         }
     }
@@ -77,9 +82,9 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
                     for (num in 0..routineList.size-1) {
                         if (routineList[num].id == datas[position].groupId) {
                             routineScheduleData.routineScheduleDao().delete(routineList[num]) // 해당 routineSchedule 객체 삭제
-//                            datas.remove(datas[position])
                         }
                     }
+                    scheduleData.calendarDao().delete(datas[position])
                 }
 
                 android.os.Handler(Looper.getMainLooper()).postDelayed({
