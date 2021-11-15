@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ssafy.jobis">
+
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".presentation.login.Jobis"
@@ -25,8 +28,11 @@
             android:name=".presentation.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustNothing" />
+
+
         <activity
             android:name=".presentation.login.UserActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,16 +42,12 @@
         </activity>
         <activity android:name=".presentation.chat.ChatActivity" />
         <activity android:name=".presentation.CalendarScheduleActivity"
-            android:theme="@style/Theme.Jobis">
-<!--            android:windowSoftInputMode="adjustResize">-->
-
-        </activity>
+            android:theme="@style/Theme.Jobis"/>
 
 
         <service
-            android:name=".presentation.MyFCMService"
-            android:exported="true"
-            android:stopWithTask="false">
+            android:name=".presentation.chat.MyFCMService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
