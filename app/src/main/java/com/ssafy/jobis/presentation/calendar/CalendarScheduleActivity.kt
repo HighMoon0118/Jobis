@@ -3,6 +3,7 @@ package com.ssafy.jobis.presentation
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -17,6 +18,9 @@ import kotlinx.android.synthetic.main.fragment_single_schedule.*
 
 
 class CalendarScheduleActivity : AppCompatActivity() {
+    lateinit var singleFragment: singleScheduleFragement
+    lateinit var routineFragment: RoutineScheduleFragment
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,16 +32,18 @@ class CalendarScheduleActivity : AppCompatActivity() {
         var day = intent.getIntExtra("selected_day", 0)
         println("액티비티 데이터 전달: " + year + month + day)
 
+        singleFragment = singleScheduleFragement(this, year, month, day)
+        routineFragment = RoutineScheduleFragment(this)
 
         scheduleTopAppBar.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId) {
                 R.id.schedule_item1 -> {
-                    println("저장 체크 클릭함")
-                    var test : Fragment = supportFragmentManager.findFragmentById(R.id.scheduleFrameLayout) as Fragment
-                    println(test)
-                    println("이게뭐람")
-                    println(test.startDate.toString())
-
+//                    println("저장 체크 클릭함")
+//                    var test : Fragment = supportFragmentManager.findFragmentById(R.id.scheduleFrameLayout) as Fragment
+//                    println(test)
+//                    println("이게뭐람")
+//                    println(test.startDate.toString())
+                    routineFragment.getSchedule()
                     true
                 }
                 else -> false
@@ -63,8 +69,9 @@ class CalendarScheduleActivity : AppCompatActivity() {
                 id: Long
             ) {
                 if (position == 0){
+
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.scheduleFrameLayout, singleScheduleFragement(this@CalendarScheduleActivity))
+                        .replace(R.id.scheduleFrameLayout, singleFragment)
                         .commit()
                 } else if (position == 1) {
                     supportFragmentManager.beginTransaction()
@@ -75,5 +82,9 @@ class CalendarScheduleActivity : AppCompatActivity() {
         }
 
     }
+
+//    override fun onClickCreateSchedule(title: String, content: String) {
+//        Log.d("전달받은 데이터", "$title, $content")
+//    }
 }
 

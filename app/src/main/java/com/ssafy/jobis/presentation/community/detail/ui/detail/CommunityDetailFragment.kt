@@ -1,5 +1,8 @@
 package com.ssafy.jobis.presentation.community.detail.ui.detail
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -87,12 +90,14 @@ class CommunityDetailFragment : Fragment() {
         }
 
         binding.postDeleteButton.setOnClickListener {
-            (activity as CommunityDetailActivity).loadingOn()
-            communityDetailViewModel.deletePost(id!!, uid!!)
+            showPopup(0, null)
         }
 
         binding.postEditButton.setOnClickListener {
-            (activity as CommunityDetailActivity).goPostEditFragment(id!!, uid!!)
+            val post = communityDetailViewModel.getPost()
+            if (post != null) {
+                (activity as CommunityDetailActivity).goPostEditFragment(id!!, uid!!, post)
+            }
         }
 
         if (id != null && uid != null) {
@@ -129,7 +134,7 @@ class CommunityDetailFragment : Fragment() {
         adapter.setOnItemClickListener(object: CustomCommentAdapter.OnItemClickListener{
             override fun onItemClick(v: View, comment: Comment, pos: Int) {
                 if ( comment.user_id == uid) {
-                    communityDetailViewModel.deleteComment(id!!, comment, uid!!)
+                    showPopup(1, comment)
                 }
             }
         })
@@ -139,4 +144,36 @@ class CommunityDetailFragment : Fragment() {
             StaggeredGridLayoutManager.VERTICAL)
     }
 
+    fun showPopup(option: Int, comment: Comment?) {
+        val inflater = (activity as CommunityDetailActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val alertDialog = AlertDialog.Builder((activity as CommunityDetailActivity))
+
+        when(option) {
+            0 -> {
+                alertDialog.setTitle("게시글을 삭제하시겠습니까?")
+                    .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                        (activity as CommunityDetailActivity).loadingOn()
+                        communityDetailViewModel.deletePost(id!!, uid!!)
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
+                        return@OnClickListener
+                    })
+                    .create()
+            }
+            1 -> {
+                alertDialog.setTitle("댓글을 삭제하시겠습니까?")
+                    .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                        communityDetailViewModel.deleteComment(id!!, comment!!, uid!!)
+                    })
+                    .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
+                        return@OnClickListener
+                    })
+                    .create()
+            }
+        }
+
+        alertDialog.setView(view)
+        alertDialog.show()
+    }
 }
