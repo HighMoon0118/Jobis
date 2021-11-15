@@ -65,7 +65,6 @@
     </string-array>
 
 
-
     <string name="empty_title">제목을 입력해주세요</string>
     <string name="empty_content">내용을 입력해주세요</string>
     <string name="day_select_error1">시작일이 종료일보다 늦습니다</string>
