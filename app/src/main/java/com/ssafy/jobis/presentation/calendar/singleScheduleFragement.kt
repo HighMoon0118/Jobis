@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class singleScheduleFragement(val activity: Activity) : Fragment() {
+class singleScheduleFragement(val activity: Activity, val year: Int, val month: Int, val day: Int) : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +42,8 @@ class singleScheduleFragement(val activity: Activity) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("시작 날짜 전달",  "$year $month $day")
         val view = inflater.inflate(R.layout.fragment_single_schedule, null)
-        //
         var startDateString =""
         var startTimeString = ""
         var endDateString =""
