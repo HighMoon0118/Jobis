@@ -45,11 +45,9 @@ data class Chat(
 )
 
 class Converters {
-    companion object {
-        @TypeConverter
-        fun crewListToJson(value: List<Crew>?): String = Gson().toJson(value)
+    @TypeConverter
+    fun crewListToJson(value: List<Crew>?): String = Gson().toJson(value)
 
-        @TypeConverter
-        fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
-    }
+    @TypeConverter
+    fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
 }
