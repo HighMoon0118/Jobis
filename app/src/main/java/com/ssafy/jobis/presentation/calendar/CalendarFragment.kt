@@ -10,6 +10,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +38,7 @@ import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.materialcalendar.EventDecorator
+import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,11 +112,12 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var firstMonth = calc.get(Calendar.MONTH)
         var firstDay = calc.get(Calendar.DATE)
 
+
         // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
         var viewPagerInfo = calculateCalendarDates(firstYear, firstMonth, firstDay, scheduleDatabase, routineScheduleDatabase)
 
-        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo) // 뷰 페이저 만들어주기
-        binding.calendarViewpager.currentItem = firstDay-1 // 선택한 날짜로 이동
+        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this) // 뷰 페이저 만들어주기
+        selectedDate(firstDay) // 선택한 날짜로 이동
 
         // 처음 선택되어 있는 날짜 = 현재 날짜, + 버튼에 연결된 날짜 = 현재 날짜
         binding.calendarView.setSelectedDate(calc)
@@ -127,6 +131,10 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         }
 
         return binding.root
+    }
+
+    fun selectedDate(day: Int) {
+        binding.calendarViewpager.currentItem = day-1 // 선택한 날짜로 이동
     }
 
     fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?): ArrayList<ArrayList<Schedule>> {
@@ -179,7 +187,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     }
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
-                println("TEMP_SCHEDULE: " + temp_schedule.size)
                 if (temp_schedule.size == 0) {
                     val empty_schedule = Schedule("일정 없음", "", year, month, k, "", "", -1, -1, "")
                     temp_schedule.add(empty_schedule)
@@ -198,10 +205,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
     fun dotDecorator(calendar: MaterialCalendarView?, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?) {
         // 사전작업1. room에서 단일 일정 데이터 가져와서 표시해주기
+        var dates = ArrayList<CalendarDay>()
+
         CoroutineScope(Dispatchers.IO).launch {
             var scheduleList = scheduleDatabase!!.calendarDao().getAll()
             if (scheduleList.size != 0) { // schedule이 있을 때만..
-                var dates = ArrayList<CalendarDay>() // 점을 찍을 날짜들을 여기에 add로 담아주면 됨
                 for (i in 0..scheduleList.size-1) {
                     var dot_year = scheduleList[i].year
                     var dot_month = scheduleList[i].month
@@ -221,11 +229,23 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     date_for_text.add(day)
                     calendar!!.addDecorator(TextDecorator(date_for_text, scheduleList[i].title))
                 }
-                calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             }
         }
+        Handler(Looper.getMainLooper()).postDelayed({
+            // 점은 처음부터 다시 찍어야 함
+            calendar!!.removeDecorators()
+            calendar!!.invalidateDecorators()
+            // 토, 일 색칠 + 오늘 날짜 표시
+            calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
+            if (dates.size > 0) {
+                calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
+            }
+            println("dates size:" + dates)
+        }, 0)
+
 
         // 사전작업2. room에서 반복 일정 데이터 가져와서 표시해주기
+        var routineDates = ArrayList<ArrayList<CalendarDay>>()
         CoroutineScope(Dispatchers.IO).launch {
             var routineScheduleList = routineScheduleDatabase!!.routineScheduleDao().getAll()
             for (i: Int in 0..routineScheduleList.size-1) {
@@ -242,11 +262,19 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     var day = CalendarDay.from(date) // Calendar 자료형을 넣어주면 됨
                     dates.add(day)
                 }
-                calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
+                routineDates.add(dates)
             }
-
-
         }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            calendar!!.removeDecorators()
+            calendar!!.invalidateDecorators()
+            calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
+            for (v: Int in 0..routineDates.size-1) {
+                calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
+            }
+            println("dates2 size:" + routineDates)
+        }, 0)
     }
     private fun cancelAlarm() {
 //        var alarmManager = this.context?.let { getSystemService(it, AlarmManager::class.java) }
@@ -294,9 +322,9 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     }
 
 
-    // 1. 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
-    override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
 
+    override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+        // 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
             simpleDateFormat.format(date?.date?.time)
@@ -315,7 +343,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
         var viewPagerInfo = calculateCalendarDates(year, month, day, scheduleDatabase, routineScheduleDatabase)
-        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo)
+
+        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this)
 
 
         binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -326,6 +355,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 binding.calendarView.setSelectedDate(calc)
             }
         })
+        dotDecorator(widget, scheduleDatabase, routineScheduleDatabase)
     }
 
     override fun onDateSelected(
@@ -338,7 +368,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var selectedMonth = date.month + 1
         var selectedYear = date.year
         if (selected) {
-            binding.calendarViewpager.currentItem = selectedDay-1 // 선택한 날짜로 이동
+            selectedDate(selectedDay) // 선택한 날짜로 이동
 
             binding.calendarBtn.setOnClickListener {
                 val intent = Intent(this.context, CalendarScheduleActivity::class.java)

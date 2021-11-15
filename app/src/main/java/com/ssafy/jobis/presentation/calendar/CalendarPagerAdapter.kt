@@ -3,6 +3,7 @@ package com.ssafy.jobis.presentation
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ import kotlin.collections.ArrayList
 class CalendarPagerViewHolder(val binding: CalendarViewpagerBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-class CalendarPagerAdapter(private var dates: ArrayList<ArrayList<Schedule>>) :
+class CalendarPagerAdapter(private var dates: ArrayList<ArrayList<Schedule>>, private var frag: CalendarFragment) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
@@ -33,10 +34,10 @@ class CalendarPagerAdapter(private var dates: ArrayList<ArrayList<Schedule>>) :
         if (dates[position][0].title == "일정 없음") {
             binding.emptyText.layoutParams.height = 300
             binding.emptyText.text = "예정된 일정이 없습니다."
-            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(ArrayList<Schedule>())
+            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(ArrayList<Schedule>(), frag)
         } else {
             binding.emptyText.layoutParams.height = 0
-            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position])
+            binding.viewpagerContentRecycler.adapter = CalendarScheduleAdapter(dates[position], frag)
         }
 
         // 구분선 추가
