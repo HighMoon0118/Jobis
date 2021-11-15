@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,12 +28,21 @@ import java.util.*
 
 
 class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
+//    interface OnClickCreateScheduleListener {
+//        fun onClickCreateSchedule(title: String, content: String)
+//    }
+    var title = ""
+    var content = ""
     private var _binding: FragmentRoutineScheduleBinding? = null
-
     private val binding get() = _binding!!
 
     fun testfun(){
         println("함수호출입니다")
+    }
+
+    fun getSchedule():Array<String>{
+        Log.d("fragment > activity", "$title, $content")
+        return arrayOf(title, content)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -345,8 +355,8 @@ class RoutineScheduleFragment(private val activity: Activity) : Fragment() {
 
 
             // 일정 제목 내용 받아오기
-            val title = view.scheduleTitleEditText.text.toString()
-            val content = view.scheduleContentEditText.text.toString()
+            title = view.scheduleTitleEditText.text.toString()
+            content = view.scheduleContentEditText.text.toString()
 
             if (title==""){
                 Toast.makeText(context,R.string.empty_title, Toast.LENGTH_SHORT).show()
