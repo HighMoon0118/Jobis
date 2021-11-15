@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".presentation.CalendarScheduleActivity">-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.CalendarScheduleActivity">
+    tools:context=".presentation.CalendarScheduleActivity"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/scheduleTopAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="일정"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white"
+        app:menu="@menu/schedule_top_app_bar"
+        style="@style/Widget.MaterialComponents.Toolbar.PrimarySurface"
+        app:titleCentered="true"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:orientation="vertical">
         <Spinner
             android:id="@+id/scheduleSpinner"
@@ -22,125 +38,6 @@
             app:backgroundTint = "@null"
             android:padding="5dp"
             />
-        <TextView
-            android:id="@+id/selected_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selected: "/>
-<!--        <LinearLayout-->
-<!--            android:id="@+id/startDate"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            >-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="시작일"-->
-<!--                android:textColor="@color/black"/>-->
-<!--            <Button-->
-<!--                android:id="@+id/startDateBtn"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:drawableLeft="@drawable/ic_baseline_calendar_today_24"-->
-<!--                android:drawableTint="@color/black"-->
-<!--                android:text="날짜"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:background="@drawable/calendar_detail_button"-->
-<!--                app:backgroundTint = "@null"-->
-<!--                android:minHeight="0dp"-->
-<!--                android:minWidth="0dp"-->
-<!--                android:paddingTop="0dp"-->
-<!--                android:paddingBottom="0dp"-->
-<!--                android:paddingLeft="8dp"-->
-<!--                android:paddingRight="8dp"-->
-<!--                />-->
-<!--            <Button-->
-<!--                android:id="@+id/startTimeBtn"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="시간"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:drawableLeft="@drawable/ic_baseline_access_time_24"-->
-<!--                android:drawableTint="@color/black"-->
-<!--                android:background="@drawable/calendar_detail_button"-->
-<!--                app:backgroundTint="@null"-->
-<!--                android:minWidth="0dp"-->
-<!--                android:minHeight="0dp"-->
-<!--                android:paddingTop="0dp"-->
-<!--                android:paddingBottom="0dp"-->
-<!--                android:paddingLeft="8dp"-->
-<!--                android:paddingRight="8dp"/>-->
-<!--        </LinearLayout>-->
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/startDate">-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="종료일"-->
-<!--                android:textColor="@color/black"/>-->
-<!--            <Button-->
-<!--                android:id="@+id/endDateBtn"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:drawableLeft="@drawable/ic_baseline_calendar_today_24"-->
-<!--                android:drawableTint="@color/black"-->
-<!--                android:text="날짜"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:background="@drawable/calendar_detail_button"-->
-<!--                app:backgroundTint = "@null"-->
-<!--                android:minHeight="0dp"-->
-<!--                android:minWidth="0dp"-->
-<!--                android:paddingTop="0dp"-->
-<!--                android:paddingBottom="0dp"-->
-<!--                android:paddingLeft="8dp"-->
-<!--                android:paddingRight="8dp"/>-->
-<!--            <Button-->
-<!--                android:id="@+id/endTimeBtn"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="시간"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:drawableLeft="@drawable/ic_baseline_access_time_24"-->
-<!--                android:drawableTint="@color/black"-->
-<!--                android:background="@drawable/calendar_detail_button"-->
-<!--                app:backgroundTint="@null"-->
-<!--                android:minWidth="0dp"-->
-<!--                android:minHeight="0dp"-->
-<!--                android:paddingTop="0dp"-->
-<!--                android:paddingBottom="0dp"-->
-<!--                android:paddingLeft="8dp"-->
-<!--                android:paddingRight="8dp"/>-->
-<!--        </LinearLayout>-->
-<!--        <EditText-->
-<!--            android:id="@+id/scheduleTitleEditText"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:ems="10"-->
-<!--            android:inputType="textWebEditText"-->
-<!--            android:hint="일정을 입력하세요"-->
-<!--            android:privateImeOptions="defaultInputmode=korea"/>-->
-<!--        <EditText-->
-<!--            android:id="@+id/scheduleContentEditText"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:ems="10"-->
-<!--            android:inputType="textMultiLine"-->
-<!--            android:lines="15"-->
-<!--            android:minLines="2"-->
-<!--            android:maxLines="20"-->
-<!--            android:scrollbars="vertical"-->
-<!--            android:hint="내용을 입력하세요"-->
-<!--            android:gravity="top"-->
-<!--            android:privateImeOptions="defaultInputmode=korean"/>-->
-
         <FrameLayout
             android:id="@+id/scheduleFrameLayout"
             android:layout_width="match_parent"
@@ -149,6 +46,7 @@
 
     </LinearLayout>
 
+</LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
