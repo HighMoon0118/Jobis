@@ -18,4 +18,8 @@ class RecentPostViewModel(private val communityRepository: CommunityRepository) 
             _recentPostList.value = communityRepository.loadRecentPosts()
         }
     }
+
+    fun filterPost(pos: Int) {
+
+    }
 }

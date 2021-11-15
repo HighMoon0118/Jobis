@@ -79,4 +79,8 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
             }
         }
     }
+
+    fun getPost(): PostResponse? {
+        return _post.value
+    }
 }
