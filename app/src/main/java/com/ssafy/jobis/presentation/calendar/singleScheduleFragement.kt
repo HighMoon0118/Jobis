@@ -1,33 +1,41 @@
 package com.ssafy.jobis.presentation
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.Schedule
 import kotlinx.android.synthetic.main.fragment_single_schedule.*
 import kotlinx.android.synthetic.main.fragment_single_schedule.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 import java.text.SimpleDateFormat
 import java.util.*
 
-class singleScheduleFragement : Fragment() {
+class singleScheduleFragement(val activity: Activity) : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
-    lateinit var calendarScheduleActivity: CalendarScheduleActivity
-
-    override fun onAttach(context: Context) { super.onAttach(context)
-        // 2. Context를 액티비티로 형변환해서 할당
-        calendarScheduleActivity = context as CalendarScheduleActivity }
+//    lateinit var calendarScheduleActivity: CalendarScheduleActivity
+//
+//    override fun onAttach(context: Context) { super.onAttach(context)
+//        // 2. Context를 액티비티로 형변환해서 할당
+//        calendarScheduleActivity = context as CalendarScheduleActivity }
 
 
     override fun onCreateView(
@@ -50,6 +58,8 @@ class singleScheduleFragement : Fragment() {
         var endDay = 0
         var endHour = 0
         var endMinute = 0
+        var title = ""
+        var content = ""
 
         // 시간 불러오는 두가지 방법
         // 1. System.currentTimeMillis()
@@ -105,9 +115,9 @@ class singleScheduleFragement : Fragment() {
             }
             // Dialog 창 띄움
             if (startDateString == "") {
-                DatePickerDialog(calendarScheduleActivity, dateSetListener, currentTime.get(Calendar.YEAR), currentTime.get(Calendar.MONTH),currentTime.get(Calendar.DAY_OF_MONTH), ).show()
+                DatePickerDialog(activity, dateSetListener, currentTime.get(Calendar.YEAR), currentTime.get(Calendar.MONTH),currentTime.get(Calendar.DAY_OF_MONTH), ).show()
             } else {
-                DatePickerDialog(calendarScheduleActivity, dateSetListener, startYear, startMonth, startDay).show()
+                DatePickerDialog(activity, dateSetListener, startYear, startMonth, startDay).show()
             }
 
         }
@@ -130,7 +140,7 @@ class singleScheduleFragement : Fragment() {
             }
             if (startTimeString == "") {
                 TimePickerDialog(
-                    calendarScheduleActivity,
+                    activity,
                     timeSetListener,
                     currentTime.get(Calendar.HOUR_OF_DAY),
                     currentTime.get(Calendar.MINUTE),
@@ -139,7 +149,7 @@ class singleScheduleFragement : Fragment() {
             }
             else {
                 TimePickerDialog(
-                    calendarScheduleActivity,
+                    activity,
                     timeSetListener,
                     startHour,
                     startMinute,
@@ -169,9 +179,9 @@ class singleScheduleFragement : Fragment() {
             }
             // Dialog 창 띄움
             if (endDateString == "") {
-                DatePickerDialog(calendarScheduleActivity, dateSetListener, afterTime.get(Calendar.YEAR), afterTime.get(Calendar.MONTH),afterTime.get(Calendar.DAY_OF_MONTH), ).show()
+                DatePickerDialog(activity, dateSetListener, afterTime.get(Calendar.YEAR), afterTime.get(Calendar.MONTH),afterTime.get(Calendar.DAY_OF_MONTH), ).show()
             } else {
-                DatePickerDialog(calendarScheduleActivity, dateSetListener, endYear, endMonth, endDay).show()
+                DatePickerDialog(activity, dateSetListener, endYear, endMonth, endDay).show()
             }
         }
 
@@ -194,7 +204,7 @@ class singleScheduleFragement : Fragment() {
             }
             if (endTimeString == "") {
                 TimePickerDialog(
-                    calendarScheduleActivity,
+                    activity,
                     timeSetListener,
                     afterTime.get(Calendar.HOUR_OF_DAY),
                     afterTime.get(Calendar.MINUTE),
@@ -203,7 +213,7 @@ class singleScheduleFragement : Fragment() {
             }
             else {
                 TimePickerDialog(
-                    calendarScheduleActivity,
+                    activity,
                     timeSetListener,
                     endHour,
                     endMinute,
@@ -213,6 +223,67 @@ class singleScheduleFragement : Fragment() {
             }
         }
 
+        view.singleScheduleAddBtn.setOnClickListener{
+            println("-----------------------")
+            println("일정 등록 버튼 클릭")
+            println("시작시간 $scheduleStartTime")
+            println("끝시간, $scheduleEndTime")
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val temp = CoroutineScope(Dispatchers.Default).async {
+                    if (startYear == 0) {
+                        startYear = SimpleDateFormat("yyyy").format(currentTime.time).toInt()
+                        startMonth = SimpleDateFormat("MM").format(currentTime.time).toInt()
+                        startDay = SimpleDateFormat("dd").format(currentTime.time).toInt()
+
+                    }
+                    if (startTimeString == "") {
+                        startTimeString = scheduleStartTime
+                        println(startTimeString)
+
+                    }
+                    if (endTimeString == "") {
+                        endTimeString = scheduleEndTime
+                        println(endTimeString)
+                    }
+
+                    title = view.scheduleTitleEditText.text.toString()
+                    content = view.scheduleContentEditText.text.toString()
+
+                    println("시작, $startTimeString")
+                    println("끝, $endTimeString")
+                }.await()
+                println("바깥시작, $startTimeString")
+                println("바깥끝, $endTimeString")
+
+                var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
+                var db = CalendarDatabase.getInstance(activity)
+                CoroutineScope(Dispatchers.IO).launch {
+                    db!!.calendarDao().insert(newSchedule)
+                    var dbList = db!!.calendarDao().getAll()
+                    println("DB 결과: " + dbList)
+                }
+
+
+//            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
+//            var db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                var dbList = db!!.calendarDao().getAll()
+//                println("DB 결과: " + dbList)
+//            }
+            }
+
+        }
+
+        view.scheduleList.setOnClickListener {
+            println("일정 확인")
+            var db = CalendarDatabase.getInstance(this.context)
+            CoroutineScope(Dispatchers.IO).launch {
+                var dbList = db!!.calendarDao().getAll()
+                println("일정 결과: " + dbList)
+            }
+        }
         return view
 
     }
