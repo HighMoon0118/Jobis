@@ -9,7 +9,7 @@ interface CalendarDao {
     fun getAll(): List<Schedule>
 
     @Insert
-    fun insert(schedule: Schedule)
+    fun insert(schedule: Schedule) : Int
 
     @Update
     fun update(schedule: Schedule)

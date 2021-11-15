@@ -58,17 +58,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
-        // 알람
-//        binding.createNotification.setOnClickListener {
-//            setAlarm()
-//        }
-//
-//        binding.deleteNotification.setOnClickListener {
-//            cancelAlarm()
-//        }
-
-
-
 
         // room 데이터 추가 test용
 //        binding.roomTest.setOnClickListener {
@@ -225,24 +214,12 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     dates.add(day)
 
                     // 글자 표시는 하루하루 해줘야 함
-                    var date_for_text = ArrayList<CalendarDay>()
-                    date_for_text.add(day)
-                    calendar!!.addDecorator(TextDecorator(date_for_text, scheduleList[i].title))
+//                    var date_for_text = ArrayList<CalendarDay>()
+//                    date_for_text.add(day)
+//                    calendar!!.addDecorator(TextDecorator(date_for_text, scheduleList[i].title))
                 }
             }
         }
-        Handler(Looper.getMainLooper()).postDelayed({
-            // 점은 처음부터 다시 찍어야 함
-            calendar!!.removeDecorators()
-            calendar!!.invalidateDecorators()
-            // 토, 일 색칠 + 오늘 날짜 표시
-            calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
-            if (dates.size > 0) {
-                calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
-            }
-            println("dates size:" + dates)
-        }, 0)
-
 
         // 사전작업2. room에서 반복 일정 데이터 가져와서 표시해주기
         var routineDates = ArrayList<ArrayList<CalendarDay>>()
@@ -270,50 +247,12 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             calendar!!.removeDecorators()
             calendar!!.invalidateDecorators()
             calendar.addDecorators(SundayDecorator(), SaturdayDecorator(), OneDayDecorator())
+            calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), dates)) // 점 찍기
             for (v: Int in 0..routineDates.size-1) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
             }
             println("dates2 size:" + routineDates)
         }, 0)
-    }
-    private fun cancelAlarm() {
-//        var alarmManager = this.context?.let { getSystemService(it, AlarmManager::class.java) }
-        val alarmManager = getSystemService(requireContext(), AlarmManager::class.java) as AlarmManager
-        val intent = Intent(this.context, AlarmReceiver::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-        alarmManager.cancel(pendingIntent) // 알람 취소
-        pendingIntent.cancel() // pendingIntent 취소
-
-        Toast.makeText(this.context, "Alaram Cancelled", Toast.LENGTH_LONG).show()
-    }
-
-    private fun setAlarm() {
-        var alarmCalendar = Calendar.getInstance()
-        alarmCalendar.set(Calendar.YEAR, 2021)
-        alarmCalendar.set(Calendar.MONTH, 10)
-        alarmCalendar.set(Calendar.DAY_OF_MONTH, 11)
-        alarmCalendar.set(Calendar.HOUR_OF_DAY, 14)
-        alarmCalendar.set(Calendar.MINUTE, 39)
-        alarmCalendar.set(Calendar.SECOND, 0)
-
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val intent = Intent(this.context, AlarmReceiver::class.java)  // 1
-        var pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
-        }
-        else {
-            if (Build.VERSION.SDK_INT >= 19) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
-            }
-        }
-
-
-        Toast.makeText(this.context, "Alarm set Successfully", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
