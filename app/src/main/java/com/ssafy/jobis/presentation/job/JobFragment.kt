@@ -44,6 +44,7 @@ class JobFragment: Fragment() {
             Observer { jobList ->
                 jobList ?:return@Observer
                 updateJobList(jobList)
+                jobViewModel.loadMyJobList(requireContext())
             })
         jobViewModel.scheduleResult.observe(viewLifecycleOwner,
             Observer { scheduleResult ->
