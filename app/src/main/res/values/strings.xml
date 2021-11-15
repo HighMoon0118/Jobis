@@ -72,4 +72,45 @@
 
 
 
+    <string name="create_study_upperbar">스터디 생성</string>
+    <string name="create_study_title">제목</string>
+    <string name="create_study_describe">설명</string>
+    <string name="create_study_submit">만들기</string>
+
+    <string-array name="study_region">
+        <item>지역</item>
+        <item>지역1</item>
+        <item>지역2</item>
+        <item>지역3</item>
+        <item>지역4</item>
+        <item>지역5</item>
+        <item>지역6</item>
+        <item>지역7</item>
+        <item>지역8</item>
+    </string-array>
+
+    <string-array name="study_topic">
+        <item>주제</item>
+        <item>주제1</item>
+        <item>주제2</item>
+        <item>주제3</item>
+        <item>주제4</item>
+        <item>주제5</item>
+        <item>주제6</item>
+        <item>주제7</item>
+        <item>주제8</item>
+    </string-array>
+
+    <string-array name="study_population">
+        <item>인구</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
 </resources>
