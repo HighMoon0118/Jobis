@@ -25,10 +25,12 @@
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_border.xml" value="0.20833333333333334" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_not_selected_background.xml" value="0.20833333333333334" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/calendar_selected_background.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/drawable/custom_dialog_background.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_schedule.xml" value="0.1" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/calendar_background.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/calendar_viewpager.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.12916666666666668" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/custom_dialog.xml" value="0.4" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.2" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_my.xml" value="0.14270833333333333" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_routine_schedule.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_chat.xml" value="0.25364583333333335" />

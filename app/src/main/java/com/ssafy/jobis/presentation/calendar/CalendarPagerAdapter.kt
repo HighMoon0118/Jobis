@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.jobis.data.model.calendar.OnDeleteClick
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.CalendarViewpagerBinding
 import com.ssafy.jobis.presentation.calendar.CalendarFragment
@@ -16,7 +17,7 @@ import kotlin.collections.ArrayList
 class CalendarPagerViewHolder(val binding: CalendarViewpagerBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
+class CalendarPagerAdapter(private var dates: ArrayList<ArrayList<Schedule>>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
@@ -27,8 +28,7 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
         // 뷰에 데이터 출력
         var txt = (dates[position][0].month+1).toString() + "월 " + dates[position][0].day.toString() + "일"
         binding.calendarViewDate.text = txt
-//        binding.calendarViewTitle.text = dates[position][0].title // 이런 식으로 사용해야 함
-//        binding.calendarViewContent.text = dates[position][0].content
+
 
         if (dates[position][0].title == "일정 없음") {
             binding.emptyText.layoutParams.height = 300
@@ -46,6 +46,11 @@ class CalendarPagerAdapter(private val dates: ArrayList<ArrayList<Schedule>>) :
 
     override fun getItemCount(): Int {
         return dates.size
+    }
+
+    fun setData(new_dates: ArrayList<ArrayList<Schedule>>) {
+        dates = new_dates
+        notifyDataSetChanged()
     }
 
 }
