@@ -63,4 +63,12 @@
         <item>기타</item>
     </string-array>
 
+    <string name="empty_title">제목을 입력해주세요</string>
+    <string name="empty_content">내용을 입력해주세요</string>
+    <string name="day_select_error1">시작일이 종료일보다 늦습니다</string>
+    <string name="day_select_error2">시작일과 종료일이 같습니다</string>
+    <string name="time_select_error">시작 시간이 종료 시간보다 늦습니다</string>
+    <string name="empty_routine_select">선택된 날짜가 없습니다.\n기간과 요일을 확인해주세요.</string>
+
+
 </resources>
