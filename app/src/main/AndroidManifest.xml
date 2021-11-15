@@ -34,8 +34,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.chat.ChatActivity" />
-        <activity android:name=".presentation.CalendarScheduleActivity">
-            android:windowSoftInputMode="adjustResize"></activity>
+        <activity android:name=".presentation.CalendarScheduleActivity"
+            android:theme="@style/Theme.Jobis">
+<!--            android:windowSoftInputMode="adjustResize">-->
+
+        </activity>
+
 
         <service
             android:name=".presentation.MyFCMService"
@@ -45,6 +49,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".presentation.calendar.AlarmReceiver"/>
+
     </application>
 
 </manifest>

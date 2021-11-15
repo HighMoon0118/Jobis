@@ -19,6 +19,7 @@ data class Study(
     var created_at: String
 )
 
+@Entity(tableName = "crew")
 data class Crew(
     @PrimaryKey
     @ColumnInfo(name = "crew_id")
@@ -36,6 +37,7 @@ data class Crew(
         onDelete = CASCADE
     )
 ])
+
 data class Chat(
     @ColumnInfo(name = "chat_id")
     @PrimaryKey(autoGenerate = true) var id: Int,
@@ -45,11 +47,12 @@ data class Chat(
 )
 
 class Converters {
-    companion object {
-        @TypeConverter
-        fun crewListToJson(value: List<Crew>?): String = Gson().toJson(value)
+    @TypeConverter
+    fun crewListToJson(value: List<Crew>?): String = Gson().toJson(value)
 
-        @TypeConverter
-        fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
-    }
+    @TypeConverter
+    fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
 }
+
+
+
