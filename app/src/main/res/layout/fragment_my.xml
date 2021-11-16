@@ -40,15 +40,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/myImageView"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                app:civ_circle_background_color="@color/light_gray"
-                android:src="@drawable/fui_ic_anonymous_white_24dp" />
+                android:src="@drawable/fui_ic_anonymous_white_24dp"
+                app:civ_circle_background_color="@color/light_gray" />
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -63,6 +63,7 @@
                     android:fontFamily="sans-serif-black"
                     android:text="닉네임"
                     android:textSize="24sp" />
+
 
                 <!--                <LinearLayout-->
                 <!--                    android:layout_width="wrap_content"-->
@@ -89,6 +90,16 @@
 
             </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/nickNameEditButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
+                android:src="@drawable/icons8_edit_24"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -108,8 +119,7 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="실력있는 개발자가 되고 싶은 사람" />
+            android:padding="10dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
