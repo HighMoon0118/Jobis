@@ -16,6 +16,7 @@
         <item name="android:timePickerStyle">@style/MyTimePickerTheme</item>
 <!--        <item name="android:datePickerStyle">@style/MyDatePickerTheme</item>-->
         <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+<!--        <item name="android:textColorPrimary">#ff0000</item>-->
 
     </style>
 
