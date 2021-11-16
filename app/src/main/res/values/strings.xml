@@ -113,4 +113,7 @@
         <item>8</item>
     </string-array>
 
+
+    <string name="search_activity_name">StudySearch</string>
+    <string name="search_upper_bar">검색</string>
 </resources>
