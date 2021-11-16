@@ -10,7 +10,7 @@ interface CalendarDao {
     fun getAll(): List<Schedule>
 
     @Insert
-    fun insert(schedule: Schedule)
+    fun insert(schedule: Schedule): Long
 
     @Update
     fun update(schedule: Schedule)
@@ -23,4 +23,7 @@ interface CalendarDao {
 
     @Query("SELECT * FROM schedule WHERE companyName > 0")
     fun getMyJob(): List<Schedule>
+
+    @Query("SELECT * FROM schedule WHERE id = :id")
+    fun getJob(id: Int): Schedule
 }
