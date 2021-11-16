@@ -4,7 +4,7 @@ import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
 import com.google.gson.Gson
 
-@Entity(tableName = "study")
+@Entity(tableName = "Study")
 data class Study(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "study_id")
