@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -26,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: Int, val day: Int) : Fragment() {
+class RoutineScheduleFragment(val activity: Activity, private val year: Int, val month: Int, val day: Int) : Fragment() {
 //    interface OnClickCreateScheduleListener {
 //        fun onClickCreateSchedule(title: String, content: String)
 //    }
@@ -52,10 +51,11 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
 
     private val dayOfWeekSelect = arrayOf(false, false, false, false, false, false, false, false)
 
+    @SuppressLint("SimpleDateFormat")
     private val dateFormat1 = SimpleDateFormat("yyyy-MM-dd")
+    @SuppressLint("SimpleDateFormat")
     private val dateFormat2 = SimpleDateFormat("HH:mm")
-    var calendar: Calendar = Calendar.getInstance()!! // 현재 날짜 및 시간 저장
-
+    var calendar: Calendar = Calendar.getInstance() // 현재 날짜 및 시간 저장
     private var scheduleStartDate = ""
     private var scheduleStartTime = ""
     private var scheduleEndDate = "" // 이거 없어도 되겠는데?
@@ -64,13 +64,13 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
 
 
     @SuppressLint("SimpleDateFormat")
-    fun routinScheduleAddFun(){
+    fun routinScheduleAddFun():Int{
         // 시작 날짜 따로 안정했으면
         if (startYear == 0) {
             // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장. 그냥 calendar 써도 됨
-            startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
-            startMonth = SimpleDateFormat("MM").format(calendar.time).toInt() - 1
-            startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
+            startYear = year
+            startMonth = month
+            startDay = day
         }
         // 시작 시간 안정했으면
         if (startTimeString == "") {
@@ -95,12 +95,21 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
 
         if (title==""){
             Toast.makeText(context,R.string.empty_title, Toast.LENGTH_SHORT).show()
-            return
+            return 0
 
         }
         if (content==""){
             Toast.makeText(context,R.string.empty_content, Toast.LENGTH_SHORT).show()
-            return
+            return 0
+        }
+
+
+        if (endHour<startHour){
+            Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+            return 0
+        } else if (endHour == startHour && endMinute < startMinute) {
+            Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
+            return 0
         }
 
         // Calendar 객체에 시작 날짜 넣어서 저장
@@ -110,6 +119,22 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         // Calendar 객체에 끝 날짜 넣어서 저장
         val endCal = Calendar.getInstance()
         endCal.set(endYear, endMonth, endDay)
+
+        // 시작하는 날짜의 날 (int, nnn) (1~365로 나타난다)
+        val startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
+        // 끝 날짜
+        val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
+
+        if (startDayOfYear > endDayOfYear){
+            Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
+            return 0
+        }
+        if (startDayOfYear == endDayOfYear){
+            Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
+            return 0
+        }
+
+
         // 시작하는 날짜의 요일
         val startDayOfWeek= startCal.get(Calendar.DAY_OF_WEEK)
 
@@ -124,9 +149,9 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
             if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                 when {
                     i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
-                        val cal1 = Calendar.getInstance()
-                        cal1.set(startYear, startMonth, startDay)
-                        val cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
+                        val cal0 = Calendar.getInstance()
+                        cal0.set(startYear, startMonth, startDay)
+                        val cal1MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                         println("cal1mtd, $cal1MilliToDate")
                         val diff = (endMilliToDate - cal1MilliToDate)/7
                         var tmp = 0
@@ -135,7 +160,7 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                             cal1.set(startYear, startMonth, startDay)
                             cal1.add(Calendar.DATE, 7 * tmp)
                             routineDaySelect.add(cal1)
-                            println("cal1: " + cal1)
+                            println("cal1: $cal1")
                             println(cal1.get(Calendar.DAY_OF_YEAR))
 
                             tmp += 1
@@ -145,11 +170,11 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                     i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
                         // 며칠 차이인지 확인해서 + a
                         // 7일 더하면서 반복 저장
-                        val cal2 = Calendar.getInstance()
-                        cal2.set(startYear, startMonth, startDay)
+                        val cal0 = Calendar.getInstance()
+                        cal0.set(startYear, startMonth, startDay)
                         val add = i - startDayOfWeek
-                        cal2.add(Calendar.DATE, add)
-                        val cal2MilliToDate = cal2.timeInMillis / (24*60*60*1000)
+                        cal0.add(Calendar.DATE, add)
+                        val cal2MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                         println("cal2mtd, $cal2MilliToDate")
                         val diff = (endMilliToDate - cal2MilliToDate)/7
                         var tmp = 0
@@ -167,10 +192,10 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                         // 며칠 차이인지 확인해서 + a
                         // 7일 더하면서 반복 저장
                         val add = 7 - startDayOfWeek + i
-                        val cal3 = Calendar.getInstance()
-                        cal3.set(startYear, startMonth, startDay)
-                        cal3.add(Calendar.DATE, add)
-                        val cal3MilliToDate = cal3.timeInMillis / (24*60*60*1000)
+                        val cal0 = Calendar.getInstance()
+                        cal0.set(startYear, startMonth, startDay)
+                        cal0.add(Calendar.DATE, add)
+                        val cal3MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                         println("cal3mtd, $cal3MilliToDate")
                         val diff = (endMilliToDate - cal3MilliToDate)/7
                         var tmp = 0
@@ -189,7 +214,7 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         }
         if (routineDaySelect.size == 0) {
             Toast.makeText(context,R.string.empty_routine_select, Toast.LENGTH_SHORT).show()
-            return
+            return 0
         }
         println("------선택된 날----")
         println(routineDaySelect)
@@ -200,14 +225,13 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         // 아닌 경우엔 중간에 return으로 빠져나감
         // db 저장
         newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
-//        println(newRoutineSchedule)
         val db = RoutineScheduleDatabase.getInstance(activity)
         CoroutineScope(Dispatchers.IO).launch {
             db!!.routineScheduleDao().insert(newRoutineSchedule)
             val dbList = db.routineScheduleDao().getAll()
             println("DB 결과: $dbList")
         }
-        return
+        return 1
     }
 
 
@@ -233,12 +257,12 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         val view = binding.root
 
         // null 오류 > view binding 으로 해결했음 (왜?)
-        ArrayAdapter.createFromResource(activity,
-            R.array.dayOfWeek,
-            android.R.layout.simple_spinner_item).also{adapter->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.testSpinner.adapter = adapter
-        }
+//        ArrayAdapter.createFromResource(activity,
+//            R.array.dayOfWeek,
+//            android.R.layout.simple_spinner_item).also{adapter->
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//            binding.testSpinner.adapter = adapter
+//        }
 
 
 //        val dayOfWeekSelect = arrayOf(false, dayOfWeek1.isSelected ,dayOfWeek2.isSelected, dayOfWeek3.isSelected,dayOfWeek4.isSelected,dayOfWeek5.isSelected,dayOfWeek6.isSelected,dayOfWeek7.isSelected)
@@ -268,7 +292,6 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         view.dayOfWeek7.setOnClickListener {
             dayOfWeek7.isSelected = !dayOfWeek7.isSelected
             dayOfWeekSelect[7] = !dayOfWeekSelect[7]
-//            println(dayOfWeekSelect.contentToString())
         }
 
 //        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -287,18 +310,19 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         val currentCal = calendar
 //        var currentCal = calendar // 10분 추가한 cal 객체랑 따로 저장하고 싶어서 분리한건데 잘 안되는듯?
 //        scheduleStartDate = dateFormat1.format(currentCal.time)
-        if (day<=9 && month <= 8) {  // 월 일 전부 한자리
-            scheduleStartDate = "${year}-0${month}-0${day}"
+        scheduleStartDate = if (day<=9 && month <= 8) {  // 월 일 전부 한자리
+            "${year}-0${month}-0${day}"
         } else if (month <= 9) { // 월만 한자리
-            scheduleStartDate = "${year}-0${month}-${day}"
+            "${year}-0${month}-${day}"
         } else if (day <= 9 ){ // 일만 한자리
-            scheduleStartDate ="${year}-${month}-0${day}"
-
+            "${year}-${month}-0${day}"
         } else { // 처리할 필요 없음
-            scheduleStartDate = "${year}-${month}-${day}"
+            "${year}-${month}-${day}"
         }
 //        scheduleStartDate = "$year-$month-$day"
         scheduleStartTime = dateFormat2.format(currentCal.time)
+        startHour = currentCal.get(Calendar.HOUR_OF_DAY)
+        startMinute = currentCal.get(Calendar.MINUTE)
         scheduleEndDate = dateFormat1.format(calendar.time) // 이거 없어도 되겠는데?
 
         // 현재 시간 50~59분 이면 59로 강제 지정 -> 안그러면 날짜 변경됨
@@ -320,7 +344,7 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
         // 화면 로딩시 보이는 시간! +10분 후가 기본. 23:50~59 일때는 23:59로 픽스
         view.startDateBtn.text = scheduleStartDate
         view.startTimeBtn.text = scheduleStartTime
-        view.endDateBtn.text = scheduleEndDate
+        view.endDateBtn.text = scheduleStartDate
         view.endTimeBtn.text = scheduleEndTime
 
         // 시작일 선택 버튼
@@ -578,9 +602,9 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                 if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                     when {
                         i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
-                            val cal1 = Calendar.getInstance()
-                            cal1.set(startYear, startMonth, startDay)
-                            val cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
+                            val cal0 = Calendar.getInstance()
+                            cal0.set(startYear, startMonth, startDay)
+                            val cal1MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                             println("cal1mtd, $cal1MilliToDate")
                             val diff = (endMilliToDate - cal1MilliToDate)/7
                             var tmp = 0
@@ -589,7 +613,7 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                                 cal1.set(startYear, startMonth, startDay)
                                 cal1.add(Calendar.DATE, 7 * tmp)
                                 routineDaySelect.add(cal1)
-                                println("cal1: " + cal1)
+                                println("cal1: $cal1")
                                 println(cal1.get(Calendar.DAY_OF_YEAR))
 
                                 tmp += 1
@@ -599,11 +623,11 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                         i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
                             // 며칠 차이인지 확인해서 + a
                             // 7일 더하면서 반복 저장
-                            val cal2 = Calendar.getInstance()
-                            cal2.set(startYear, startMonth, startDay)
+                            val cal0 = Calendar.getInstance()
+                            cal0.set(startYear, startMonth, startDay)
                             val add = i - startDayOfWeek
-                            cal2.add(Calendar.DATE, add)
-                            val cal2MilliToDate = cal2.timeInMillis / (24*60*60*1000)
+                            cal0.add(Calendar.DATE, add)
+                            val cal2MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                             println("cal2mtd, $cal2MilliToDate")
                             val diff = (endMilliToDate - cal2MilliToDate)/7
                             var tmp = 0
@@ -621,10 +645,10 @@ class RoutineScheduleFragment(val activity: Activity, val year: Int, val month: 
                             // 며칠 차이인지 확인해서 + a
                             // 7일 더하면서 반복 저장
                             val add = 7 - startDayOfWeek + i
-                            val cal3 = Calendar.getInstance()
-                            cal3.set(startYear, startMonth, startDay)
-                            cal3.add(Calendar.DATE, add)
-                            val cal3MilliToDate = cal3.timeInMillis / (24*60*60*1000)
+                            val cal0 = Calendar.getInstance()
+                            cal0.set(startYear, startMonth, startDay)
+                            cal0.add(Calendar.DATE, add)
+                            val cal3MilliToDate = cal0.timeInMillis / (24*60*60*1000)
                             println("cal3mtd, $cal3MilliToDate")
                             val diff = (endMilliToDate - cal3MilliToDate)/7
                             var tmp = 0
