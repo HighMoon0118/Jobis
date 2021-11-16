@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D3E0EA"
     tools:context=".presentation.community.CommunityFragment">
 
     <LinearLayout
@@ -45,13 +44,15 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/postTabLayout"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:tabGravity="start"
         app:tabIndicatorColor="@color/primary"
+        app:tabIndicatorGravity="bottom"
         app:tabRippleColor="@color/primary"
         app:tabSelectedTextColor="@color/primary">
 
@@ -69,6 +70,7 @@
         android:id="@+id/postViewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#D3E0EA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
