@@ -58,13 +58,14 @@ class CreateStudy : AppCompatActivity() {
             val max_user = 5
             val current_user = 1
 
-            val username = Crew(mAuth!!.displayName.toString())
+            val username = Crew(mAuth!!.uid.toString())
             val user_list = listOf(username)
             val curTime = SimpleDateFormat("hh:mm a").toString()
 
 
 
             RequestNewStudy(title, content, location, topic, max_user, current_user, user_list, curTime, 0)
+            finish()
         }
     }
 
@@ -80,12 +81,8 @@ class CreateStudy : AppCompatActivity() {
     unread_chat_cnt:Int? = 0) {
 
 
-//        // study id를 어떻게 하는게 좋을까..?
-//        val newStudy = Study(1, title, content, location, topic, max_user, current_user, user_list, created_at, unread_chat_cnt)
         val a = Study(title = title,content = content,location = location,topic = topic,max_user = max_user,current_user = current_user,user_list = user_list,created_at = created_at,unread_chat_cnt = unread_chat_cnt)
 
-
-        // 왜 study db가 closed지?
         CoroutineScope(Dispatchers.IO).launch {
             val db = StudyDatabase.getInstance(this@CreateStudy)
             db!!.getStudyDao().insertStudy(a)
