@@ -69,15 +69,20 @@ class RecentPostFragment : Fragment() {
 
     fun setUpSpinner() {
         val categories = resources.getStringArray(R.array.post_category)
+        binding.autoCompleteTextView.setText("전체")
         val adapter = ArrayAdapter((activity as MainActivity), R.layout.support_simple_spinner_dropdown_item, categories)
-        binding.recentPostSpinner.adapter = adapter
-        binding.recentPostSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                recentPostViewModel.filterPost(p2)
+        binding.autoCompleteTextView.setAdapter(adapter)
+        binding.autoCompleteTextView.onItemClickListener = object: AdapterView.OnItemClickListener {
+            override fun onItemClick(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                println("출력 테스트: " + position)
+                recentPostViewModel.filterPost(position)
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
         }
     }
 
