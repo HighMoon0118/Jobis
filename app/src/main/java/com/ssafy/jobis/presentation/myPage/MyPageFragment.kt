@@ -110,6 +110,9 @@ class MyPageFragment: Fragment() {
                 binding.myCommentRecyclerView.visibility = View.GONE
             }
         }
+        myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+        myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
+        myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
 
     }
 
