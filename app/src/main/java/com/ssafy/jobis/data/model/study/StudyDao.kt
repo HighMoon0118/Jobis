@@ -1,7 +1,8 @@
 package com.ssafy.jobis.data.model.study
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.lifecycle.LiveData
+
 
 @Dao
 interface StudyDao {
