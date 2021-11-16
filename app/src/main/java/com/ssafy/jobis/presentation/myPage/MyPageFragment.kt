@@ -84,18 +84,20 @@ class MyPageFragment: Fragment() {
             val isChecked = binding.likeToggleButton.isChecked
             // 체크되어있으면 리사이클러뷰를 활성화시킨다.
             if (isChecked) {
+                binding.myLikeRecyclerView.visibility = View.VISIBLE
                 myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
             } else {
-
+                binding.myLikeRecyclerView.visibility = View.GONE
             }
         }
 
         binding.postToggleButton.setOnClickListener {
             val isChecked = binding.postToggleButton.isChecked
             if (isChecked) {
+                binding.myPostRecyclerView.visibility = View.VISIBLE
                 myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
             } else {
-
+                binding.myPostRecyclerView.visibility = View.GONE
             }
         }
 
@@ -103,8 +105,9 @@ class MyPageFragment: Fragment() {
             val isChecked = binding.commentToggleButton.isChecked
             if (isChecked) {
                 myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
+                binding.myCommentRecyclerView.visibility = View.VISIBLE
             } else {
-
+                binding.myCommentRecyclerView.visibility = View.GONE
             }
         }
 

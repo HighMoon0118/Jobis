@@ -1,8 +1,10 @@
 package com.ssafy.jobis.presentation.job
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.response.JobResponse
@@ -55,26 +58,35 @@ class JobFragment: Fragment() {
                 updateJobList(jobList)
             })
         jobViewModel.scheduleResult.observe(viewLifecycleOwner,
-            Observer { scheduleResult ->
-                scheduleResult ?:return@Observer
-                if (scheduleResult) {
+            Observer { schedule ->
+                if (schedule != null) {
                     Toast.makeText(context, "공고가 달력에 등록되었습니다.", Toast.LENGTH_SHORT).show()
-//                    setAlarm(newSchedule, alarm_id)
+                    setAlarm(schedule, schedule.id)
                 } else {
                     Toast.makeText(context, "이미 등록된 공고입니다.", Toast.LENGTH_SHORT).show()
                 }
+                return@Observer
             })
         jobViewModel.myJobList.observe(viewLifecycleOwner,
             Observer { myJobList ->
                 myJobList ?:return@Observer
                 updateMyJobList(myJobList)
-            }
-            )
+            })
+        jobViewModel.isScheduleDeleted.observe(viewLifecycleOwner,
+            Observer { isScheduleDeleted ->
+                isScheduleDeleted ?: return@Observer
+                binding.jobProgressBar.visibility = View.GONE
+                if (isScheduleDeleted) {
+                    jobViewModel.loadMyJobList(requireContext())
+                    Toast.makeText(context, "공고가 달력에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+
         binding.jobProgressBar.visibility = View.VISIBLE
         jobViewModel.loadJobList()
-        jobViewModel.loadMyJobList(requireContext())
 
-        val tabTitles = listOf("채용공고", "나의 채용공고")
         binding.jobTabLayout.getTabAt(0)?.text = "채용공고"
         binding.jobTabLayout.getTabAt(1)?.text = "나의 채용공고"
         binding.jobTabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
@@ -87,6 +99,7 @@ class JobFragment: Fragment() {
                     }
 
                     1 -> {
+                        jobViewModel.loadMyJobList(requireContext())
                         binding.jobRecyclerView.visibility = View.GONE
                         binding.jobScheduleRecyclerView.visibility = View.VISIBLE
                     }
@@ -112,8 +125,6 @@ class JobFragment: Fragment() {
         adapter.listData = jobList
         adapter.setOnItemClickListener(object: JobAdapter.OnItemClickListener{
             // 각 채용공고 클릭 시 동작하는 함수
-            // 여기서 알림설정 코드 작성
-            var alarm_id : Int = 0
             override fun onItemClick(v: View, job: JobResponse, post: Int) {
                 var newSchedule = Schedule(
                     title=job.title,
@@ -127,8 +138,7 @@ class JobFragment: Fragment() {
                     groupId = 0,
                     companyName = job.companyName
                 )
-
-                jobViewModel.insertSchedule(newSchedule, context!!)
+                showSetPopup(newSchedule)
             }
         })
         binding.jobRecyclerView.adapter = adapter
@@ -143,9 +153,8 @@ class JobFragment: Fragment() {
         val adapter = JobScheduleAdapter()
         adapter.listData = scheduleList
         adapter.setOnItemClickListener(object: JobScheduleAdapter.OnItemClickListener{
-
             override fun onItemClick(v: View, schedule: Schedule, post: Int) {
-                //delete
+                showDeletePopup(schedule)
             }
         })
         binding.jobScheduleRecyclerView.adapter = adapter
@@ -191,6 +200,44 @@ class JobFragment: Fragment() {
         pendingIntent.cancel() // pendingIntent 취소
 
         Toast.makeText(this.context, "Alaram Cancelled", Toast.LENGTH_LONG).show()
+    }
+
+    private fun showDeletePopup(schedule: Schedule) {
+        val inflater = (activity as MainActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val alertDialog = AlertDialog.Builder((activity as MainActivity))
+
+        alertDialog.setTitle("${schedule.companyName}")
+            .setMessage("공고를 달력에서 삭제하시겠습니까?")
+            .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                binding.jobProgressBar.visibility = View.VISIBLE
+                cancelAlarm(schedule, schedule.id)
+                jobViewModel.deleteSchedule(schedule, requireContext())
+            })
+            .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
+                return@OnClickListener
+            })
+            .create()
+        alertDialog.setView(view)
+        alertDialog.show()
+    }
+
+    private fun showSetPopup(schedule: Schedule) {
+        val inflater = (activity as MainActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val alertDialog = AlertDialog.Builder((activity as MainActivity))
+
+        alertDialog.setTitle("${schedule.companyName}")
+            .setMessage("공고를 달력에 등록하시겠습니까?")
+            .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                jobViewModel.insertSchedule(schedule, requireContext())
+            })
+            .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
+                return@OnClickListener
+            })
+            .create()
+        alertDialog.setView(view)
+        alertDialog.show()
     }
 
 }
