@@ -36,17 +36,40 @@
             android:textSize="30dp"
             android:text="채팅방 공지"
             android:translationZ="1dp"
-            android:background="@color/white"/>
+            android:background="#BFFFFFFF"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_chat"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_chat"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tb_chat"/>
+
+        <FrameLayout
+            android:id="@+id/layout_gif"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#40000000"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_chat">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_gif"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_close_gif"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_close_24"
+                android:layout_gravity="top|right"/>
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/input_chat"
@@ -65,7 +88,8 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/edit_text_chat"
                 app:layout_constraintBottom_toTopOf="@id/frame_emoticon_chat"
-                android:src="@drawable/ic_add_box_24"/>
+                android:src="@drawable/ic_add_box_24"
+                android:tint="#7C7C7C"/>
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edit_text_chat"
                 android:layout_width="0dp"
@@ -78,20 +102,22 @@
                 android:id="@+id/img_emoticon_chat"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_margin="5dp"
+                android:layout_marginHorizontal="5dp"
                 app:layout_constraintLeft_toRightOf="@id/edit_text_chat"
                 app:layout_constraintRight_toLeftOf="@id/img_send_chat"
                 app:layout_constraintBottom_toBottomOf="@id/img_add_chat"
-                android:src="@drawable/ic_faces_24"/>
+                android:src="@drawable/ic_faces_24"
+                android:tint="#7C7C7C"/>
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_send_chat"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_margin="5dp"
+                android:layout_marginHorizontal="5dp"
                 app:layout_constraintLeft_toRightOf="@id/img_emoticon_chat"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/img_add_chat"
-                android:src="@drawable/ic_send_24"/>
+                android:src="@drawable/ic_send_24"
+                android:tint="#7C7C7C"/>
 
             <FrameLayout
                 android:id="@+id/frame_emoticon_chat"
@@ -103,10 +129,12 @@
                 android:visibility="gone"
                 android:background="#A5A5A5">
 
-<!--                <androidx.recyclerview.widget.RecyclerView-->
-<!--                    android:id="@+id/grid_emoticon_chat"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"/>-->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewpager_chat"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:background="@color/white"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_select_color"
@@ -114,6 +142,14 @@
                     android:layout_height="30dp"
                     android:layout_margin="10dp"
                     android:background="@drawable/view_circle"
+                    android:layout_gravity="top|left"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_save"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_save_24"
                     android:layout_gravity="top|right"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -121,30 +157,36 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_left_24"
-                    android:layout_gravity="center_vertical|left"
-                    />
+                    android:layout_gravity="center_vertical|left"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_right"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/ic_right_24"
-                    android:layout_gravity="center_vertical|right"
-                    />
+                    android:layout_gravity="center_vertical|right"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_check"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginVertical="28dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_check_circle_outline_24"
+                    android:layout_gravity="bottom|right"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_viewpager_num"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:text="1/1"
-                    android:layout_gravity="bottom|right"
-                    />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="1/24"
+                    android:layout_gravity="bottom|right"/>
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewpager_chat"
-                    android:layout_width="300dp"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/grid_emoticon_chat"
+                    android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:layout_gravity="center"
                     android:background="@color/white"/>
 
             </FrameLayout>

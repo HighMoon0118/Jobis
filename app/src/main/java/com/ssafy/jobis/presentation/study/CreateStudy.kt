@@ -83,9 +83,6 @@ class CreateStudy : AppCompatActivity() {
 
         val a = Study(title = title,content = content,location = location,topic = topic,max_user = max_user,current_user = current_user,user_list = user_list,created_at = created_at,unread_chat_cnt = unread_chat_cnt)
 
-
-        // 왜 study db가 closed지?
-        // 원래 main activity에서는 안되서 다른 쓰레드로 빼서 돌려야함..
         CoroutineScope(Dispatchers.IO).launch {
             val db = StudyDatabase.getInstance(this@CreateStudy)
             db!!.getStudyDao().insertStudy(a)

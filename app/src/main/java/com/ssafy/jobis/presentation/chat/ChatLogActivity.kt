@@ -1,28 +1,21 @@
 package com.ssafy.jobis.presentation.chat
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
 import android.widget.ScrollView
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
-import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Chat
 import com.ssafy.jobis.data.model.study.StudyDatabase
 import com.ssafy.jobis.databinding.ActivityChatLogBinding
 import com.ssafy.jobis.presentation.study.adapter.ChatDisplayAdapter
-import com.ssafy.jobis.presentation.study.adapter.TmpAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 class ChatLogActivity : AppCompatActivity() {
     private var mBinding:ActivityChatLogBinding? = null
