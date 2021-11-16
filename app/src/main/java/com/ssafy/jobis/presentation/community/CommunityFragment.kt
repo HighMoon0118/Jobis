@@ -33,6 +33,7 @@ class CommunityFragment: Fragment() {
         val adapter = CommunityFragmentAdapter(this)
         adapter.fragmentList = fragmentList
         binding.postViewPager.adapter = adapter
+        binding.postViewPager.isSaveEnabled = false
 
         val tabTitles = listOf<String>("인기글", "최신글")
         TabLayoutMediator(binding.postTabLayout, binding.postViewPager) { tab, position ->
