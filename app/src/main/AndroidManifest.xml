@@ -51,7 +51,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.chat.ChatActivity" />
+        <activity android:name=".presentation.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".presentation.CalendarScheduleActivity"
             android:theme="@style/Theme.Jobis"/>
 
