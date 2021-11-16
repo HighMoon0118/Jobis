@@ -2,9 +2,16 @@ package com.ssafy.jobis.presentation.chat
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.ImageDecoder
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.drawable.AnimatedImageDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,44 +22,114 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import com.ssafy.jobis.R
-import com.ssafy.jobis.databinding.ActivityChatBinding
-import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
-import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
-import com.ssafy.jobis.view.DrawingView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
+import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.messaging.ktx.remoteMessage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.ssafy.jobis.R
+import com.ssafy.jobis.databinding.ActivityChatBinding
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_ID
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_NAME
+import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
+import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
+import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
+import com.ssafy.jobis.presentation.chat.viewholder.ChatViewHolder
+import com.ssafy.jobis.presentation.chat.viewholder.GIFViewHolder
+import com.ssafy.jobis.presentation.chat.viewmodel.ChatViewModel
+import com.ssafy.jobis.view.DrawingView
 import kotlinx.coroutines.*
+import org.json.JSONObject
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.*
 
-class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener {
+
+class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener,
+    ViewPagerAdapter.CanvasListener, GIFViewHolder.OnClickGIFListener,
+    ChatAdapter.onAddedChatListener {
 
     private lateinit var binding: ActivityChatBinding
+    private var mySource: ImageDecoder.Source? = null
     private val chatAdapter: ChatAdapter by lazy {
-        ChatAdapter()
+        ChatAdapter(this@ChatActivity)
     }
     private val viewPagerAdapter: ViewPagerAdapter by lazy {
         ViewPagerAdapter(this@ChatActivity)
     }
+    private val girdAdapter: GridAdapter by lazy {
+        GridAdapter(this@ChatActivity)
+    }
+    private val model: ChatViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requestPermissions()
+
+        Intent(this, MyFCMService.javaClass).also {intent ->
+            // 채팅방 아이디를 보내서 서비스가 알림을 보내야할지 말아야할지를 판단
+            startService(intent)
+        }
 
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.rvChat.adapter = chatAdapter
-        goToRecentChat()
+
+        val display = windowManager.defaultDisplay
+        val size = Point()
+        display.getRealSize(size)
+        val density = resources.displayMetrics.density
+        val width = (size.x - 300*density)/4
+
+        binding.gridEmoticonChat.apply {
+            adapter = girdAdapter
+            layoutManager = GridLayoutManager(context, 3)
+            addItemDecoration(object : RecyclerView.ItemDecoration() {
+                val spanCount = 3
+                val spacing = width.toInt()
+                override fun getItemOffsets( outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                    val position: Int = parent.getChildAdapterPosition(view)
+                    val column: Int = position % spanCount
+
+                    outRect.apply {
+                        left = spacing - column * spacing / spanCount
+                        right = (column + 1) * spacing / spanCount
+
+                        if (position < spanCount) top = spacing
+                        bottom = spacing
+                    }
+                }
+            })
+        }
 
         binding.viewpagerChat.apply {
             isUserInputEnabled = false
             adapter = viewPagerAdapter
+            registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+                override fun onPageScrollStateChanged(state: Int) {
+                    super.onPageScrollStateChanged(state)
+                    if (viewPagerAdapter.isAdded(currentItem)) {
+                        binding.imgCheck.setImageResource(R.drawable.ic_check_circle_24)
+                    } else {
+                        binding.imgCheck.setImageResource(R.drawable.ic_check_circle_outline_24)
+                    }
+                }
+            })
         }
 
         setSupportActionBar(binding.tbChat)  // 액션바 설정
@@ -64,42 +141,45 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             setHomeAsUpIndicator(R.drawable.ic_arrow_back_24)  // 뒤로가기 아이콘 설정
         }
 
+        Firebase.messaging.subscribeToTopic("StudyRoom")
 
         binding.apply {
             imgAddChat.setOnClickListener(this@ChatActivity)
             imgEmoticonChat.setOnClickListener(this@ChatActivity)
             imgSendChat.setOnClickListener(this@ChatActivity)
+            editTextChat.requestFocus()
             editTextChat.setOnClickListener(this@ChatActivity)
             imgSelectColor.setOnClickListener(this@ChatActivity)
+            imgSave.setOnClickListener(this@ChatActivity)
             imgLeft.setOnClickListener(this@ChatActivity)
             imgRight.setOnClickListener(this@ChatActivity)
+            imgCheck.setOnClickListener(this@ChatActivity)
+            imgCloseGif.setOnClickListener(this@ChatActivity)
         }
     }
 
     private fun goToRecentChat() {
-        binding.rvChat.post {
-            binding.rvChat.scrollToPosition(19)
+        Log.d("시알", "왜 안되냐")
+        CoroutineScope(Dispatchers.Main).launch {
+            binding.rvChat.scrollToPosition(chatAdapter.itemCount-1)
         }
     }
 
-    suspend fun showCanvas(view: View) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    suspend fun showCanvas(view: View, imm: InputMethodManager) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)   // 키보드가 layout에 영향을 주지 않게 함
-        binding.frameEmoticonChat.visibility = View.VISIBLE                                 // 캔버스를 보임
+        binding.frameEmoticonChat.visibility = View.VISIBLE                             // 캔버스를 보임
         imm.hideSoftInputFromWindow(view.windowToken, 0)                           // 키보드를 숨김
         delay(100)                                                              // 키보드가 전부 안보일 떄까지 기다림
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
     }
 
-    suspend fun showKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    suspend fun showKeyboard(imm: InputMethodManager) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)   // 키보드가 layout에 영향을 주지 않게 함
         imm.showSoftInput(binding.editTextChat, 0)                                 // 키보드를 보임
         delay(100)                                                              // 키보드가 전부 보일 떄까지 기다림
-        binding.frameEmoticonChat.visibility = View.GONE                                    // 캔버스를 숨김
+        binding.frameEmoticonChat.visibility = View.GONE                                // 캔버스를 숨김
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
     }
-
 
     @SuppressLint("ResourceType")
     override fun onClick(view: View?) {
@@ -108,27 +188,39 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
             }
             R.id.img_emoticon_chat -> {
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 val scope = CoroutineScope(Dispatchers.Main)
                 scope.launch {
-                    if (binding.frameEmoticonChat.visibility == View.GONE) {     // 1. 키보드가 보일 때
-                        showCanvas(view)
-                    } else {                                                     // 2. 캔버스가 보일 때
-                        showKeyboard()
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {
+                        showCanvas(view, imm)
+                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
+                    } else if(binding.gridEmoticonChat.visibility == View.GONE) {
+                        binding.gridEmoticonChat.visibility = View.VISIBLE
+                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
+                    } else {
+                        binding.gridEmoticonChat.visibility = View.GONE
+                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_faces_24)
                     }
                 }
             }
             R.id.img_send_chat -> {
-
+                if (mySource != null) {
+                    chatAdapter.addChat(true, mySource, null)
+                    clearGIFLayout()
+                }
+                val text = binding.editTextChat.text?.trim().toString()
+                if (text != "") {
+                    chatAdapter.addChat(false, null, text)
+                    binding.editTextChat.text = null
+                    model.sendMessage("StudyRoom", "내", text)
+                }
             }
             R.id.edit_text_chat -> {
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-                    if (binding.frameEmoticonChat.visibility == View.GONE) {      // 1. Edit Text만 보일 때
-                        imm.showSoftInput(binding.editTextChat, 0)           // 키보드를 보임
-                    } else {                                                      // 2. 캔버스가 보일 때
-                        showKeyboard()
+                    if (binding.frameEmoticonChat.visibility == View.VISIBLE) {    // 1. Edit Text만 보일 때
+                        showKeyboard(imm)                                             // 키보드를 보임
                     }
                 }
             }
@@ -141,25 +233,48 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     .setPresetsButtonText(R.string.presets)
                     .show(this)
             }
+            R.id.img_save -> {
+                viewPagerAdapter.saveView()
+            }
             R.id.img_left -> {
                 binding.viewpagerChat.apply {
                     if (currentItem > 0) {
                         currentItem--
                     }
-                    binding.textViewpagerNum.text = "$currentItem/$childCount"
+                    binding.textViewpagerNum.text = "${currentItem+1}/24"
                 }
             }
             R.id.img_right -> {
                 binding.viewpagerChat.apply {
-                    if (currentItem < childCount-1) {
+                    if (currentItem < 23) {
                         currentItem++
-                    } else if (currentItem == currentItem-1){
-                        viewPagerAdapter.addFragment(DrawingFragment())
                     }
-                    binding.textViewpagerNum.text = "$currentItem/$childCount"
+                    binding.textViewpagerNum.text = "${currentItem+1}/24"
                 }
             }
+            R.id.img_check -> {
+                val current = binding.viewpagerChat.currentItem
+                viewPagerAdapter.apply {
+                    if (isAdded(current)) {
+                        removeView(current)
+                        binding.imgCheck.setImageResource(R.drawable.ic_check_circle_outline_24)
+                    } else {
+                        addView(current)
+                        binding.imgCheck.setImageResource(R.drawable.ic_check_circle_24)
+                    }
+                }
+
+            }
+            R.id.img_close_gif -> {
+                clearGIFLayout()
+            }
         }
+    }
+
+    fun clearGIFLayout() {
+        binding.layoutGif.visibility = View.GONE
+        binding.imgSendChat.setColorFilter(Color.parseColor("#7C7C7C"))
+        mySource = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -185,53 +300,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         }
     }
 
-    private fun requestPermissions() {
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            val permissions: Array<String> = arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE)
-            ActivityCompat.requestPermissions(this, permissions, 0)
-        }
-    }
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode==0) {
-            if (grantResults.isNotEmpty()) {
-                var isAllGranted = true
-                for (grant in grantResults) {
-                    if (grant != PackageManager.PERMISSION_GRANTED) {
-                        isAllGranted = false
-                        break;
-                    }
-                }
-                Log.d("ㅇㅇㅇㅇ", isAllGranted.toString())
-                if (isAllGranted) {
-
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        AlertDialog
-                            .Builder(this)
-                            .setTitle("권한 설정")
-                            .setMessage("미디어 액세스를 허용해주세요")
-                            .setPositiveButton("권한 설정하러 가기"){ dialog, which ->
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                    .setData(Uri.parse("package:$packageName"))
-                                startActivity(intent);
-                            }
-                            .setNegativeButton("취소"){ dialog, which ->
-                                finish()
-                            }
-                            .create()
-                            .show()
-                    }
-                }
-            }
-        }
-    }
-
     override fun onColorSelected(dialogId: Int, color: Int) {
         binding.imgSelectColor.background.setTint(color)
         DrawingView.color = color
@@ -239,5 +307,28 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
     override fun onDialogDismissed(dialogId: Int) {
 
+    }
+
+    override fun onSuccess() {
+        girdAdapter.getGif()
+    }
+
+    override fun chooseGIF(source: ImageDecoder.Source?) {
+        if (source != null) {
+            mySource = source
+            val drawable = ImageDecoder.decodeDrawable(mySource!!)
+            binding.imgGif.setImageDrawable(drawable)
+
+            if (drawable is AnimatedImageDrawable) {
+                drawable.repeatCount = 4
+                drawable.start()
+            }
+            binding.layoutGif.visibility = View.VISIBLE
+            binding.imgSendChat.setColorFilter(Color.parseColor("#448aff"))
+        }
+    }
+
+    override fun onAddedChat() {
+        goToRecentChat()
     }
 }

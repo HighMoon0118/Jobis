@@ -27,5 +27,6 @@ abstract class StudyDatabase : RoomDatabase() {
             }
             return Instance
         }
+
     }
 }
