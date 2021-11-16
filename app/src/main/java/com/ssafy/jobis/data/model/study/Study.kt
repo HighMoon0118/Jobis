@@ -58,5 +58,3 @@ class Converters {
     fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
 }
 
-
-
