@@ -27,12 +27,9 @@ class MyStudyFragment(val myContext: Context): Fragment() {
             viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(this.application)).get(StudyViewModel::class.java)
         }
 
-        val studyAdapter = MyStudyAdapter(myContext)
-        binding.rvMyStudy.adapter = studyAdapter
-
         viewModel.studyList.observe(viewLifecycleOwner,  {
-            Log.d("시발", "ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ")
-            studyAdapter.submitList(it)
+            val studyAdapter = MyStudyAdapter(myContext, it)
+            binding.rvMyStudy.adapter = studyAdapter
         })
 
         binding.fabMyStudy.setOnClickListener {
