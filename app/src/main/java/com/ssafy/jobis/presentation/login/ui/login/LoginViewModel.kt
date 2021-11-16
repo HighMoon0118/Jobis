@@ -28,7 +28,6 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                 if (job1.data.userId != null) {
                     val nickname = loginRepository.getUserInfo(job1.data.userId)
                     Jobis.prefs.setString("nickname", nickname)
-                    val test = Jobis.prefs.getString("nickname", null)
                 }
                 _loginResult.value = LoginResult(success = LoggedInUserView(displayName = job1.data.displayName))
             } else {
