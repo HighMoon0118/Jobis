@@ -40,7 +40,7 @@ class ChatLogActivity : AppCompatActivity() {
 
         val db = StudyDatabase.getInstance(this@ChatLogActivity)
         db!!.getStudyDao().getChatList(study_id).observe(this, {
-                val chatDisplayAdapter = ChatDisplayAdapter(it)
+                val chatDisplayAdapter = ChatDisplayAdapter(it.chats)
                 binding.groupChatDisplay.adapter = chatDisplayAdapter
         })
 
@@ -52,7 +52,7 @@ class ChatLogActivity : AppCompatActivity() {
             val content = binding.inputGroupMessage.text.toString()
             val created_at = SimpleDateFormat("hh:mm a").toString()
 
-            val chat = Chat(uid = uid, content = content, created_at =  created_at, study_id = study_id)
+            val chat = Chat(user_id = uid, content = content, created_at =  created_at, study_id = study_id)
 
             CoroutineScope(Dispatchers.IO).launch {
             val db = StudyDatabase.getInstance(this@ChatLogActivity)

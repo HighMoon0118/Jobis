@@ -16,18 +16,18 @@ class ChatGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
     private val img: ImageView = view.findViewById(R.id.img_gif)
 
-    fun bind(studyChat: ChatAdapter.StudyChat) {
-        img.setImageDrawable(studyChat.drawable)
-        if (!studyChat.isMoved && studyChat.drawable is AnimatedImageDrawable) {
-            studyChat.isMoved = true
-            studyChat.drawable.repeatCount = 4
-            studyChat.drawable.start()
-        }
-        img.setOnClickListener {
-            if (studyChat.drawable is AnimatedImageDrawable) {
-                studyChat.drawable.repeatCount = 4
-                studyChat.drawable.start()
-            }
-        }
-    }
+//    fun bind(studyChat: ChatAdapter.StudyChat) {
+//        img.setImageDrawable(studyChat.drawable)
+//        if (!studyChat.isMoved && studyChat.drawable is AnimatedImageDrawable) {
+//            studyChat.isMoved = true
+//            studyChat.drawable.repeatCount = 4
+//            studyChat.drawable.start()
+//        }
+//        img.setOnClickListener {
+//            if (studyChat.drawable is AnimatedImageDrawable) {
+//                studyChat.drawable.repeatCount = 4
+//                studyChat.drawable.start()
+//            }
+//        }
+//    }
 }
