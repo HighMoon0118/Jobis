@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ssafy.jobis.data.model.Report.Report
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.repository.CommunityRepository
 import com.ssafy.jobis.data.response.PostResponse
@@ -23,6 +24,9 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
     val comments: LiveData<MutableList<Comment>> = _comments
     private val _deleted = MutableLiveData<Boolean>()
     val deleted: LiveData<Boolean> = _deleted
+    private val _reportResult = MutableLiveData<Boolean>()
+    val reportResult: LiveData<Boolean> = _reportResult
+
 
     fun loadPost(id: String, uid: String) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -82,5 +86,12 @@ class CommunityDetailViewModel(private val communityRepository: CommunityReposit
 
     fun getPost(): PostResponse? {
         return _post.value
+    }
+
+    fun reportPost(post_id: String, uid: String, reason: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val res = communityRepository.reportPost(Report(post_id, uid, reason))
+            _reportResult.value = res
+        }
     }
 }

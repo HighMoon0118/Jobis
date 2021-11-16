@@ -1,12 +1,14 @@
 package com.ssafy.jobis.presentation.community.recent
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -38,10 +40,12 @@ class RecentPostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recentPostViewModel = ViewModelProvider(this, RecentPostViewModelFactory())
             .get(RecentPostViewModel::class.java)
-        recentPostViewModel.recentPostList.observe(viewLifecycleOwner,
-            Observer { recentPostList ->
-                recentPostList ?: return@Observer
-                updateRecentPost(recentPostList)
+        recentPostViewModel.filteredPostList.observe(viewLifecycleOwner,
+            Observer { filteredPostList ->
+                Log.d("test", "sdfdddd ${filteredPostList}")
+                filteredPostList ?: return@Observer
+                Log.d("test", "sdfdddd ${filteredPostList}")
+                updateRecentPost(filteredPostList)
             })
         binding.recentProgressBar.visibility = View.VISIBLE
 

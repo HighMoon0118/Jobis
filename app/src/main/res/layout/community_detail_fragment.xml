@@ -113,6 +113,17 @@
                             android:text="삭제"
                             android:textColor="@color/light_gray"
                             android:visibility="gone" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/postDeclarationButton"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/comfortaa_bold"
+                            android:minWidth="48dp"
+                            android:text="신고하기"
+                            android:textColor="@color/light_gray" />
+
                     </LinearLayout>
 
                 </LinearLayout>

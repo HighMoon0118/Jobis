@@ -8,16 +8,18 @@ import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.data.response.PostResponseList
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.ssafy.jobis.data.model.Report.Report
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.presentation.login.Jobis
 import kotlinx.coroutines.tasks.await
 import java.security.Timestamp
 
 class CommunityRepository {
+    var db = FirebaseFirestore.getInstance()
     suspend fun loadAllPosts(): PostResponseList {
         var postList = PostResponseList()
         return try {
-            var db = FirebaseFirestore.getInstance()
+//            var db = FirebaseFirestore.getInstance()
             db.collection("posts")
                 .get()
                 .addOnSuccessListener { result ->
@@ -38,7 +40,7 @@ class CommunityRepository {
     suspend fun loadRecentPosts(): PostResponseList {
         var postList = PostResponseList()
         return try {
-            val db = FirebaseFirestore.getInstance()
+//            val db = FirebaseFirestore.getInstance()
             db.collection("posts")
                 .orderBy("created_at", Query.Direction.DESCENDING)
                 .get()
@@ -61,7 +63,7 @@ class CommunityRepository {
     suspend fun loadPopularPosts(): PostResponseList {
         var postList = PostResponseList()
         return try {
-            val db = FirebaseFirestore.getInstance()
+//            val db = FirebaseFirestore.getInstance()
             db.collection("posts")
                 .orderBy("like", Query.Direction.DESCENDING)
                 .get()
@@ -83,7 +85,7 @@ class CommunityRepository {
     suspend fun loadPostDetail(id: String): PostResponse? {
         var post: PostResponse? = null
         return try {
-            val db = FirebaseFirestore.getInstance()
+//            val db = FirebaseFirestore.getInstance()
             db.collection("posts").document(id)
                 .get()
                 .addOnSuccessListener { result ->
@@ -98,7 +100,7 @@ class CommunityRepository {
     }
 
     suspend fun deletePost(post_id: String, uid: String): Boolean {
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         var res = false
         val postRef = db.collection("posts").document(post_id)
         val userRef = db.collection("users").document(uid)
@@ -122,7 +124,7 @@ class CommunityRepository {
     }
 
     fun updateLike(isLiked: Boolean, post_id: String, uid: String) {
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("posts").document(post_id)
         val userRef = db.collection("users").document(uid)
         db.runBatch { batch ->
@@ -138,7 +140,7 @@ class CommunityRepository {
 
     suspend fun createComment(text: String, post_id: String, uid: String): Boolean? {
         var commentResponse = false
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("posts").document(post_id)
         val userRef = db.collection("users").document(uid)
         val comment = Comment(
@@ -167,7 +169,7 @@ class CommunityRepository {
     }
 
     suspend fun deleteComment(post_id: String, comment: Comment, uid: String): Boolean {
-        val db = FirebaseFirestore.getInstance()
+//        val db = FirebaseFirestore.getInstance()
         val docRef = db.collection("posts").document(post_id)
         val userRef = db.collection("users").document(uid)
         var response = false
@@ -187,6 +189,25 @@ class CommunityRepository {
         } catch(e: Throwable) {
             e.printStackTrace()
             response
+        }
+    }
+
+    suspend fun reportPost(report: Report): Boolean {
+        var ret = false
+        return try {
+            db.collection("reports")
+                .add(report)
+                .addOnSuccessListener {
+                    ret = true
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("test", "${exception}")
+                }
+                .await()
+            ret
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            false
         }
     }
 
