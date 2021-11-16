@@ -8,15 +8,17 @@ import com.google.gson.Gson
 data class Study(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "study_id")
-    var id: Int,
+    var id: Int = 0,
     var title: String,
     var content: String?,
     var location: String?,
-    var topic: String,
+    var topic: String?,
     var max_user: Int?,
-    var current_user: Int = 1,
+    var current_user: Int? = 1,
     var user_list: List<Crew>? = null,
-    var created_at: String
+    var created_at: String,
+    var unread_chat_cnt : Int? = 0
+
 )
 
 @Entity(tableName = "crew")
@@ -29,21 +31,23 @@ data class Crew(
 
 @Entity(
     tableName = "chat",
-    foreignKeys = [
-    ForeignKey(
-        entity = Study::class,
-        parentColumns = ["study_id"],
-        childColumns = ["chat_id"],
-        onDelete = CASCADE
-    )
-])
+//    foreignKeys = [
+//    ForeignKey(
+//        entity = Study::class,
+//        parentColumns = ["study_id"],
+//        childColumns = ["chat_id"],
+//        onDelete = CASCADE
+//    )
+//]
+)
 
 data class Chat(
     @ColumnInfo(name = "chat_id")
-    @PrimaryKey(autoGenerate = true) var id: Int,
+    @PrimaryKey(autoGenerate = true) var chat_id: Int = 0,
     var uid: String,
     var content: String,
     var created_at: String,
+    var study_id: Int,
 )
 
 class Converters {
@@ -53,6 +57,4 @@ class Converters {
     @TypeConverter
     fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
 }
-
-
 

@@ -3,11 +3,13 @@ package com.ssafy.jobis.presentation.chat
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.*
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
 import com.ssafy.jobis.view.DrawingView
@@ -35,15 +37,19 @@ class DrawingFragment : Fragment() {
         return view
     }
 
-    fun addView() {
+    fun getWH(): Array<Int> {
+        return arrayOf(canvas.width, canvas.height)
+    }
+
+    fun getBitmap(): Bitmap {
 
         val bitmap = Bitmap.createBitmap(canvas.width, canvas.height, Bitmap.Config.ARGB_8888)
         val tmp = Canvas(bitmap)
         canvas.draw(tmp)
-
-        bitmapList.add(bitmap)
-        Log.d("비트맵 개수", bitmapList.size.toString())
-
+        return bitmap
+    }
+//        bitmapList.add(bitmap)
+//        Log.d("비트맵 개수", bitmapList.size.toString())
 //        val date = System.currentTimeMillis().toString()
 //        val fileName = "$date.jpg"
 //        try {
@@ -66,41 +72,4 @@ class DrawingFragment : Fragment() {
 //        } catch (e: Exception) {
 //            e.printStackTrace()
 //        }
-    }
-    fun saveView() {
-        Thread {
-            try {
-                encodeGIF()
-                Log.d("스레드 중", "ㅋㅋㅋㅋㅋ")
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }.start()
-        Log.d("스레드 끝", "ㅋㅋㅋㅋㅋㅋ")
-    }
-
-    fun encodeGIF() {
-        val fileName = System.currentTimeMillis().toString()+".gif"
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
-//        val filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + File.separator + fileName
-        val filePath = file.absolutePath
-        val width = canvas.width
-        val height = canvas.height
-        val delayMs = 100;
-
-        val gifEncoder = GifEncoder()
-        gifEncoder.init(width, height, filePath, GifEncoder.EncodingType.ENCODING_TYPE_NORMAL_LOW_MEMORY)
-        gifEncoder.setDither(false)
-        for (bm in bitmapList) {
-            gifEncoder.encodeFrame(bm, delayMs)
-        }
-        gifEncoder.close()
-
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also {
-            it.data = Uri.fromFile(file)
-            context?.sendBroadcast(it)
-        }
-    }
 }
