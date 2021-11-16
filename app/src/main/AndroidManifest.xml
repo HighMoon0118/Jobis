@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity
+            android:name=".presentation.chat.ChatScheduleAddActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.chat.ChatScheduleActivity"
             android:exported="false" />
         <activity
