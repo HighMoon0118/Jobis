@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                         supportFragmentManager.beginTransaction().replace(R.id.frame_main, jobFragment).commit()
                     }
                     R.id.item_community -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, communityFragment).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, CommunityFragment()).commit()
                     }
                     R.id.item_my_page -> {
                         supportFragmentManager.beginTransaction().replace(R.id.frame_main, myPageFragment).commit()
