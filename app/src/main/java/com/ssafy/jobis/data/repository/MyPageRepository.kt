@@ -2,8 +2,11 @@ package com.ssafy.jobis.data.repository
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.data.response.PostResponseList
@@ -82,6 +85,42 @@ class MyPageRepository {
         } catch(e: Throwable) {
             e.printStackTrace()
             commentList
+        }
+    }
+
+    fun loadMyJobList(context: Context): List<Schedule>? {
+        var db = CalendarDatabase.getInstance(context)
+        return db?.calendarDao()?.getMyJob()
+    }
+
+    fun deleteSchedule(schedule: Schedule, context: Context): Boolean {
+        var db = CalendarDatabase.getInstance(context)
+        return try {
+            db?.calendarDao()?.delete(schedule)
+            true
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    suspend fun updateNickName(uid: String, nickName: String): Boolean {
+        var db = FirebaseFirestore.getInstance()
+        var res = false
+        return try {
+            db.collection("users").document(uid)
+                .update("nickname", nickName)
+                .addOnSuccessListener {
+                    res = true
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("test", "${exception}")
+                }
+                .await()
+            res
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            res
         }
     }
 }
