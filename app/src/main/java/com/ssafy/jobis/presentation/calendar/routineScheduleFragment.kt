@@ -6,6 +6,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
 //    }
     var title = ""
     var content = ""
-    lateinit var newRoutineSchedule : RoutineSchedule
+    private lateinit var newRoutineSchedule : RoutineSchedule
     private var _binding: FragmentRoutineScheduleBinding? = null
     private val binding get() = _binding!!
     private var startDateString =""
@@ -40,9 +41,9 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
     private var endTimeString = ""
     private var startHour = 0
     private var startMinute = 0
-    private var startYear = year
-    private var startMonth = month
-    private var startDay = day
+    private var startYear = 0
+    private var startMonth = 0
+    private var startDay = 0
     private var endYear = 0
     private var endMonth = 0
     private var endDay = 0
@@ -69,8 +70,9 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         if (startYear == 0) {
             // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장. 그냥 calendar 써도 됨
             startYear = year
-            startMonth = month
+            startMonth = month - 1
             startDay = day
+            println("어디부터 1, $startYear, $startMonth, $startDay")
         }
         // 시작 시간 안정했으면
         if (startTimeString == "") {
@@ -103,7 +105,6 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             return 0
         }
 
-
         if (endHour<startHour){
             Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
             return 0
@@ -115,7 +116,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         // Calendar 객체에 시작 날짜 넣어서 저장
         val startCal = Calendar.getInstance()
         startCal.set(startYear, startMonth, startDay)
-        println(startCal)
+        println("어디부터2, $startYear, $startMonth, $startDay")
         // Calendar 객체에 끝 날짜 넣어서 저장
         val endCal = Calendar.getInstance()
         endCal.set(endYear, endMonth, endDay)
@@ -126,6 +127,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
 
         if (startDayOfYear > endDayOfYear){
+            println("$startDayOfYear, $endDayOfYear, 시작일이 종료일보다 늦습니다. ")
             Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
             return 0
         }
@@ -145,6 +147,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         // 버튼 클릭할때마다 새로 담아야해서 안쪽에서 선언
         // 1~7까지 순회하면서
         val routineDaySelect = mutableListOf<Calendar>()
+        println("______________________________________________________")
+        println(startDayOfWeek)
         for(i in 1..7) {
             if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
                 when {
@@ -162,7 +166,6 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
                             routineDaySelect.add(cal1)
                             println("cal1: $cal1")
                             println(cal1.get(Calendar.DAY_OF_YEAR))
-
                             tmp += 1
                         }
                     }
@@ -306,6 +309,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
 //
 //            }
 //        }
+        calendar = Calendar.getInstance()
         calendar.add(Calendar.HOUR, 9)
         val currentCal = calendar
 //        var currentCal = calendar // 10분 추가한 cal 객체랑 따로 저장하고 싶어서 분리한건데 잘 안되는듯?
@@ -330,14 +334,15 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
                 scheduleEndTime = "59"
                 calendar.set(Calendar.MINUTE, 59)
-                println("여기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                val test = calendar.get(Calendar.MINUTE)
-                println("에휴, $test")
                 scheduleEndTime = "23:59"
+                endMinute = 59
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
             }
         } else{
             calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
             scheduleEndTime = dateFormat2.format(calendar.time)
+            endHour = calendar.get(Calendar.HOUR_OF_DAY)
+            endMinute = calendar.get(Calendar.MINUTE)
         }
 
 
@@ -406,23 +411,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             if (startTimeString == "") { // 시간 처음 정하는거라면 현재 cal 객체에서 시간 분 받아와서 기본으로 설정
                 startHour = currentCal.get(Calendar.HOUR_OF_DAY)
                 startMinute = currentCal.get(Calendar.MINUTE)
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    currentCal.get(Calendar.HOUR_OF_DAY),
-//                    currentCal.get(Calendar.MINUTE),
-//                    true,
-//                ).show()
             }
-//            else { // 다시 정하는 거라면, 이전에 선택해 저장한 값 불러와서 사용
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    startHour,
-//                    startMinute,
-//                    true,
-//                ).show()
-//            }
+
 
             TimePickerDialog(
                 activity,
@@ -453,11 +443,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             // Dialog 창 띄움
             if (endDateString == "") {
                 DatePickerDialog( // calendar = 10분 더한 객체, 50~59분일 경우 59로 맞춘 객체
-                    activity, dateSetListener, calendar.get(Calendar.YEAR),
-                    calendar.get(
-                        Calendar.MONTH
-                    ),
-                    calendar.get(Calendar.DAY_OF_MONTH),
+                    activity, dateSetListener, year, month -1 , day,
                 ).show()
             } else {
                 DatePickerDialog(activity, dateSetListener, endYear, endMonth, endDay).show()
@@ -509,193 +495,10 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             ).show()
         }
 
-        // 일정 등록 버튼
-        view.routineScheduleAddBtn.setOnClickListener {
-
-            // 시작 날짜 따로 안정했으면
-            if (startYear == 0) {
-                // 시작 날짜가 0 할당이므로 포맷 바꿔서 변수에 저장. 그냥 calendar 써도 됨
-                startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
-                startMonth = SimpleDateFormat("MM").format(calendar.time).toInt() - 1
-                startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
-            }
-            // 시작 시간 안정했으면
-            if (startTimeString == "") {
-                // 시작 시간 "" 이므로 그냥 현재 시간 할당한거 저장
-                startTimeString = scheduleStartTime
-            }
-            // 끝 날짜 안정했으면
-            if (endDateString==""){
-                endYear = startYear
-                endMonth = startMonth
-                endDay = startDay
-            }
-            // 끝 시간 안정했을경우
-            if (endTimeString == "") {
-                endTimeString = scheduleEndTime // 현재시간 + 10분 시간을 저장
-            }
-
-
-            // 일정 제목 내용 받아오기
-            title = view.scheduleTitleEditText.text.toString()
-            content = view.scheduleContentEditText.text.toString()
-
-            if (title==""){
-                Toast.makeText(context,R.string.empty_title, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-
-            }
-            if (content==""){
-                Toast.makeText(context,R.string.empty_content, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Calendar 객체에 시작 날짜 넣어서 저장
-            val startCal = Calendar.getInstance()
-            startCal.set(startYear, startMonth, startDay)
-            println(startCal)
-            // Calendar 객체에 끝 날짜 넣어서 저장
-            val endCal = Calendar.getInstance()
-            endCal.set(endYear, endMonth, endDay)
-            // 시작하는 날짜의 요일
-            val startDayOfWeek= startCal.get(Calendar.DAY_OF_WEEK)
-//            // 시작하는 날짜의 날 (int, nnn) (1~365로 나타난다)
-//            val startDayOfYear = startCal.get(Calendar.DAY_OF_YEAR)
-//            // 끝 날짜
-//            val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
-
-//
-//            if (startDayOfYear > endDayOfYear){
-//                Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-//            if (startDayOfYear == endDayOfYear){
-//                Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-//
-//
-//            if (endHour<startHour){
-//                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            } else if (endHour == startHour && endMinute < startMinute) {
-//                Toast.makeText(context,R.string.time_select_error, Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-
-//            var cal1 = Calendar.getInstance()
-//            cal1.set(startYear, startMonth, startDay)
-//            println("-----------------------")
-//            println(startCal)
-//            println(cal1)
-//            var cal1MilliToDate = cal1.timeInMillis / (24*60*60*1000)
-//            println("cal1mtd, $cal1MilliToDate")
-//            println(endCal)
-            val endMilli = endCal.timeInMillis
-//            println("끝밀리, $endMilli")
-            val endMilliToDate = endMilli / (24*60*60*1000)
-            println("끝밀리투데이트,$endMilliToDate")
-            // 버튼 클릭할때마다 새로 담아야해서 안쪽에서 선언
-            // 1~7까지 순회하면서
-            val routineDaySelect = mutableListOf<Calendar>()
-            for(i in 1..7) {
-                if (dayOfWeekSelect[i]) { // 요일이 true 일 경우
-                    when {
-                        i == startDayOfWeek -> { // 시작 날짜의 요일 == 반복 선택한 요일 중 지금 보고있는 거
-                            val cal0 = Calendar.getInstance()
-                            cal0.set(startYear, startMonth, startDay)
-                            val cal1MilliToDate = cal0.timeInMillis / (24*60*60*1000)
-                            println("cal1mtd, $cal1MilliToDate")
-                            val diff = (endMilliToDate - cal1MilliToDate)/7
-                            var tmp = 0
-                            while(diff >= tmp){ //
-                                val cal1 = Calendar.getInstance()
-                                cal1.set(startYear, startMonth, startDay)
-                                cal1.add(Calendar.DATE, 7 * tmp)
-                                routineDaySelect.add(cal1)
-                                println("cal1: $cal1")
-                                println(cal1.get(Calendar.DAY_OF_YEAR))
-
-                                tmp += 1
-                            }
-                        }
-
-                        i > startDayOfWeek -> {// 시작 날짜의 요일 < 반복 선택한 요일 중 지금 보고있는 거
-                            // 며칠 차이인지 확인해서 + a
-                            // 7일 더하면서 반복 저장
-                            val cal0 = Calendar.getInstance()
-                            cal0.set(startYear, startMonth, startDay)
-                            val add = i - startDayOfWeek
-                            cal0.add(Calendar.DATE, add)
-                            val cal2MilliToDate = cal0.timeInMillis / (24*60*60*1000)
-                            println("cal2mtd, $cal2MilliToDate")
-                            val diff = (endMilliToDate - cal2MilliToDate)/7
-                            var tmp = 0
-                            while(diff >= tmp){ //
-                                val cal2 = Calendar.getInstance()
-                                cal2.set(startYear, startMonth, startDay)
-                                cal2.add(Calendar.DATE, add) // 요일 맞추기
-                                cal2.add(Calendar.DATE, 7 * tmp)
-                                routineDaySelect.add(cal2)
-
-                                tmp += 1
-                            }
-                        }
-                        else -> { // 시작 날짜의 요일 > 반복 선택한 요일 중 지금 보고있는 거
-                            // 며칠 차이인지 확인해서 + a
-                            // 7일 더하면서 반복 저장
-                            val add = 7 - startDayOfWeek + i
-                            val cal0 = Calendar.getInstance()
-                            cal0.set(startYear, startMonth, startDay)
-                            cal0.add(Calendar.DATE, add)
-                            val cal3MilliToDate = cal0.timeInMillis / (24*60*60*1000)
-                            println("cal3mtd, $cal3MilliToDate")
-                            val diff = (endMilliToDate - cal3MilliToDate)/7
-                            var tmp = 0
-                            while(diff >= tmp){ //
-                                val cal3 = Calendar.getInstance()
-                                cal3.set(startYear, startMonth, startDay)
-                                cal3.add(Calendar.DATE, add) // 요일 맞추기
-                                cal3.add(Calendar.DATE, 7 * tmp)
-                                routineDaySelect.add(cal3)
-
-                                tmp += 1
-                            }
-                        }
-                    }
-                }
-            }
-            if (routineDaySelect.size == 0) {
-                Toast.makeText(context,R.string.empty_routine_select, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-
-            }
-            println("------선택된 날----")
-            println(routineDaySelect)
-            val size1 = routineDaySelect.size
-            println("사이즈,$size1")
-            routineDaySelect.sort()
-
-            // db 저장
-            val newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
-            val db = RoutineScheduleDatabase.getInstance(activity)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.routineScheduleDao().insert(newRoutineSchedule)
-                val dbList = db.routineScheduleDao().getAll()
-                println("DB 결과: $dbList")
-            }
-
-        }
 
         view.routineScheduleList.setOnClickListener {
-            println("일정 확인")
-//            val db = RoutineScheduleDatabase.getInstance(this.context)
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val dbList = db!!.routineScheduleDao().getAll()
-//                println("일정 결과: $dbList")
-//            }
-            this.routinScheduleAddFun()
-            println("============일정 등록 =======")
+            Log.d("로그 저장 정보", "$title, $content, $startYear, ${startMonth}, $startDay, $startTimeString, $endTimeString")
+            Log.d("시작끝시간", "$startHour, $endHour, $startMinute, $endMinute")
         }
 
 
