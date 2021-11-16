@@ -1,45 +1,36 @@
 package com.ssafy.jobis.presentation.study.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.study.Study
 import com.ssafy.jobis.presentation.study.viewholder.MyStudyHeaderViewHolder
 import com.ssafy.jobis.presentation.study.viewholder.MyStudyViewHolder
 
-class MyStudyAdapter(private val onClick: () -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MyStudyAdapter(val context: Context): ListAdapter<Study, MyStudyViewHolder>(StudyDiffCallback) {
 
-    private val MY_STUDY_HEADER = 0
-    private val MY_STUDY_ITEM = 1
-    private val MY_STUDY_FOOTER = 2
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            MY_STUDY_HEADER -> MyStudyHeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_my_study_header, parent, false))
-            else -> MyStudyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_my_study, parent, false), onClick)
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyStudyViewHolder {
+        return MyStudyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_my_study, parent, false), context)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is MyStudyHeaderViewHolder -> {
-                holder.bind("스터디")
-            }
-            is MyStudyViewHolder -> {
-                holder.bind(position)
-            }
-        }
+    override fun onBindViewHolder(holder: MyStudyViewHolder, position: Int) {
+        val study = getItem(position)
+        holder.bind(study)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            0 -> MY_STUDY_HEADER
-            else -> MY_STUDY_ITEM
-        }
+}
+
+object StudyDiffCallback : DiffUtil.ItemCallback<Study>() {
+    override fun areItemsTheSame(oldItem: Study, newItem: Study): Boolean {
+        return oldItem == newItem
     }
 
-    override fun getItemCount(): Int {
-        return 5
+    override fun areContentsTheSame(oldItem: Study, newItem: Study): Boolean {
+        return oldItem.id == newItem.id
     }
-
 }

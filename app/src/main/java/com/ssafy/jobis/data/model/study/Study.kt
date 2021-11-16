@@ -4,12 +4,12 @@ import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
 import com.google.gson.Gson
 
-@Entity(tableName = "study")
+@Entity(tableName = "Study")
 data class Study(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "study_id")
     var id: Int = 0,
-    var title: String?,
+    var title: String,
     var content: String?,
     var location: String?,
     var topic: String?,
@@ -57,6 +57,4 @@ class Converters {
     @TypeConverter
     fun crewJsonToList(value: String) = Gson().fromJson(value, Array<Crew>::class.java).toList()
 }
-
-
 
