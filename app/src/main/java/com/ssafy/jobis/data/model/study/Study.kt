@@ -8,7 +8,7 @@ import com.google.gson.Gson
 data class Study(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "study_id")
-    var id: Int,
+    var id: Int = 0,
     var title: String,
     var content: String?,
     var location: String?,
