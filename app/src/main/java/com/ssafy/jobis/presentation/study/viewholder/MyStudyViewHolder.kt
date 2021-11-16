@@ -1,11 +1,15 @@
 package com.ssafy.jobis.presentation.study.viewholder
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.study.Study
+import com.ssafy.jobis.presentation.chat.ChatActivity
 
-class MyStudyViewHolder(view: View, private val onClick: () -> Unit): RecyclerView.ViewHolder(view) {
+class MyStudyViewHolder(val view: View, val context: Context): RecyclerView.ViewHolder(view) {
 
 
     private val myStudyTitle: TextView = view.findViewById(R.id.tv_my_study_title)
@@ -14,11 +18,13 @@ class MyStudyViewHolder(view: View, private val onClick: () -> Unit): RecyclerVi
     private val myStudyMsgCnt: TextView = view.findViewById(R.id.tv_my_study_msg_cnt)
     private val myStudyDDay: TextView = view.findViewById(R.id.tv_my_study_dday)
 
-    init {
-        view.setOnClickListener{onClick()}
-    }
+    fun bind(study: Study) {
 
-    fun bind(id: Int) {
-        myStudyTitle.text = "${id}번째 스터디"
+        myStudyTitle.text = study.title
+
+        view.setOnClickListener{
+            val intent = Intent(context, ChatActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }

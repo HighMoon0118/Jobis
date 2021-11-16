@@ -27,6 +27,7 @@ import com.ssafy.jobis.presentation.study.MyStudyFragment
 
 class MainActivity : AppCompatActivity() {
 
+
     private lateinit var binding: ActivityMainBinding
     private val getResultCommunityDetail = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
@@ -50,23 +51,29 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction().add(R.id.frame_main, CalendarFragment()).commit()
 
+        val calendarFragment = CalendarFragment()
+        val myStudyFragment = MyStudyFragment(this)
+        val jobFragment = JobFragment()
+        val communityFragment = CommunityFragment()
+        val myPageFragment = MyPageFragment()
+
         binding.btmNavi.run {
             setOnNavigationItemSelectedListener {
                 when(it.itemId) {
                     R.id.item_calendar -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, CalendarFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, calendarFragment).commit()
                     }
                     R.id.item_study -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, MyStudyFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, myStudyFragment).commit()
                     }
                     R.id.item_job -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, JobFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, jobFragment).commit()
                     }
                     R.id.item_community -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, CommunityFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, communityFragment).commit()
                     }
                     R.id.item_my_page -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, MyPageFragment()).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, myPageFragment).commit()
                     }
                 }
                 true

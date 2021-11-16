@@ -20,7 +20,7 @@ interface StudyDao {
     @Delete
     fun deleteStudy(study: Study)
 
-    @Query("SELECT * FROM study")
+    @Query("SELECT * FROM Study")
     fun getAllStudy(): LiveData<List<Study>>
 
 
