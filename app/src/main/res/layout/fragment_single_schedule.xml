@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="시작일"
+                android:text="날짜"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/startDateBtn"
@@ -42,6 +42,35 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/startDate">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시간"
+                android:textColor="@color/black"/>
+<!--            <Button-->
+<!--                android:id="@+id/endDateBtn"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:drawableLeft="@drawable/ic_baseline_calendar_today_24"-->
+<!--                android:drawableTint="@color/black"-->
+<!--                android:text="날짜"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:background="@drawable/calendar_detail_button"-->
+<!--                app:backgroundTint = "@null"-->
+<!--                android:minHeight="0dp"-->
+<!--                android:minWidth="0dp"-->
+<!--                android:paddingTop="0dp"-->
+<!--                android:paddingBottom="0dp"-->
+<!--                android:paddingLeft="8dp"-->
+<!--                android:paddingRight="8dp"/>-->
             <Button
                 android:id="@+id/startTimeBtn"
                 android:layout_width="wrap_content"
@@ -54,34 +83,6 @@
                 app:backgroundTint="@null"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/startDate">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="종료일"
-                android:textColor="@color/black"/>
-            <Button
-                android:id="@+id/endDateBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_baseline_calendar_today_24"
-                android:drawableTint="@color/black"
-                android:text="날짜"
-                android:textColor="@color/black"
-                android:background="@drawable/calendar_detail_button"
-                app:backgroundTint = "@null"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
