@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
+import com.ssafy.jobis.databinding.FragmentSingleScheduleBinding
 import kotlinx.android.synthetic.main.fragment_single_schedule.*
 import kotlinx.android.synthetic.main.fragment_single_schedule.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class SingleScheduleFragement(val activity: Activity, private val year: Int, val month: Int, val day: Int) : Fragment() {
+    private var _binding: FragmentSingleScheduleBinding? = null
+    private val binding get() = _binding!!
     private var startDateString =""
     private var startTimeString = ""
     private var endTimeString = ""
@@ -50,7 +53,7 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
     private var scheduleStartDate = ""
     private var scheduleStartTime = ""
     private var scheduleEndTime = ""
-    val calendar: Calendar = Calendar.getInstance()
+    var calendar: Calendar = Calendar.getInstance()
 
 
     @SuppressLint("SimpleDateFormat")
@@ -58,7 +61,7 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
         // 시작 날짜 따로 안정했으면
         if (startYear == 0) {
             startYear = year
-            startMonth = month
+            startMonth = month - 1
             startDay = day
         }
         // 시작 시간 안정했으면 자동 할당
@@ -93,11 +96,11 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
             return 0
         }
 
-        val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
+        val newSchedule = Schedule(title, content, startYear, startMonth, startDay, startTimeString, endTimeString, 0, 0, "")
         val db = CalendarDatabase.getInstance(activity)
         CoroutineScope(Dispatchers.IO).launch {
             db!!.calendarDao().insert(newSchedule)
-            val dbList = db!!.calendarDao().getAll()
+            val dbList = db.calendarDao().getAll()
             println("DB 결과: $dbList")
         }
 
@@ -111,18 +114,25 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     @SuppressLint("SimpleDateFormat")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         Log.d("시작 날짜 전달",  "$year $month $day")
-        val view = inflater.inflate(R.layout.fragment_single_schedule, null)
+//        val view = inflater.inflate(R.layout.fragment_single_schedule, null)
 
+        _binding = FragmentSingleScheduleBinding.inflate(inflater, container, false)
+        val view = binding.root
 
+        calendar = Calendar.getInstance()
         calendar.add(Calendar.HOUR, 9) // 기준 시간 +9 맞춤
-        var currentCal = calendar // Tue Nov 02 15:02:28 GMT 2021
+        val currentCal = calendar // Tue Nov 02 15:02:28 GMT 2021
         
         scheduleStartDate = dateFormat1.format(currentCal.time)
         scheduleStartTime = dateFormat2.format(currentCal.time)
@@ -144,12 +154,15 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
             if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
                 scheduleEndTime = "59"
                 calendar.set(Calendar.MINUTE, 59)
-                val test = calendar.get(Calendar.MINUTE)
                 scheduleEndTime = "23:59"
+                endMinute = 59
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
             }
         } else{
             calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
             scheduleEndTime = dateFormat2.format(calendar.time)
+            endHour = calendar.get(Calendar.HOUR_OF_DAY)
+            endMinute = calendar.get(Calendar.MINUTE)
         }
 
         val afterTime = calendar
@@ -184,9 +197,9 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
                 DatePickerDialog(
                     activity,
                     dateSetListener,
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH),
+                    year,
+                    month-1,
+                    day,
                 ).show()
             } else {
                 DatePickerDialog(activity, dateSetListener, startYear, startMonth, startDay).show()
@@ -230,31 +243,6 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
             }
         }
 
-//        view.endDateBtn.setOnClickListener {
-//            // OnDateSetListener : 사용자가 날짜 선택을 완료했음을 알림, 내부 기능 작성
-//            // com.example.calendardetail.MainActivity$$ExternalSyntheticLambda0@bb1014f
-//            val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-//                if (dayOfMonth<=9 && month <= 8) { // 1~9일 선택하더라도 포맷 맞추려고 설정
-//                    endDateString ="${year}-0${month+1}-0${dayOfMonth}"
-//                } else if (month <= 8) {
-//                    endDateString ="${year}-0${month+1}-${dayOfMonth}"
-//                } else if (dayOfMonth <= 9 ){
-//                    endDateString ="${year}-${month+1}-0${dayOfMonth}"
-//                } else {
-//                    endDateString = "${year}-${month + 1}-${dayOfMonth}"
-//                }
-//                endYear = year
-//                endMonth = month
-//                endDay = dayOfMonth
-//                endDateBtn.setText(endDateString)
-//            }
-//            // Dialog 창 띄움
-//            if (endDateString == "") {
-//                DatePickerDialog(activity, dateSetListener, afterTime.get(Calendar.YEAR), afterTime.get(Calendar.MONTH),afterTime.get(Calendar.DAY_OF_MONTH), ).show()
-//            } else {
-//                DatePickerDialog(activity, dateSetListener, endYear, endMonth, endDay).show()
-//            }
-//        }
 
         view.endTimeBtn.setOnClickListener {
 
@@ -322,7 +310,7 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
             val db = CalendarDatabase.getInstance(activity)
             CoroutineScope(Dispatchers.IO).launch {
                 db!!.calendarDao().insert(newSchedule)
-                val dbList = db!!.calendarDao().getAll()
+                val dbList = db.calendarDao().getAll()
                 println("DB 결과: $dbList")
             }
 
