@@ -6,9 +6,9 @@ import com.google.gson.Gson
 
 @Entity(tableName = "Study")
 data class Study(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "study_id")
-    var id: Int = 0,
+    var id: String = "",
     var title: String,
     var content: String?,
     var location: String?,
@@ -47,7 +47,7 @@ data class Chat(
     var uid: String,
     var content: String,
     var created_at: String,
-    var study_id: Int,
+    var study_id: String,
 )
 
 class Converters {
