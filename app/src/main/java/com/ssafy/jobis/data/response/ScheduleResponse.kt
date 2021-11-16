@@ -8,8 +8,8 @@ data class ScheduleResponse(
     val day: Long,
     val start_time: String,
     val end_time: String,
-    val groupId: Long,
-    val studyId: Long,
+    val group_id: Long,
+    val study_id: Long,
     val title: String,
 ) {
     companion object {
@@ -22,8 +22,8 @@ data class ScheduleResponse(
                 val day by map
                 val start_time by map
                 val end_time by map
-                val groupId by map
-                val studyId by map
+                val group_id by map
+                val study_id by map
                 val title by map
                 val data = ScheduleResponse(
                     companyName as String,
@@ -33,8 +33,8 @@ data class ScheduleResponse(
                     day as Long,
                     start_time as String,
                     end_time as String,
-                    groupId as Long,
-                    studyId as Long,
+                    group_id as Long,
+                    study_id as Long,
                     title as String
                 )
             }.data
