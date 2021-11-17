@@ -21,6 +21,7 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     private val _studyWithChats: LiveData<StudyWithChats>
     val studyWithChats: LiveData<StudyWithChats> get() = _studyWithChats
+    var fileReference: String = ""
 
     private val repo = ChatRepository(application)
 
@@ -50,4 +51,5 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
             repo.uploadMessage(studyId, userId, content, createdAt)
         }
     }
+
 }
