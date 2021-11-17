@@ -1,16 +1,14 @@
 package com.ssafy.jobis.presentation.chat
 
-import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.ssafy.jobis.R
-import java.lang.Exception
 
 
 class MyFCMService: FirebaseMessagingService() {
@@ -23,10 +21,11 @@ class MyFCMService: FirebaseMessagingService() {
         var currentStudyId = ""
     }
     private lateinit var mNotificationManager: NotificationManager
+    private lateinit var repo: ChatRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
 
     override fun onCreate() {
         Log.d("파이어베이스 메시징 서비스", "onCreate")
-
+        repo = ChatRepository(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -47,6 +46,7 @@ class MyFCMService: FirebaseMessagingService() {
         var studyId = ""
         var userId = ""
         var content = ""
+        var fileName = ""
         var createdAt = ""
 
         if (remoteMessage.data.isNotEmpty()) {
@@ -55,18 +55,26 @@ class MyFCMService: FirebaseMessagingService() {
                 studyId = it.data["study_id"].toString()
                 userId = it.data["user_id"].toString()
                 content = it.data["content"].toString()
+                fileName = it.data["file_name"].toString()
                 createdAt = it.data["created_at"].toString()
             }
+            if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
+                repo.saveMessage(studyId, userId, content, fileName, createdAt)
+            }
+
         }
 
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("메세지가 도착했습니다.")
-            .setContentText(content)
-            .setSmallIcon(R.mipmap.ic_main)
-            .setVibrate(longArrayOf(1000, 0, 0))
 
-        if (currentStudyId == "")
+
+        if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId && currentStudyId == "") {
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("메세지가 도착했습니다.")
+                .setContentText(content)
+                .setSmallIcon(R.mipmap.ic_main)
+                .setVibrate(longArrayOf(1000, 0, 0))
+
             mNotificationManager.notify(NOTIFICATION_ID, builder.build())
+        }
     }
 
 
