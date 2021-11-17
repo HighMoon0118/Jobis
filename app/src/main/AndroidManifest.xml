@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ssafy.jobis">
 
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".presentation.login.Jobis"
@@ -17,6 +16,12 @@
         android:roundIcon="@mipmap/ic_main_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <activity
+            android:name=".presentation.chat.ChatScheduleAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.chat.ChatScheduleActivity"
+            android:exported="false" />
         <activity
             android:name=".presentation.community.search.CommunitySearchActivity"
             android:exported="true" />
@@ -29,28 +34,30 @@
             android:exported="true"
             android:windowSoftInputMode="adjustNothing" />
         <activity
+            android:name=".presentation.study.SearchStudy"
+            android:exported="true" />
+        <activity
             android:name=".presentation.chat.ChatLogActivity"
             android:exported="true" />
+
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustNothing" />
-
-
         <activity
             android:name=".presentation.login.UserActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.chat.ChatActivity" />
+        <activity android:name=".presentation.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".presentation.CalendarScheduleActivity"
             android:theme="@style/Theme.Jobis"/>
-
 
         <service
             android:name=".presentation.chat.MyFCMService"
@@ -60,8 +67,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".presentation.calendar.AlarmReceiver"/>
-
+        <receiver android:name=".presentation.calendar.AlarmReceiver" />
     </application>
 
 </manifest>

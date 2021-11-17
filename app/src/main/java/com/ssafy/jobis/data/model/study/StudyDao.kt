@@ -24,6 +24,7 @@ interface StudyDao {
     fun getAllStudy(): LiveData<List<Study>>
 
     @Transaction
-    @Query("SELECT * FROM Study WHERE study_id = :study_id")
-    fun getChatList(study_id:Int): LiveData<StudyWithChats>
+    @Query("SELECT * FROM Study WHERE study_id = :studyId")
+    fun getChatList(studyId: String): LiveData<StudyWithChats>
+
 }
