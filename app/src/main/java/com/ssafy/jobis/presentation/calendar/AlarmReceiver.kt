@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.ssafy.jobis.R
 import com.ssafy.jobis.presentation.MainActivity
 
-class AlarmReceiver : BroadcastReceiver() {
+class AlarmReceiver() : BroadcastReceiver() {
 
     companion object {
         const val TAG = "AlarmReceiver"
@@ -30,10 +30,10 @@ class AlarmReceiver : BroadcastReceiver() {
             Context.NOTIFICATION_SERVICE) as NotificationManager
 
         createNotificationChannel()
-        deliverNotification(context)
+        deliverNotification(context, intent)
     }
 
-    private fun deliverNotification(context: Context) {
+    private fun deliverNotification(context: Context, intent:Intent) {
         val contentIntent = Intent(context, MainActivity::class.java)
         val contentPendingIntent = PendingIntent.getActivity(
             context,
@@ -44,8 +44,8 @@ class AlarmReceiver : BroadcastReceiver() {
         val builder =
             NotificationCompat.Builder(context, PRIMARY_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("Alert")
-                .setContentText("This is repeating alarm")
+                .setContentTitle(intent.getStringExtra("title"))
+                .setContentText(intent.getStringExtra("content"))
                 .setContentIntent(contentPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)

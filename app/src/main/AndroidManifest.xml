@@ -56,12 +56,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".presentation.chat.ChatActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".presentation.CalendarScheduleActivity"
-            android:theme="@style/Theme.Jobis" />
+
+        <activity android:name=".presentation.calendar.CalendarScheduleActivity"
+            android:theme="@style/Theme.Jobis"
+            android:windowSoftInputMode="adjustNothing"
+            />
+        <activity android:name=".presentation.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize"/>
 
         <service
             android:name=".presentation.chat.MyFCMService"

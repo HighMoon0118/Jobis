@@ -9,14 +9,14 @@ data class Study(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "study_id")
     var id: String = "",
-    var title: String,
-    var content: String?,
-    var location: String?,
-    var topic: String?,
-    var max_user: Int?,
+    var title: String = "",
+    var content: String? = "",
+    var location: String? = "",
+    var topic: String? = "",
+    var max_user: Int? = 0,
     var current_user: Int? = 1,
     var user_list: List<Crew>? = null,
-    var created_at: String,
+    var created_at: String = "",
     var unread_chat_cnt : Int? = 0
 
 )
@@ -25,7 +25,7 @@ data class Study(
 data class Crew(
     @PrimaryKey
     @ColumnInfo(name = "crew_id")
-    var id: String,
+    var id: String = "",
     )
 
 @Entity(
