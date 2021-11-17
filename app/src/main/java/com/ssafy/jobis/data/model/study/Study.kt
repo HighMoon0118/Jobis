@@ -2,6 +2,7 @@ package com.ssafy.jobis.data.model.study
 
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
+import com.google.firebase.database.Exclude
 import com.google.gson.Gson
 
 @Entity(tableName = "Study")
@@ -15,11 +16,27 @@ data class Study(
     var topic: String? = "",
     var max_user: Int? = 0,
     var current_user: Int? = 1,
-    var user_list: List<Crew>? = null,
+    var user_list: MutableList<Crew>? = null,
     var created_at: String = "",
     var unread_chat_cnt : Int? = 0
 
-)
+){
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "id" to id,
+            "title" to title,
+            "content" to content,
+            "location" to location,
+            "topic" to topic,
+            "max_user" to max_user,
+            "current_user" to current_user,
+            "user_list" to user_list,
+            "created_at" to created_at,
+            "unread_chat_cnt" to unread_chat_cnt
+        )
+    }
+}
 
 @Entity(tableName = "crew")
 data class Crew(

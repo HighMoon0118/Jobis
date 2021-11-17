@@ -36,6 +36,9 @@ class MyPageViewModel(private val myPageRepository: MyPageRepository): ViewModel
     private val _isNicknameChanged = MutableLiveData<Boolean>()
     val isNicknameChanged: LiveData<Boolean> = _isNicknameChanged
 
+    private val _isUserDeleted = MutableLiveData<Boolean>()
+    val isUserDeleted: LiveData<Boolean> = _isUserDeleted
+
     fun loadMyLikeList(uid: String) {
         CoroutineScope(Dispatchers.Main).launch {
             val res = myPageRepository.loadMyLikePosts(uid)
@@ -90,6 +93,18 @@ class MyPageViewModel(private val myPageRepository: MyPageRepository): ViewModel
         }
     }
 
+    fun deleteAccount(uid: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            //순서대로 실행
+            var res = false
+            val job1 = myPageRepository.deleteMyDatabase(uid)
+            if (job1) {
+                res = myPageRepository.deleteAuthentication()
+            }
+            _isUserDeleted.postValue(res)
+        }
+    }
+
     private fun getDDay(year: Int, month: Int, day: Int): Long {
 
         val sdf = SimpleDateFormat("yyyy-MM-dd")
@@ -119,4 +134,5 @@ class MyPageViewModel(private val myPageRepository: MyPageRepository): ViewModel
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
     }
+
 }
