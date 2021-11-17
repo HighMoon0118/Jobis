@@ -315,7 +315,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 intent.putExtra("selected_day", selectedDay)
                 startActivity(intent)
             }
-
         }
     }
 }
