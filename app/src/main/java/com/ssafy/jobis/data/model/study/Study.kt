@@ -6,9 +6,9 @@ import com.google.gson.Gson
 
 @Entity(tableName = "Study")
 data class Study(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "study_id")
-    var id: Int = 0,
+    var id: String = "",
     var title: String,
     var content: String?,
     var location: String?,
@@ -28,26 +28,26 @@ data class Crew(
     var id: String,
     )
 
-
 @Entity(
     tableName = "chat",
-//    foreignKeys = [
-//    ForeignKey(
-//        entity = Study::class,
-//        parentColumns = ["study_id"],
-//        childColumns = ["chat_id"],
-//        onDelete = CASCADE
-//    )
-//]
+    foreignKeys = [
+        ForeignKey(
+            entity = Study::class,
+            parentColumns = ["study_id"],
+            childColumns = ["study_id"],
+            onDelete = CASCADE
+        )
+    ]
 )
-
 data class Chat(
     @ColumnInfo(name = "chat_id")
-    @PrimaryKey(autoGenerate = true) var chat_id: Int = 0,
-    var uid: String,
+    @PrimaryKey(autoGenerate = true)
+    var chat_id: Int = 0,
+    var user_id: String,
     var content: String,
+    var url: String? = null,
     var created_at: String,
-    var study_id: Int,
+    @ColumnInfo(name = "study_id") var study_id: String,
 )
 
 class Converters {
