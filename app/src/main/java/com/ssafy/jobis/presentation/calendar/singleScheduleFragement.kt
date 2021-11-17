@@ -96,7 +96,7 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
             return 0
         }
 
-        val newSchedule = Schedule(title, content, startYear, startMonth, startDay, startTimeString, endTimeString, 0, 0, "")
+        val newSchedule = Schedule(title, content, startYear, startMonth, startDay, startTimeString, endTimeString, "", 0, "")
         val db = CalendarDatabase.getInstance(activity)
         CoroutineScope(Dispatchers.IO).launch {
             db!!.calendarDao().insert(newSchedule)
@@ -306,7 +306,7 @@ class SingleScheduleFragement(val activity: Activity, private val year: Int, val
                 println("시작, $startTimeString")
                 println("끝, $endTimeString")
        
-            val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
+            val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, "", 0, "")
             val db = CalendarDatabase.getInstance(activity)
             CoroutineScope(Dispatchers.IO).launch {
                 db!!.calendarDao().insert(newSchedule)

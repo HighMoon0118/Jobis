@@ -176,7 +176,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
                 // 2. 해당 날짜에 아무 스케줄이 없을 때, 일정 없음이 표시된 객체를 넣어줌
                 if (temp_schedule.size == 0) {
-                    val empty_schedule = Schedule("일정 없음", "", year, month, k, "", "", -1, -1, "")
+                    val empty_schedule = Schedule("일정 없음", "", year, month, k, "", "", "", -1, "")
                     temp_schedule.add(empty_schedule)
                 }
                 calendarDates.add(temp_schedule) // 하루하루 일정들을 모두 추가

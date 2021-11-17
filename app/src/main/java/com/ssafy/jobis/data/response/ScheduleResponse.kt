@@ -9,7 +9,7 @@ data class ScheduleResponse(
     val start_time: String,
     val end_time: String,
     val group_id: Long,
-    val study_id: Long,
+    val study_id: String,
     val title: String,
 ) {
     companion object {
@@ -34,7 +34,7 @@ data class ScheduleResponse(
                     start_time as String,
                     end_time as String,
                     group_id as Long,
-                    study_id as Long,
+                    study_id as String,
                     title as String
                 )
             }.data
