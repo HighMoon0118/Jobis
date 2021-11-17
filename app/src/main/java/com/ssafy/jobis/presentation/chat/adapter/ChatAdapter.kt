@@ -9,10 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Chat
+import com.ssafy.jobis.presentation.chat.ImgChat
 import com.ssafy.jobis.presentation.chat.viewholder.ChatGIFViewHolder
 import com.ssafy.jobis.presentation.chat.viewholder.ChatViewHolder
+import java.util.HashMap
 
-class ChatAdapter(val chatList: List<Chat>?): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatAdapter(val chatList: List<Chat>?, val map: HashMap<Int, ImgChat?>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface onAddedChatListener {
         fun onAddedChat()
@@ -36,15 +38,22 @@ class ChatAdapter(val chatList: List<Chat>?): RecyclerView.Adapter<RecyclerView.
                 if (chatList != null)
                     holder.bind(chatList[position].content)
             }
-//            is ChatGIFViewHolder -> {
-//                holder.bind(chatList[position])
-//            }
+            is ChatGIFViewHolder -> {
+                holder.bind(map[position])
+            }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return CHAT_ITEM
-//        return if (chatList[position].isGif) GIF_ITEM else CHAT_ITEM
+
+        if (chatList != null) {
+            return if (chatList[position].file_name.isNotEmpty()) {
+                GIF_ITEM
+            } else {
+                CHAT_ITEM
+            }
+        }
+        return 1
     }
 
     override fun getItemCount(): Int {

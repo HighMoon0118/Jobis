@@ -60,7 +60,7 @@
             android:windowSoftInputMode="adjustNothing"
             />
         <activity android:name=".presentation.chat.ChatActivity"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <service
             android:name=".presentation.chat.MyFCMService"

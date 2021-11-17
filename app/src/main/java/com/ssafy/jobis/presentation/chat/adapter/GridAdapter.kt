@@ -2,6 +2,7 @@ package com.ssafy.jobis.presentation.chat.adapter
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import kotlin.collections.ArrayList
 class GridAdapter(private val fragmentActivity: FragmentActivity): RecyclerView.Adapter<GIFViewHolder>() {
 
     private var gifBitmap = ArrayList<ImageDecoder.Source>()
+    private var filePathes = ArrayList<String>()
 
     init {
         getGif()
@@ -34,7 +36,7 @@ class GridAdapter(private val fragmentActivity: FragmentActivity): RecyclerView.
 
     override fun onBindViewHolder(holder: GIFViewHolder, position: Int) {
         if (position <  gifBitmap.size) {
-            holder.bind(gifBitmap[position])
+            holder.bind(gifBitmap[position], filePathes[position])
         }
     }
 
@@ -44,6 +46,7 @@ class GridAdapter(private val fragmentActivity: FragmentActivity): RecyclerView.
 
     fun getGif() {
         gifBitmap.clear()
+        filePathes.clear()
 
         val pref = PreferenceManager.getDefaultSharedPreferences(fragmentActivity)
         val files = pref.getString("gif", "")
@@ -54,10 +57,15 @@ class GridAdapter(private val fragmentActivity: FragmentActivity): RecyclerView.
             while (st.hasMoreTokens()) {
                 val path = st.nextToken()
                 val file = File(path)
+
+                val gifFile = Uri.fromFile(file)
+                val fileName = "${gifFile.lastPathSegment}"
+
                 if (file.exists()) {
                     sb.append(file).append("#")
                     val source = ImageDecoder.createSource(file)
                     gifBitmap.add(source)
+                    filePathes.add(fileName)
                 }
             }
             pref.edit().apply {
