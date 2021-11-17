@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity
+            android:name=".presentation.admin.AdminActivity"
+            android:exported="true" />
+        <activity
             android:name=".presentation.chat.ChatScheduleAddActivity"
             android:exported="false" />
         <activity
@@ -39,7 +42,6 @@
         <activity
             android:name=".presentation.chat.ChatLogActivity"
             android:exported="true" />
-
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
@@ -54,10 +56,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.chat.ChatActivity"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".presentation.CalendarScheduleActivity"
-            android:theme="@style/Theme.Jobis"/>
+        <activity
+            android:name=".presentation.chat.ChatActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".presentation.CalendarScheduleActivity"
+            android:theme="@style/Theme.Jobis" />
 
         <service
             android:name=".presentation.chat.MyFCMService"
