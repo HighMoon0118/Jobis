@@ -8,14 +8,17 @@ import android.graphics.ImageDecoder
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.widget.addTextChangedListener
@@ -49,7 +52,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityChatBinding
-    private var mySource: ImageDecoder.Source? = null
     private lateinit var chatAdapter: ChatAdapter
     private val viewPagerAdapter: ViewPagerAdapter by lazy {
         ViewPagerAdapter(this@ChatActivity)
@@ -60,6 +62,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
     private lateinit var model: ChatViewModel
     private lateinit var userId: String
+    private val map = HashMap<Int, ImgChat?>()
+    private var startIdx = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +78,48 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
 
-        model.studyWithChats.observe(this,  {
-            chatAdapter = ChatAdapter(it.chats)
+        model.studyWithChats.observe(this, {
+            val chatList = it.chats
+            val storageRef = Firebase.storage.reference
+
+            for (i in startIdx until chatList.size) {
+                val chat = chatList[i]
+                if (chat.file_name.isNotEmpty()) {
+
+                    map[i] = null
+
+                    val path = "images/${chat.file_name}"
+                    val pathRef = storageRef.child(path)
+
+                    val localFile = File(
+                        applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                        chat.file_name
+                    )
+                    if (localFile.exists()) {
+                        Log.d("로컬에 존재할 때", "ㅇㅇㅇㅇ")
+                        val source = ImageDecoder.createSource(localFile)
+                        map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
+                    } else {
+                        Log.d("로컬에 존재하지 않을 때", "ㅇㅇㅇㅇ")
+                        pathRef.getFile(localFile).addOnSuccessListener {
+                            if (localFile.exists()) {
+                                Log.d("로컬에 생성후", "ㅇㅇㅇㅇㅇ")
+                                val source = ImageDecoder.createSource(localFile)
+                                map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
+                                chatAdapter.notifyDataSetChanged()
+                            }
+                        }.addOnFailureListener {
+
+                        }
+                    }
+
+                }
+            }
+
+            chatAdapter = ChatAdapter(chatList, map)
             binding.rvChat.adapter = chatAdapter
+            goToRecentChat()
+            startIdx = chatList.size
         })
 
         val display = windowManager.defaultDisplay
@@ -133,7 +176,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             setHomeAsUpIndicator(R.drawable.ic_arrow_back_24)  // 뒤로가기 아이콘 설정
         }
 
-        Firebase.messaging.subscribeToTopic("StudyRoom")
+        Firebase.messaging.subscribeToTopic(currentStudyId)
 
         binding.apply {
             imgAddChat.setOnClickListener(this@ChatActivity)
@@ -171,6 +214,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         imm.hideSoftInputFromWindow(view.windowToken, 0)                           // 키보드를 숨김
         delay(100)                                                              // 키보드가 전부 안보일 떄까지 기다림
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
+        goToRecentChat()
     }
 
     suspend fun showKeyboard(imm: InputMethodManager) {
@@ -179,6 +223,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         delay(100)                                                              // 키보드가 전부 보일 떄까지 기다림
         binding.frameEmoticonChat.visibility = View.GONE                                // 캔버스를 숨김
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)    // 키보드가 layout에 영향을 주도록 함
+        goToRecentChat()
     }
 
     @SuppressLint("ResourceType")
@@ -203,13 +248,12 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                 }
             }
             R.id.img_send_chat -> {
-                if (mySource != null) {
-//                    chatAdapter.addChat(true, mySource, null)
+                if (model.chooseFileName.isNotEmpty()) {
+                    model.sendMessage(currentStudyId, userId, "이모티콘을 보냈습니다.", model.chooseFileName)
                     clearGIFLayout()
                 }
                 val text = binding.editTextChat.text?.trim().toString()
                 if (text != "") {
-//                    chatAdapter.addChat(false, null, text)
                     binding.editTextChat.text = null
                     model.sendMessage(currentStudyId, userId, text)
                 }
@@ -221,6 +265,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     if (binding.frameEmoticonChat.visibility == View.VISIBLE) {    // 1. Edit Text만 보일 때
                         showKeyboard(imm)                                             // 키보드를 보임
                     }
+                    delay(300)
+                    goToRecentChat()
                 }
             }
             R.id.img_select_color -> {
@@ -238,7 +284,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     launch {
                         viewPagerAdapter.saveView()
                     }.join()
-                    binding.gifProgressChat.visibility = View.GONE
                 }
             }
             R.id.img_left -> {
@@ -280,7 +325,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     fun clearGIFLayout() {
         binding.layoutGif.visibility = View.GONE
         binding.imgSendChat.setColorFilter(Color.parseColor("#7C7C7C"))
-        mySource = null
+        model.chooseFileName = ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -327,24 +372,26 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         val riversRef = storageRef.child(filePath)                 // gif파일을 저장할 파이어스토어 경로를 가져온다
 
         riversRef.putFile(gifFile).addOnFailureListener {
-
+            binding.gifProgressChat.visibility = View.GONE
+            Toast.makeText(this, "파일 생성 실패!", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener {
-
+            binding.gifProgressChat.visibility = View.GONE
+            Toast.makeText(this, "파일 생성!", Toast.LENGTH_SHORT).show()
         }
 
     }
 
-    override fun chooseGIF(source: ImageDecoder.Source?) {
+    override fun chooseGIF(source: ImageDecoder.Source?, filePath: String) {
         if (source != null) {
-            mySource = source
-            val drawable = ImageDecoder.decodeDrawable(mySource!!)
-            binding.imgGif.setImageDrawable(drawable)
+            model.chooseFileName = filePath
 
+            val drawable = ImageDecoder.decodeDrawable(source)
+            binding.imgGif.setImageDrawable(drawable)
+            binding.layoutGif.visibility = View.VISIBLE
             if (drawable is AnimatedImageDrawable) {
                 drawable.repeatCount = 4
                 drawable.start()
             }
-            binding.layoutGif.visibility = View.VISIBLE
             binding.imgSendChat.setColorFilter(Color.parseColor("#448aff"))
         }
     }
@@ -381,3 +428,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         return true
     }
 }
+
+data class ImgChat(
+    val drawable: Drawable? = null,
+    var isMoved: Boolean = false
+)
