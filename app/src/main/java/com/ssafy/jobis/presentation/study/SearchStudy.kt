@@ -42,15 +42,14 @@ class SearchStudy : AppCompatActivity() {
         mBinding = ActivitySearchStudyBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        initRecycler()
 
 
         binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 // 검색 버튼 누를 때 호출
-//                fetchStudy()
-                initRecycler()
+                fetchStudy(query)
                 return true
             }
 
@@ -62,14 +61,38 @@ class SearchStudy : AppCompatActivity() {
             }
         })
 
-//        handler = Handler()
-//        var thread = ThreadClass()
-//        handler?.post(thread)
 
     }
 
-    private fun fetchStudy() {
-        val ref = FirebaseDatabase.getInstance().getReference("/Study")
+    private fun fetchStudy(query:String?) {
+        val ref = FirebaseDatabase.getInstance().getReference("/Study").orderByChild("created_at")
+
+        if (query == null) {
+            Toast.makeText(applicationContext, "please write what you want to search...", Toast.LENGTH_SHORT).show()
+        } else {
+            studyList = arrayListOf()
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (info in snapshot.children) {
+
+                        // 와 이게되네...
+                        val study = info.getValue(Study::class.java)
+                        if (study!!.title.contains(query)) {
+                            studyList?.add(study!!)
+                        }
+                    }
+                    val searchAdapter = SearchResultAdapter(applicationContext, studyList)
+                    binding.rvSearchResult.adapter = searchAdapter
+                    Log.i("checkData", studyList.toString())
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+        }
+    }
+    fun initRecycler() {
+        val ref = FirebaseDatabase.getInstance().getReference("/Study").orderByChild("created_at")
 
         Toast.makeText(applicationContext, "searched", Toast.LENGTH_SHORT).show()
 
@@ -89,24 +112,5 @@ class SearchStudy : AppCompatActivity() {
             }
         })
     }
-
-    fun initRecycler() {
-        fetchStudy()
-//        Log.i("chech null", studyList.toString())
-
-//            val searchAdapter = SearchResultAdapter(studyList)
-//            binding.rvSearchResult.adapter = searchAdapter
-
-    }
-
-//    inner class ThreadClass : Thread() {
-//
-//        override fun run() {
-//            Toast.makeText(applicationContext, "halder callsed", Toast.LENGTH_SHORT).show()
-//            searchAdapter = SearchResultAdapter(studyList)
-//            binding.rvSearchResult.adapter = searchAdapter
-//            handler?.post(this)
-//        }
-//    }
 }
 
