@@ -16,6 +16,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -40,6 +41,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
 import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.messaging.ktx.remoteMessage
+import com.google.firebase.storage.ktx.storage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
@@ -59,6 +61,8 @@ import com.ssafy.jobis.presentation.study.adapter.MyStudyAdapter
 import com.ssafy.jobis.view.DrawingView
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -105,6 +109,9 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         display.getRealSize(size)
         val density = resources.displayMetrics.density
         val width = (size.x - 300*density)/4
+
+        binding.frameEmoticonChat.layoutParams.width = size.x
+        binding.frameEmoticonChat.layoutParams.height = size.x
 
         binding.gridEmoticonChat.apply {
             adapter = girdAdapter
@@ -172,6 +179,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgRight.setOnClickListener(this@ChatActivity)
             imgCheck.setOnClickListener(this@ChatActivity)
             imgCloseGif.setOnClickListener(this@ChatActivity)
+            gifProgressChat.setOnClickListener(this@ChatActivity)
         }
     }
 
@@ -205,8 +213,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_emoticon_chat -> {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                val scope = CoroutineScope(Dispatchers.Main)
-                scope.launch {
+                CoroutineScope(Dispatchers.Main).launch {
                     if (binding.frameEmoticonChat.visibility == View.GONE) {
                         showCanvas(view, imm)
                         binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
@@ -250,7 +257,13 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     .show(this)
             }
             R.id.img_save -> {
-                viewPagerAdapter.saveView()
+                CoroutineScope(Dispatchers.Main).launch {
+                    binding.gifProgressChat.visibility = View.VISIBLE
+                    launch {
+                        viewPagerAdapter.saveView()
+                    }.join()
+                    binding.gifProgressChat.visibility = View.GONE
+                }
             }
             R.id.img_left -> {
                 binding.viewpagerChat.apply {
@@ -284,6 +297,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             R.id.img_close_gif -> {
                 clearGIFLayout()
             }
+            R.id.gif_progress_chat -> return
         }
     }
 
@@ -325,8 +339,23 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
     }
 
-    override fun onSuccess() {
-        girdAdapter.getGif()
+    override fun onSuccess(file: File) {
+        girdAdapter.getGif()                                       // gif파일 그리드를 새로고침한다
+
+
+        val gifFile = Uri.fromFile(file)                           // gif파일의 로컬 경로를 가져온다
+        val filePath = "images/${gifFile.lastPathSegment}"         // gif파일을 저장할 파이어스토어 경로를 지정한다
+        model.fileReference = filePath                             // 도중에 취소될 경우를 대비하여 뷰모델에 저장
+
+        val storageRef = Firebase.storage.reference                // 파이어스토어의 루트 경로를 가져온다
+        val riversRef = storageRef.child(filePath)                 // gif파일을 저장할 파이어스토어 경로를 가져온다
+
+        riversRef.putFile(gifFile).addOnFailureListener {
+
+        }.addOnSuccessListener {
+
+        }
+
     }
 
     override fun chooseGIF(source: ImageDecoder.Source?) {
@@ -351,5 +380,19 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     override fun onPause() {
         super.onPause()
         currentStudyId = ""
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("reference", model.fileReference)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val StringRef = savedInstanceState.getString("reference") ?: return
+        val storageRef = Firebase.storage.getReference(StringRef)
+        storageRef.activeUploadTasks
     }
 }
