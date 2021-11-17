@@ -68,7 +68,7 @@ class CreateStudy : AppCompatActivity() {
             val current_user = 1
 
             val username = Crew(mAuth!!.uid.toString())
-            val user_list = listOf(username)
+            val user_list = mutableListOf(username)
             val curTime = Calendar.getInstance().time
             val sdf = SimpleDateFormat("hh:mm a")
             val time = sdf.format(curTime)
@@ -88,7 +88,7 @@ class CreateStudy : AppCompatActivity() {
         topic:String,
         max_user:Int? = null,
         current_user:Int = 1,
-        user_list:List<Crew>? = null,
+        user_list:MutableList<Crew>? = null,
         created_at:String,
     unread_chat_cnt:Int? = 0) {
 
