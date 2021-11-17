@@ -10,7 +10,11 @@ interface CalendarDao {
     fun getAll(): List<Schedule>
 
     @Insert
+<<<<<<< HEAD
+    fun insert(schedule: Schedule) : Long
+=======
     fun insert(schedule: Schedule): Long
+>>>>>>> b9ca7fe0dcb8c2c17a959e65392e7a13dc932345
 
     @Update
     fun update(schedule: Schedule)

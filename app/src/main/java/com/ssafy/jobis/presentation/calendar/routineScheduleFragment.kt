@@ -1,9 +1,9 @@
 package com.ssafy.jobis.presentation.calendar
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +14,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
+import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.FragmentRoutineScheduleBinding
 import kotlinx.android.synthetic.main.fragment_routine_schedule.*
 import kotlinx.android.synthetic.main.fragment_routine_schedule.view.*
@@ -23,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Year
 import java.util.*
 
 
@@ -49,7 +52,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
     private var endDay = 0
     private var endHour = 0
     private var endMinute = 0
-
+    var scheduleId : Long = 0
     private val dayOfWeekSelect = arrayOf(false, false, false, false, false, false, false, false)
 
     @SuppressLint("SimpleDateFormat")
@@ -61,7 +64,55 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
     private var scheduleStartTime = ""
     private var scheduleEndDate = "" // 이거 없어도 되겠는데?
     private var scheduleEndTime = ""
+    private fun setAlarm(RoutineSchedule: RoutineSchedule) {
 
+
+        // 일정 객체에서 시작 시간 받아와서 나누기
+        val time = RoutineSchedule.startTime.split(":")
+        val hourOfDay = time[0].toInt()
+        val minute = time[1].toInt()
+
+        val dayList = RoutineSchedule.dayList
+        val dayListSize = dayList?.size
+        println("데이리스트")
+        println(dayList)
+        for (i in 0 until dayListSize!!) { // 0..4 면 0~4까지 돌지만, 0 until 4면 0~3까지 돈다! python for문처럼
+            println("데이리스트사이즈만큼순회, $i")
+            println(dayList[i])
+            println(dayList[i].timeZone)
+            val year = dayList[i].get(Calendar.YEAR)
+            val month = dayList[i].get(Calendar.MONTH)
+            val day = dayList[i].get(Calendar.DAY_OF_MONTH)
+            val alarmCalendar = Calendar.getInstance()
+            alarmCalendar.set(Calendar.YEAR, year)
+            alarmCalendar.set(Calendar.MONTH, month)
+            alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
+            alarmCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            alarmCalendar.set(Calendar.MINUTE, minute)
+            alarmCalendar.set(Calendar.SECOND, 0)
+            println("스케쥴아이디, $scheduleId")
+//            var scheduleIdToInt = scheduleId.toInt()
+//            println("스케쥴아이디 int, $scheduleIdToInt")
+            val scheduleIdToInt = scheduleId.toInt()
+            val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this.context, AlarmReceiver::class.java)  // 1
+
+            var pendingIntent = PendingIntent.getBroadcast(this.context, scheduleIdToInt, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+            }
+            else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+            }
+            println("알람정보, $i, 번째, $year, $month, $day, $hourOfDay, $minute, $scheduleIdToInt")
+            println("--------알람설정됨-----,$i")
+//        Toast.makeText(this.context, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+
+
+    }
 
 
     @SuppressLint("SimpleDateFormat")
@@ -81,9 +132,9 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         }
         // 끝 날짜 안정했으면
         if (endDateString==""){
-            endYear = startYear
-            endMonth = startMonth
-            endDay = startDay
+            endYear = year
+            endMonth = month -1
+            endDay = day
         }
         // 끝 시간 안정했을경우
         if (endTimeString == "") {
@@ -126,13 +177,21 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         // 끝 날짜
         val endDayOfYear = endCal.get(Calendar.DAY_OF_YEAR)
 
-        if (startDayOfYear > endDayOfYear){
+        if (startDay==endDay && startMonth==endMonth && startYear==endYear ){
+            Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
+            return 0
+        }
+        if(startYear > endYear) {
             println("$startDayOfYear, $endDayOfYear, 시작일이 종료일보다 늦습니다. ")
             Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
             return 0
-        }
-        if (startDayOfYear == endDayOfYear){
-            Toast.makeText(context,R.string.day_select_error2, Toast.LENGTH_SHORT).show()
+        } else if (startYear == endYear && startMonth > endMonth) {
+            println("$startDayOfYear, $endDayOfYear, 시작일이 종료일보다 늦습니다. ")
+            Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
+            return 0
+        } else if (startYear == endYear && startMonth == endMonth && startDay > endDay) {
+            println("$startDayOfYear, $endDayOfYear, 시작일이 종료일보다 늦습니다. ")
+            Toast.makeText(context,R.string.day_select_error1, Toast.LENGTH_SHORT).show()
             return 0
         }
 
@@ -230,10 +289,11 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
         val db = RoutineScheduleDatabase.getInstance(activity)
         CoroutineScope(Dispatchers.IO).launch {
-            db!!.routineScheduleDao().insert(newRoutineSchedule)
+            scheduleId = db!!.routineScheduleDao().insert(newRoutineSchedule)
             val dbList = db.routineScheduleDao().getAll()
             println("DB 결과: $dbList")
         }
+        setAlarm(newRoutineSchedule)
         return 1
     }
 
@@ -258,18 +318,6 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
     ): View {
         _binding = FragmentRoutineScheduleBinding.inflate(inflater, container, false)
         val view = binding.root
-
-        // null 오류 > view binding 으로 해결했음 (왜?)
-//        ArrayAdapter.createFromResource(activity,
-//            R.array.dayOfWeek,
-//            android.R.layout.simple_spinner_item).also{adapter->
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//            binding.testSpinner.adapter = adapter
-//        }
-
-
-//        val dayOfWeekSelect = arrayOf(false, dayOfWeek1.isSelected ,dayOfWeek2.isSelected, dayOfWeek3.isSelected,dayOfWeek4.isSelected,dayOfWeek5.isSelected,dayOfWeek6.isSelected,dayOfWeek7.isSelected)
-
 
 
         // 버튼 클릭시 해당 요일의 boolean 값이 전환됨 (기본 false), 이미지 변경
@@ -377,9 +425,10 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
 
             // DatePicker Dialog 창 띄움
             if (startDateString == "") { // 초기 (시작 날짜 안정했을 경우)
-                DatePickerDialog( // 10분 추가하기 전의 cal 객채에서 년 월 일을 기본으로 설정
+                DatePickerDialog(
+                    // 10분 추가하기 전의 cal 객채에서 년 월 일을 기본으로 설정
                     activity, dateSetListener, year,
-                    month-1, day,
+                    month - 1, day,
                 ).show()
             } else { // 선택 후 다시 열 경우, 선택했던 날짜를 기본으로 설정해서 연다
                 DatePickerDialog(activity, dateSetListener, startYear, startMonth, startDay).show()
@@ -406,13 +455,6 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
                 // 버튼에 선택한 시간 보이게 하기
                 startTimeBtn.text = startTimeString
             }
-
-            // TimePicker Dialog 띄움
-            if (startTimeString == "") { // 시간 처음 정하는거라면 현재 cal 객체에서 시간 분 받아와서 기본으로 설정
-                startHour = currentCal.get(Calendar.HOUR_OF_DAY)
-                startMinute = currentCal.get(Calendar.MINUTE)
-            }
-
 
             TimePickerDialog(
                 activity,
@@ -442,8 +484,9 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             }
             // Dialog 창 띄움
             if (endDateString == "") {
-                DatePickerDialog( // calendar = 10분 더한 객체, 50~59분일 경우 59로 맞춘 객체
-                    activity, dateSetListener, year, month -1 , day,
+                DatePickerDialog(
+                    // calendar = 10분 더한 객체, 50~59분일 경우 59로 맞춘 객체
+                    activity, dateSetListener, year, month - 1, day,
                 ).show()
             } else {
                 DatePickerDialog(activity, dateSetListener, endYear, endMonth, endDay).show()
@@ -469,23 +512,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             if (endTimeString == "") {
                 endHour = calendar.get(Calendar.HOUR_OF_DAY)
                 endMinute = calendar.get(Calendar.MINUTE)
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    endHour,
-//                    endMinute,
-//                    true,
-//                ).show()
             }
-//            else {
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    endHour,
-//                    endMinute,
-//                    true,
-//                ).show()
-//            }
+
             TimePickerDialog(
                 activity,
                 timeSetListener,
@@ -496,10 +524,16 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         }
 
 
-        view.routineScheduleList.setOnClickListener {
-            Log.d("로그 저장 정보", "$title, $content, $startYear, ${startMonth}, $startDay, $startTimeString, $endTimeString")
-            Log.d("시작끝시간", "$startHour, $endHour, $startMinute, $endMinute")
-        }
+//        view.routineScheduleList.setOnClickListener {
+//            println("일정 확인")
+//            val db = RoutineScheduleDatabase.getInstance(activity)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val dbList = db!!.routineScheduleDao().getAll()
+//                println("일정 결과: $dbList")
+//            }
+////            Log.d("로그 저장 정보", "$title, $content, $startYear, ${startMonth}, $startDay, $startTimeString, $endTimeString")
+////            Log.d("시작끝시간", "$startHour, $endHour, $startMinute, $endMinute")
+//        }
 
 
         return view
