@@ -12,6 +12,7 @@ interface CalendarDao {
     @Insert
     fun insert(schedule: Schedule): Long
 
+
     @Update
     fun update(schedule: Schedule)
 
