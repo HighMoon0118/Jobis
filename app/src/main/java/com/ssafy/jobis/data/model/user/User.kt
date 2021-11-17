@@ -1,4 +1,4 @@
-package com.ssafy.jobis.data.model
+package com.ssafy.jobis.data.model.user
 
 data class User(
     val article_list: MutableList<String> = mutableListOf(),

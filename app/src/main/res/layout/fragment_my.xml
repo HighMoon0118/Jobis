@@ -33,6 +33,21 @@
                 android:text="Jobis"
                 android:textColor="@color/primary"
                 android:textSize="24sp" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/adminButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Admin"
+                android:textColor="@color/secondary"
+                android:textSize="16sp"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -40,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
+            android:minHeight="100dp"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -105,13 +121,36 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <ImageButton
-                android:id="@+id/logoutButton"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/icons8_logout_58"
-                android:textSize="12sp"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/logoutButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/icons8_logout_58"
+                    android:textSize="12sp"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/myDeleteButton"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="48dp"
+                    android:text="회원탈퇴"
+                    android:textColor="@color/light_gray"
+                    android:textSize="10sp" />
+            </LinearLayout>
 
         </LinearLayout>
 

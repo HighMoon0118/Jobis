@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,11 +29,11 @@ import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.data.response.PostResponseList
+import com.ssafy.jobis.data.response.UserResponse
+import com.ssafy.jobis.presentation.admin.AdminActivity
 import com.ssafy.jobis.presentation.calendar.AlarmReceiver
 import com.ssafy.jobis.presentation.community.CustomPostAdapter
-import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
 import com.ssafy.jobis.presentation.community.detail.ui.detail.CustomCommentAdapter
-import com.ssafy.jobis.presentation.job.JobAdapter
 import com.ssafy.jobis.presentation.job.JobScheduleAdapter
 import com.ssafy.jobis.presentation.login.Jobis
 
@@ -102,6 +101,20 @@ class MyPageFragment: Fragment() {
                 }
             })
 
+        myPageViewModel.isUserDeleted.observe(viewLifecycleOwner,
+            Observer { isUserDeleted ->
+                isUserDeleted ?: return@Observer
+                if (isUserDeleted) {
+                    // 로그아웃 하고 로그인 페이지로 이동
+                    Toast.makeText(context, "회원탈퇴되었습니다.", Toast.LENGTH_LONG).show()
+                    auth.signOut()
+                    Jobis.prefs.setString("nickname", "??")
+                    mainActivity?.goUserActivity()
+                } else {
+                    Toast.makeText(context, "회원탈퇴 실패했습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+                }
+            })
+
         binding.myPageNickNameTextView.text = Jobis.prefs.getString("nickname", "??")
         binding.logoutButton.setOnClickListener {
             auth.signOut()
@@ -153,6 +166,18 @@ class MyPageFragment: Fragment() {
         binding.nickNameEditButton.setOnClickListener {
             openEditDialog()
         }
+        if (auth.currentUser?.email == "ssafy@gmail.com") {
+            binding.adminButton.visibility = View.VISIBLE
+            binding.adminButton.setOnClickListener {
+                val intent = Intent((activity as MainActivity), AdminActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        binding.myDeleteButton.setOnClickListener {
+            showUserDeletePopup()
+        }
+
         myPageViewModel.loadMyJobList(requireContext())
         myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
         myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
@@ -295,5 +320,22 @@ class MyPageFragment: Fragment() {
             .create()
         alertDialog.show()
     }
+
+    private fun showUserDeletePopup() {
+        val inflater = (activity as MainActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val alertDialog = AlertDialog.Builder((activity as MainActivity))
+        alertDialog.setTitle("정말 회원탈퇴 하시겠습니까?")
+            .setPositiveButton("네...😥", DialogInterface.OnClickListener { dialogInterface, i ->
+                myPageViewModel.deleteAccount(uid!!)
+            })
+            .setNegativeButton("아니오😉", DialogInterface.OnClickListener { dialogInterface, i ->
+                return@OnClickListener
+            })
+            .create()
+        alertDialog.setView(view)
+        alertDialog.show()
+    }
+
 }
 
