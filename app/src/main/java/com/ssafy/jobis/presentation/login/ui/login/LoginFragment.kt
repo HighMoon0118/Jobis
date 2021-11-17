@@ -139,8 +139,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
-        // TODO : initiate successful logged in experience
+        val welcome = "로그인 되었습니다."
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
         userActivity?.goMain()
@@ -166,7 +165,7 @@ class LoginFragment : Fragment() {
         val currentUser: FirebaseUser? = Firebase.auth.currentUser
         if(currentUser != null) {
             val appContext = context?.applicationContext ?: return
-            Toast.makeText(appContext, currentUser.email, Toast.LENGTH_LONG).show()
+            Toast.makeText(appContext, "로그인 되었습니다.", Toast.LENGTH_LONG).show()
             userActivity?.goMain()
         }
     }
