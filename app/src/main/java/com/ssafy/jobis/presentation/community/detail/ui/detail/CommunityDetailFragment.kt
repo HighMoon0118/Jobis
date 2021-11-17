@@ -21,6 +21,7 @@ import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.databinding.CommunityDetailFragmentBinding
 import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
 import java.text.SimpleDateFormat
+import java.util.*
 
 class CommunityDetailFragment : Fragment() {
     private lateinit var communityDetailViewModel: CommunityDetailViewModel
@@ -124,8 +125,11 @@ class CommunityDetailFragment : Fragment() {
         binding.detailTitleTextView.text = post.title
         binding.detailCategoryTextView.text = post.category
         binding.detailContentTextView.text = post.content
-        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm")
-        binding.detailDateTextView.text = sdf.format(post.created_at.toDate()).toString()
+        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.KOREAN)
+        val cal = Calendar.getInstance()
+        cal.time = post.created_at.toDate()
+        cal.add(Calendar.HOUR, 9)
+        binding.detailDateTextView.text = sdf.format(cal.time).toString()
         binding.detailLikeCountTextView.text = post.like.size.toString()
         binding.detailNickNameTextView.text = "by " + post.user_nickname + "  |  "
         binding.commentCountTextView.text = "댓글 " +post.comment_list.size.toString() + "개"
