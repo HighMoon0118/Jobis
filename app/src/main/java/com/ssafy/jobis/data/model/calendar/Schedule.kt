@@ -17,9 +17,9 @@ data class Schedule (
     @ColumnInfo var start_time: String,
     @ColumnInfo var end_time: String,
     // 일정이 스터디에서 만든 일정이라면 studyId를 추가
-    @ColumnInfo var studyId: Int,
+    @ColumnInfo var study_id: String,
     // 일정이 주간일정이라면 groupId를 추가
-    @ColumnInfo var groupId: Int,
+    @ColumnInfo var group_id: Int,
     @ColumnInfo var companyName: String
 
 

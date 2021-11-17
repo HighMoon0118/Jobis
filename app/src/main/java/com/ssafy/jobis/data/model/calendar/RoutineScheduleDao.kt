@@ -6,9 +6,8 @@ import androidx.room.*
 interface RoutineScheduleDao {
     @Query("SELECT * FROM routineSchedule")
     fun getAll(): List<RoutineSchedule>
-
     @Insert
-    fun insert(routineSchedule: RoutineSchedule)
+    fun insert(routineSchedule: RoutineSchedule) : Long
 
     @Update
     fun update(routineSchedule: RoutineSchedule)

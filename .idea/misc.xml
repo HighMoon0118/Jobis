@@ -3,9 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+<<<<<<< HEAD
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt3/S05P31B204/app/src/main/res/layout/activity_search_study.xml" value="0.2" />
+        <entry key="..\:/Users/multicampus/Desktop/finalpjt3/S05P31B204/app/src/main/res/layout/result_item.xml" value="0.24479166666666666" />
+=======
+<<<<<<< HEAD
+>>>>>>> 2244e8f74256f9b53d5d02d29194c254ebfdb115
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/fragment_my.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/job_recycler.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/multicampus/Desktop/free_project/S05P31B204/app/src/main/res/layout/job_schedule_recycler.xml" value="0.28802083333333334" />
+=======
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_chat.xml" value="0.264" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_chat_calendar.xml" value="0.2" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_chat_schedule_add.xml" value="0.2368659420289855" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/activity_schedule.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_blank.xml" value="0.16927083333333334" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_calendar.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_chat_schedule_add.xml" value="0.2368659420289855" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_my_study.xml" value="0.2368659420289855" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/fragment_routine_schedule.xml" value="0.18072916666666666" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/header_chat_navi.xml" value="0.14895833333333333" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_chat_schedule.xml" value="0.24139492753623187" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/item_study_schedule.xml" value="0.1" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/layout/job_recycler.xml" value="0.1546875" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/menu/menu_chat_navi.xml" value="0.4" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/menu/menu_chat_toolbar.xml" value="0.14895833333333333" />
+        <entry key="..\:/Users/multicampus/Desktop/develop/S05P31B204/app/src/main/res/menu/schedule_top_app_bar.xml" value="0.14895833333333333" />
+>>>>>>> feature/chat-calendar
       </map>
     </option>
   </component>

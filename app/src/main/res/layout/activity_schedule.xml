@@ -11,8 +11,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.CalendarScheduleActivity"
-    android:orientation="vertical">
+    tools:context=".presentation.calendar.CalendarScheduleActivity"
+    android:orientation="vertical"
+    >
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/scheduleTopAppBar"
@@ -28,15 +29,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp">
         <Spinner
             android:id="@+id/scheduleSpinner"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/calendar_detail_button"
+            android:background="@drawable/scheduel_spinner_background"
             app:backgroundTint = "@null"
             android:padding="5dp"
+            android:layout_marginBottom="10dp"
             />
         <FrameLayout
             android:id="@+id/scheduleFrameLayout"
