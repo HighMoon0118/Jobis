@@ -1,7 +1,7 @@
 package com.ssafy.jobis.presentation.signup.data
 
 import android.util.Log
-import com.ssafy.jobis.data.model.User
+import com.ssafy.jobis.data.model.user.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
