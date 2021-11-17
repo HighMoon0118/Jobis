@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 
 class StudyViewModel(application: Application): AndroidViewModel(application) {
 
-    private lateinit var _studyList: LiveData<List<Study>>
+    private val _studyList: LiveData<List<Study>>
     val studyList: LiveData<List<Study>> get() = _studyList
     val repo = StudyRepository(application)
 
