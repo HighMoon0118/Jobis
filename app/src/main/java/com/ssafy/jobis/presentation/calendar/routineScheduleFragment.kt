@@ -64,8 +64,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
     private var scheduleStartTime = ""
     private var scheduleEndDate = "" // 이거 없어도 되겠는데?
     private var scheduleEndTime = ""
-    private fun setAlarm(RoutineSchedule: RoutineSchedule) {
 
+    private fun setAlarm(RoutineSchedule: RoutineSchedule, scheduleId: Long, title:String, content:String) {
 
         // 일정 객체에서 시작 시간 받아와서 나누기
         val time = RoutineSchedule.startTime.split(":")
@@ -96,6 +96,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             val scheduleIdToInt = scheduleId.toInt()
             val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(this.context, AlarmReceiver::class.java)  // 1
+            intent.putExtra("title", "$title")
+            intent.putExtra("content", "$content")
 
             var pendingIntent = PendingIntent.getBroadcast(this.context, scheduleIdToInt, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
@@ -293,7 +295,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             val dbList = db.routineScheduleDao().getAll()
             println("DB 결과: $dbList")
         }
-        setAlarm(newRoutineSchedule)
+        setAlarm(newRoutineSchedule, scheduleId, title, content)
         return 1
     }
 
@@ -358,7 +360,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
 //            }
 //        }
         calendar = Calendar.getInstance()
-        calendar.add(Calendar.HOUR, 9)
+//        calendar.add(Calendar.HOUR, 9)
         val currentCal = calendar
 //        var currentCal = calendar // 10분 추가한 cal 객체랑 따로 저장하고 싶어서 분리한건데 잘 안되는듯?
 //        scheduleStartDate = dateFormat1.format(currentCal.time)

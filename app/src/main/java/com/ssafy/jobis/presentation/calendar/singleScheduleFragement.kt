@@ -108,14 +108,14 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
             println("-----------------------------스케쥴아이디 유닛??---, $scheduleId")
         }
         println("-----------------------------예약 스케쥴아이디 유닛??---, $scheduleId")
-        setAlarm(newSchedule, scheduleId)
+        setAlarm(newSchedule, scheduleId, title, content)
 
         return 1
 
     }
 
     // 알람 등록
-    private fun setAlarm(schedule: Schedule, scheduleId: Long) {
+    private fun setAlarm(schedule: Schedule, scheduleId: Long, title:String, content:String) {
         val alarmCalendar = Calendar.getInstance()
         // 일정 객체에서 시작 시간 받아와서 나누기
         val time = schedule.start_time.split(":")
@@ -132,6 +132,9 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this.context, AlarmReceiver::class.java)  // 1
+        intent.putExtra("title", "$title")
+        intent.putExtra("content", "$content")
+
         var pendingIntent = PendingIntent.getBroadcast(this.context, scheduleIdToInt, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         if (Build.VERSION.SDK_INT >= 23) {
