@@ -37,13 +37,11 @@ class ChatRepository(application: Application) {
             put("created_at", createdAt)
         }
         root.put("data", data)
-
 //        val notification = JSONObject()
 //        notification.put("title", "반갑습니다")
 //        notification.put("body", "안녕하세요ㅋㅋㅋ")
 //        notification을 넣으면 자동으로 알림이 옴. 커스텀하고싶다면 서비스에서 재정의해야 됨
 //        root.put("notification", notification)
-
         root.put("to", "/topics/${studyId}")
 
 
