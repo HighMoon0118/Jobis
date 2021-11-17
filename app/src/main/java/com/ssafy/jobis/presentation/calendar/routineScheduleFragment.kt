@@ -227,7 +227,7 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         // 시작 날짜 , 끝 날짜, 요일, 시간, 제목, 내용 다 제대로 들어왔을 경우에만 초기화 되긴 해
         // 아닌 경우엔 중간에 return으로 빠져나감
         // db 저장
-        newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", 0)
+        newRoutineSchedule = RoutineSchedule(title, content,routineDaySelect, startTimeString, endTimeString, 0, "", "")
         val db = RoutineScheduleDatabase.getInstance(activity)
         CoroutineScope(Dispatchers.IO).launch {
             db!!.routineScheduleDao().insert(newRoutineSchedule)
