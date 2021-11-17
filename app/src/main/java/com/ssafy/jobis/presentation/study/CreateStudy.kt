@@ -13,6 +13,7 @@ import androidx.room.Room
 import androidx.room.Room.databaseBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.database.FirebaseDatabase
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Crew
 import com.ssafy.jobis.data.model.study.Study
@@ -108,9 +109,10 @@ class CreateStudy : AppCompatActivity() {
             val ref = FirebaseDatabase.getInstance().getReference("/Study")
 
             var pushedStudy = ref.push()
-
+            Log.d("스터디 업로드", "스터디 업로드")
             pushedStudy.setValue(a)
                 .addOnCompleteListener { task ->
+                    Log.d("스터디 업로드 완료", "스터디 업로드 완료")
                     if (task.isSuccessful) {
                         Toast.makeText(applicationContext, pushedStudy.key , Toast.LENGTH_SHORT).show()
 
@@ -135,6 +137,8 @@ class CreateStudy : AppCompatActivity() {
                     } else {
                         Toast.makeText(applicationContext, "Failed...", Toast.LENGTH_SHORT).show()
                     }
+                }.addOnFailureListener {
+                    Log.d("스터디 만들기 실패", "실패 실패 실패")
                 }
         }
     }

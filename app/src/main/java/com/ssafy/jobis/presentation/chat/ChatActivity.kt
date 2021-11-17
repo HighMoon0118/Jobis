@@ -1,94 +1,87 @@
 package com.ssafy.jobis.presentation.chat
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.AnimatedImageDrawable
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
 import com.google.firebase.messaging.ktx.messaging
-import com.google.firebase.messaging.ktx.remoteMessage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.study.Chat
 import com.ssafy.jobis.databinding.ActivityChatBinding
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_ID
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_NAME
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
 import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
-import com.ssafy.jobis.presentation.chat.viewholder.ChatViewHolder
 import com.ssafy.jobis.presentation.chat.viewholder.GIFViewHolder
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatViewModel
+import com.ssafy.jobis.presentation.study.StudyViewModel
+import com.ssafy.jobis.presentation.study.adapter.MyStudyAdapter
 import com.ssafy.jobis.view.DrawingView
 import kotlinx.coroutines.*
-import org.json.JSONObject
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 
 class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener,
     ViewPagerAdapter.CanvasListener, GIFViewHolder.OnClickGIFListener,
-    ChatAdapter.onAddedChatListener {
+    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityChatBinding
     private var mySource: ImageDecoder.Source? = null
-    private val chatAdapter: ChatAdapter by lazy {
-        ChatAdapter(this@ChatActivity)
-    }
+    private lateinit var chatAdapter: ChatAdapter
     private val viewPagerAdapter: ViewPagerAdapter by lazy {
         ViewPagerAdapter(this@ChatActivity)
     }
     private val girdAdapter: GridAdapter by lazy {
         GridAdapter(this@ChatActivity)
     }
-    private val model: ChatViewModel by viewModels()
+
+    private lateinit var model: ChatViewModel
+    private lateinit var userId: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        Intent(this, MyFCMService.javaClass).also {intent ->
-            // 채팅방 아이디를 보내서 서비스가 알림을 보내야할지 말아야할지를 판단
-            startService(intent)
-        }
-
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.rvChat.adapter = chatAdapter
+        currentStudyId = intent.getStringExtra("study_id").toString()
+        Log.d("액티비티에서 얻은 스터디 아이디", currentStudyId)
+        userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+        model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
+
+        model.studyWithChats.observe(this,  {
+            chatAdapter = ChatAdapter(it.chats)
+            binding.rvChat.adapter = chatAdapter
+        })
 
         val display = windowManager.defaultDisplay
         val size = Point()
@@ -149,17 +142,24 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgSendChat.setOnClickListener(this@ChatActivity)
             editTextChat.requestFocus()
             editTextChat.setOnClickListener(this@ChatActivity)
+            editTextChat.addTextChangedListener {
+                if (it.toString().trim().isNotEmpty()) {
+                    binding.imgSendChat.setColorFilter(Color.parseColor("#448aff"))
+                } else {
+                    binding.imgSendChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                }
+            }
             imgSelectColor.setOnClickListener(this@ChatActivity)
             imgSave.setOnClickListener(this@ChatActivity)
             imgLeft.setOnClickListener(this@ChatActivity)
             imgRight.setOnClickListener(this@ChatActivity)
             imgCheck.setOnClickListener(this@ChatActivity)
             imgCloseGif.setOnClickListener(this@ChatActivity)
+            chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
         }
     }
 
     private fun goToRecentChat() {
-        Log.d("시알", "왜 안되냐")
         CoroutineScope(Dispatchers.Main).launch {
             binding.rvChat.scrollToPosition(chatAdapter.itemCount-1)
         }
@@ -205,14 +205,14 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_send_chat -> {
                 if (mySource != null) {
-                    chatAdapter.addChat(true, mySource, null)
+//                    chatAdapter.addChat(true, mySource, null)
                     clearGIFLayout()
                 }
                 val text = binding.editTextChat.text?.trim().toString()
                 if (text != "") {
-                    chatAdapter.addChat(false, null, text)
+//                    chatAdapter.addChat(false, null, text)
                     binding.editTextChat.text = null
-                    model.sendMessage("StudyRoom", "내", text)
+                    model.sendMessage(currentStudyId, userId, text)
                 }
             }
             R.id.edit_text_chat -> {
@@ -330,5 +330,18 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
     override fun onAddedChat() {
         goToRecentChat()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        currentStudyId = ""
+    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (R.id.item_1 == item.itemId) {
+            var intent = Intent(this, ChatScheduleActivity::class.java)
+            intent.putExtra("study_id", currentStudyId)
+            startActivity(intent)
+        }
+        return true
     }
 }

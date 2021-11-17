@@ -1,4 +1,4 @@
-package com.ssafy.jobis.presentation
+package com.ssafy.jobis.presentation.calendar
 
 import android.content.Intent
 import android.os.Build
@@ -11,14 +11,14 @@ import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.jobis.R
-import com.ssafy.jobis.presentation.calendar.RoutineScheduleFragment
-import com.ssafy.jobis.presentation.calendar.SingleScheduleFragement
+import com.ssafy.jobis.presentation.MainActivity
 import kotlinx.android.synthetic.main.activity_schedule.*
 
 
 class CalendarScheduleActivity : AppCompatActivity() {
-    lateinit var singleFragment: SingleScheduleFragement
+    lateinit var singleFragment: SingleScheduleFragment
     lateinit var routineFragment: RoutineScheduleFragment
+
 
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -31,12 +31,12 @@ class CalendarScheduleActivity : AppCompatActivity() {
         var day = intent.getIntExtra("selected_day", 0)
         println("액티비티 데이터 전달: $year$month$day")
 
-        singleFragment = SingleScheduleFragement(this, year, month, day)
+        singleFragment = SingleScheduleFragment(this, year, month, day)
         routineFragment = RoutineScheduleFragment(this, year, month, day)
 
 
 
-        var spinner: Spinner = scheduleSpinner
+        val spinner: Spinner = scheduleSpinner
         ArrayAdapter.createFromResource(this,
             R.array.routine,
             android.R.layout.simple_spinner_item).also{adapter->
@@ -74,7 +74,7 @@ class CalendarScheduleActivity : AppCompatActivity() {
                         "단일 일정" -> {
                             // db 저장
                             println("단일 일정 저장")
-                            var returnInt = singleFragment.singleScheduleAddFun()
+                            val returnInt = singleFragment.singleScheduleAddFun()
                             if (returnInt == 1) {
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
@@ -83,7 +83,7 @@ class CalendarScheduleActivity : AppCompatActivity() {
                         "반복 일정" -> {
                             // db 저장
                             println("반복 일정 저장")
-                            var returnInt = routineFragment.routinScheduleAddFun()
+                            val returnInt = routineFragment.routinScheduleAddFun()
                             if (returnInt == 1) {
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
@@ -99,7 +99,7 @@ class CalendarScheduleActivity : AppCompatActivity() {
             }
         }
 
-        scheduleTopAppBar.setNavigationOnClickListener(){
+        scheduleTopAppBar.setNavigationOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

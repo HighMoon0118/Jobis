@@ -18,7 +18,7 @@ data class RoutineSchedule(
     @ColumnInfo var endTime: String,
     @ColumnInfo var groupId: Int,
     @ColumnInfo var companyName: String,
-    @ColumnInfo var studyId: Int,
+    @ColumnInfo var studyId: String,
 ) {
     @PrimaryKey(autoGenerate = true) var id: Int=0
 }
