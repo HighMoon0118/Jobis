@@ -68,7 +68,7 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
         holder.bind(datas[position])
         val deleteBtn = holder.itemView.findViewById<Button>(R.id.schedule_delete) // 삭제 버튼
         deleteBtn.setOnClickListener {
-            println("item확인" + datas[position].groupId)
+            println("item확인" + datas[position].group_id)
             // 삭제하시겠습니까? 화면
             val builder = AlertDialog.Builder(ContextThemeWrapper(holder.itemView.context, R.style.ThemeOverlay_AppCompat_Dialog))
             builder.setTitle("일정")
@@ -87,7 +87,7 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
                     var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
                     var routineList = routineScheduleData!!.routineScheduleDao().getAll() // 모든 루틴 가져오기
                     for (num in 0..routineList.size-1) {
-                        if (routineList[num].id == datas[position].groupId) {
+                        if (routineList[num].id == datas[position].group_id) {
                             routineScheduleData.routineScheduleDao().delete(routineList[num]) // 해당 routineSchedule 객체 삭제
                         }
                     }

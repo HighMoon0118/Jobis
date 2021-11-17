@@ -14,7 +14,7 @@ class ScheduleRepository {
     suspend fun loadJobList(): MutableList<ScheduleResponse> {
         val scheduleList = mutableListOf<ScheduleResponse>()
         var db = FirebaseFirestore.getInstance()
-        val scheduleRef = db.collection("schedules")
+        val scheduleRef = db.collection("study_schedules")
         return try {
             scheduleRef.get()
                 .addOnSuccessListener { result ->

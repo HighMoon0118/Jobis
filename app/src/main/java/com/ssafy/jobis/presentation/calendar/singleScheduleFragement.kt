@@ -98,7 +98,7 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
             return 0
         }
 
-        val newSchedule = Schedule(title, content, startYear, startMonth, startDay, startTimeString, endTimeString, 0, 0, "")
+        val newSchedule = Schedule(title, content, startYear, startMonth, startDay, startTimeString, endTimeString, "", 0, "")
         val db = CalendarDatabase.getInstance(activity)
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -111,7 +111,7 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
         setAlarm(newSchedule, scheduleId, title, content)
 
         return 1
-        
+
     }
 
     // 알람 등록
@@ -172,7 +172,7 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
         calendar = Calendar.getInstance()
 //        calendar.add(Calendar.HOUR, 9) // 기준 시간 +9 맞춤
         val currentCal = calendar // Tue Nov 02 15:02:28 GMT 2021
-        
+
         scheduleStartDate = dateFormat1.format(currentCal.time)
         scheduleStartTime = dateFormat2.format(currentCal.time)
         startHour = currentCal.get(Calendar.HOUR_OF_DAY)
@@ -310,6 +310,41 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
             }
         }
 
+//        view.singleScheduleAddBtn.setOnClickListener{
+//
+//                if (startYear == 0) {
+//                    startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
+//                    startMonth = SimpleDateFormat("MM").format(calendar.time).toInt()
+//                    startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
+//
+//                }
+//                if (startTimeString == "") {
+//                    startTimeString = scheduleStartTime
+//                    println(startTimeString)
+//
+//                }
+//                if (endTimeString == "") {
+//                    endTimeString = scheduleEndTime
+//                    println(endTimeString)
+//                }
+//
+//                title = view.scheduleTitleEditText.text.toString()
+//                content = view.scheduleContentEditText.text.toString()
+//
+//                println("시작, $startTimeString")
+//                println("끝, $endTimeString")
+//
+//            val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, "", 0, "")
+//            val db = CalendarDatabase.getInstance(activity)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                db!!.calendarDao().insert(newSchedule)
+//                val dbList = db.calendarDao().getAll()
+//                println("DB 결과: $dbList")
+//            }
+
+
+//            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
+//            var db = CalendarDatabase.getInstance(this.context)
 //        view.singleScheduleAddBtn.setOnClickListener{
 //
 //                if (startYear == 0) {
