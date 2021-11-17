@@ -13,16 +13,16 @@ import com.ssafy.jobis.R
 class GIFViewHolder(view: View, private val fragmentActivity: FragmentActivity): RecyclerView.ViewHolder(view) {
 
     interface OnClickGIFListener {
-        fun chooseGIF(source: ImageDecoder.Source?)
+        fun chooseGIF(source: ImageDecoder.Source?, fileName: String)
     }
     private val img: ImageView = view.findViewById(R.id.img_gif)
 
-    fun bind(source: ImageDecoder.Source?) {
+    fun bind(source: ImageDecoder.Source?, fileName: String) {
         if (source != null) {
             img.setImageBitmap(ImageDecoder.decodeBitmap(source))
             img.setOnClickListener {
                 if (fragmentActivity is OnClickGIFListener) {
-                    fragmentActivity.chooseGIF(source)
+                    fragmentActivity.chooseGIF(source, fileName)
                 }
             }
         }

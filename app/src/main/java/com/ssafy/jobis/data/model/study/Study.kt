@@ -30,14 +30,15 @@ data class Crew(
 
 @Entity(
     tableName = "chat",
-    foreignKeys = [
-        ForeignKey(
-            entity = Study::class,
-            parentColumns = ["study_id"],
-            childColumns = ["study_id"],
-            onDelete = CASCADE
-        )
-    ]
+    // foreignKey를 사용하면 자꾸 오류 뜸...
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = Study::class,
+//            parentColumns = arrayOf("study_id"),
+//            childColumns = arrayOf("study_id"),
+//            onDelete = CASCADE
+//        )
+//    ]
 )
 data class Chat(
     @ColumnInfo(name = "chat_id")
@@ -45,7 +46,7 @@ data class Chat(
     var chat_id: Int = 0,
     var user_id: String,
     var content: String,
-    var url: String? = null,
+    var file_name: String = "",
     var created_at: String,
     @ColumnInfo(name = "study_id") var study_id: String,
 )

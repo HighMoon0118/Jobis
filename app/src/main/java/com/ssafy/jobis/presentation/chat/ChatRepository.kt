@@ -1,6 +1,6 @@
 package com.ssafy.jobis.presentation.chat
 
-import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ssafy.jobis.data.model.study.Chat
@@ -12,28 +12,30 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-class ChatRepository(application: Application) {
+class ChatRepository(context: Context) {
 
-    private val db = StudyDatabase.getInstance(application)
+    private val db = StudyDatabase.getInstance(context)
     private val dao = db?.getStudyDao()
 
     fun getChatList(studyId: String): LiveData<StudyWithChats>? {
         return dao?.getChatList(studyId)
     }
 
-    fun saveMessage(studyId: String, userId: String, content: String, createdAt: String) {
-        val chat = Chat(study_id = studyId, user_id = userId, content = content, created_at = createdAt)
+    fun saveMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
+        Log.d("saveMessage", "데이터 들어옴")
+        val chat = Chat(study_id = studyId, user_id = userId, content = content, file_name = fileName, created_at = createdAt)
         dao?.insertChat(chat)
     }
 
-    fun uploadMessage(studyId: String, userId: String, content: String, createdAt: String) {
+    fun uploadMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
 
         val root = JSONObject()
         val data = JSONObject()
         data.apply {
             put("user_id", userId)
-            put("studyId", studyId)
+            put("study_id", studyId)
             put("content", content)
+            put("file_name", fileName)
             put("created_at", createdAt)
         }
         root.put("data", data)
@@ -42,6 +44,7 @@ class ChatRepository(application: Application) {
 //        notification.put("body", "안녕하세요ㅋㅋㅋ")
 //        notification을 넣으면 자동으로 알림이 옴. 커스텀하고싶다면 서비스에서 재정의해야 됨
 //        root.put("notification", notification)
+
         root.put("to", "/topics/${studyId}")
 
 
@@ -51,6 +54,7 @@ class ChatRepository(application: Application) {
             requestMethod = "POST"
             doOutput = true
             doInput = true
+            // 서버 키는 받아서 사용
             addRequestProperty("Authorization", "key=AAAAyi-siU4:APA91bH-r-bKju0IKHUADgXlDlpIZLEo1blM7TaYHW_k_DWQZzwwRgxlLvqLdkMoTnSAOD1NXiDWf2tBb15eY3K4AqFXeY7HYk4n21rn1UqEweNOU6TXjMh9E7vQRJCDM1dj17CmAcIv")
             setRequestProperty("Accept", "application/json")
             setRequestProperty("Content-type", "application/json")
@@ -64,7 +68,6 @@ class ChatRepository(application: Application) {
         } else {
             Log.d("실패", "실패")
         }
-
     }
 
     private fun inputStreamToString(inputStream: InputStream): String {
