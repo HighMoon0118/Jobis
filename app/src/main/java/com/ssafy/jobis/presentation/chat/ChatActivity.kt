@@ -1,33 +1,22 @@
 package com.ssafy.jobis.presentation.chat
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.AnimatedImageDrawable
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -36,10 +25,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
 import com.google.firebase.messaging.ktx.messaging
-import com.google.firebase.messaging.ktx.remoteMessage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
@@ -51,23 +39,18 @@ import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
 import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
-import com.ssafy.jobis.presentation.chat.viewholder.ChatViewHolder
 import com.ssafy.jobis.presentation.chat.viewholder.GIFViewHolder
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatViewModel
 import com.ssafy.jobis.presentation.study.StudyViewModel
 import com.ssafy.jobis.presentation.study.adapter.MyStudyAdapter
 import com.ssafy.jobis.view.DrawingView
 import kotlinx.coroutines.*
-import org.json.JSONObject
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 
 class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener,
     ViewPagerAdapter.CanvasListener, GIFViewHolder.OnClickGIFListener,
-    ChatAdapter.onAddedChatListener {
+    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityChatBinding
     private var mySource: ImageDecoder.Source? = null
@@ -172,6 +155,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgRight.setOnClickListener(this@ChatActivity)
             imgCheck.setOnClickListener(this@ChatActivity)
             imgCloseGif.setOnClickListener(this@ChatActivity)
+            chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
         }
     }
 
@@ -351,5 +335,11 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     override fun onPause() {
         super.onPause()
         currentStudyId = ""
+    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        if (R.id.item_1 == item.itemId) {
+            startActivity(Intent(this, ChatScheduleActivity::class.java))
+        }
+        return true
     }
 }
