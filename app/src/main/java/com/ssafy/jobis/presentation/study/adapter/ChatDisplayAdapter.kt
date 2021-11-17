@@ -31,8 +31,8 @@ class ChatDisplayAdapter(val chatList: StudyWithChats): RecyclerView.Adapter<Cha
     }
 
     override fun onBindViewHolder(holder: ChatDisplayAdapter.CustomViewHolder, position: Int) {
-        holder.name.text = chatList.chats.get(position)!!.content
-        holder.uid.text = chatList.chats.get(position)!!.uid
+        holder.name.text = chatList.chats.get(position).content
+        holder.uid.text = chatList.chats.get(position).uid
         holder.describe.text = chatList.chats.get(position).created_at
 
         Log.d("holder", holder.toString())

@@ -61,13 +61,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <ImageButton
-                android:id="@+id/imageButton2"
+            <ImageView
+                android:id="@+id/jobTrashImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
+                android:minWidth="18dp"
+                android:minHeight="18dp"
                 app:srcCompat="@drawable/trash"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 

@@ -6,17 +6,17 @@ import com.google.gson.Gson
 
 @Entity(tableName = "Study")
 data class Study(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "study_id")
-    var id: Int = 0,
-    var title: String,
-    var content: String?,
-    var location: String?,
-    var topic: String?,
-    var max_user: Int?,
+    var id: String = "",
+    var title: String = "",
+    var content: String? = "",
+    var location: String? = "",
+    var topic: String? = "",
+    var max_user: Int? = 0,
     var current_user: Int? = 1,
     var user_list: List<Crew>? = null,
-    var created_at: String,
+    var created_at: String = "",
     var unread_chat_cnt : Int? = 0
 
 )
@@ -25,7 +25,7 @@ data class Study(
 data class Crew(
     @PrimaryKey
     @ColumnInfo(name = "crew_id")
-    var id: String,
+    var id: String = "",
     )
 
 
@@ -47,7 +47,7 @@ data class Chat(
     var uid: String,
     var content: String,
     var created_at: String,
-    var study_id: Int,
+    var study_id: String,
 )
 
 class Converters {

@@ -47,6 +47,7 @@
         <item>반복 일정</item>
     </string-array>
 
+
     <string-array name="post_category">
         <item>전체</item>
         <item>경영/사무</item>
@@ -113,4 +114,7 @@
         <item>8</item>
     </string-array>
 
+
+    <string name="search_activity_name">StudySearch</string>
+    <string name="search_upper_bar">검색</string>
 </resources>
