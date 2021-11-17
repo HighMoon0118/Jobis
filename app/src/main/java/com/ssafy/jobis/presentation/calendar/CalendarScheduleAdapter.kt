@@ -1,8 +1,11 @@
 package com.ssafy.jobis.presentation.calendar
 
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Looper
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -10,6 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.rotationMatrix
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -27,6 +33,7 @@ import com.ssafy.jobis.presentation.CalendarPagerAdapter
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.logging.Handler
@@ -84,6 +91,8 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
                             routineScheduleData.routineScheduleDao().delete(routineList[num]) // 해당 routineSchedule 객체 삭제
                         }
                     }
+                    println("알람 삭제: ${datas[position].id}")
+                    cancelAlarm(holder, datas[position], datas[position].id)
                     scheduleData.calendarDao().delete(datas[position])
                 }
 
@@ -108,5 +117,16 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
 
     override fun getItemCount(): Int {
         return datas.size
+    }
+
+    private fun cancelAlarm(holder: ViewHolder, schedule: Schedule, alarm_id: Int) {
+        val alarmManager = ContextCompat.getSystemService(
+            holder.itemView.context, AlarmManager::class.java
+        ) as AlarmManager
+        val intent = Intent(holder.itemView.context, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(holder.itemView.context, alarm_id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        alarmManager.cancel(pendingIntent) // 알람 취소
+        pendingIntent.cancel() // pendingIntent 취소
+
     }
 }
