@@ -10,7 +10,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        >
 
         <LinearLayout
             android:id="@+id/startDate"
@@ -19,12 +22,15 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="3dp"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="날짜"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:layout_marginRight="10dp"/>
             <Button
                 android:id="@+id/startDateBtn"
                 android:layout_width="wrap_content"
@@ -42,19 +48,21 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 />
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/startDate">
+            app:layout_constraintTop_toBottomOf="@id/startDate"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="3dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="시간"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:layout_marginRight="10dp"/>
 <!--            <Button-->
 <!--                android:id="@+id/endDateBtn"-->
 <!--                android:layout_width="wrap_content"-->
@@ -86,7 +94,12 @@
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp"/>
+                android:paddingRight="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="~"
+                android:layout_marginHorizontal="5dp"/>
             <Button
                 android:id="@+id/endTimeBtn"
                 android:layout_width="wrap_content"
@@ -112,7 +125,8 @@
             android:ems="10"
             android:inputType="textWebEditText"
             android:hint="일정을 입력하세요"
-            android:privateImeOptions="defaultInputmode=korea"/>
+            android:privateImeOptions="defaultInputMode=korea"
+            android:layout_marginHorizontal="0dp"/>
         <EditText
             android:id="@+id/scheduleContentEditText"
             android:layout_width="match_parent"
@@ -125,18 +139,18 @@
             android:scrollbars="vertical"
             android:hint="내용을 입력하세요"
             android:gravity="top"
-            android:privateImeOptions="defaultInputmode=korean"/>
-        <Button
-            android:id="@+id/singleScheduleAddBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="일정 등록(임시)"/>
-        <Button
-            android:id="@+id/scheduleList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="일정 확인(임시)"
-            />
+            android:privateImeOptions="defaultInputMode=korean"/>
+<!--        <Button-->
+<!--            android:id="@+id/singleScheduleAddBtn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="일정 등록(임시)"/>-->
+<!--        <Button-->
+<!--            android:id="@+id/scheduleList"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="일정 확인(임시)"-->
+<!--            />-->
 
     </LinearLayout>
 

@@ -5,10 +5,26 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
+import com.google.firebase.database.FirebaseDatabase
 import com.ssafy.jobis.R
 import com.ssafy.jobis.databinding.ActivityChatBinding
 import com.ssafy.jobis.databinding.ActivityChatScheduleAddBinding
 import java.util.*
+import com.google.firebase.database.DataSnapshot
+
+import androidx.annotation.NonNull
+
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.database.DatabaseError
+
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.ssafy.jobis.data.model.calendar.Schedule
+import kotlinx.coroutines.tasks.await
+import kotlin.collections.ArrayList
+
 
 class ChatScheduleAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatScheduleAddBinding
@@ -18,6 +34,19 @@ class ChatScheduleAddActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatScheduleAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        var currentStudyId = intent.getStringExtra("study_id").toString()
+        println("current: " + currentStudyId)
+
+
+        var study_info = FirebaseDatabase.getInstance().getReference("/Study").child(currentStudyId)
+        var user_list = ArrayList<Map<String, String>>()
+        study_info.child("user_list").get().addOnSuccessListener {
+            user_list = it.value as ArrayList<Map<String, String>> // [{id=OStYPE}, {id=FKMN3MFS}, {id=SDLW32FZ}, ...]
+            println("성공")
+        }.addOnFailureListener {
+            println("실패")
+        }
 
         // 기본 시간 설정
         var currentTime = Calendar.getInstance()
@@ -30,31 +59,62 @@ class ChatScheduleAddActivity : AppCompatActivity() {
         var currentMinute = currentTime.get(Calendar.MINUTE)
 
         var currentDateString = "${currentYear}. ${currentMonth}. ${currentDay} ${currentDayOfWeekString}"
-        var currentTimeString = "${currentHour}:${currentMinute}"
+        var currentStartTimeString = "${currentHour}:${currentMinute}"
+        var currentEndTimeString = "${currentHour}:${currentMinute + 30}"
 
         binding.dateButton.text = currentDateString
-        binding.timeButton.text = currentTimeString
+        binding.startTimeButton.text = currentStartTimeString
+        binding.endTimeButton.text = currentEndTimeString
 
+        // 기본값
+        var year = currentYear
+        var month = currentMonth
+        var day = currentDay
+        var startHour = currentHour
+        var startMinute = currentMinute
+        var endHour = currentHour
+        var endMinute = currentMinute + 30
         // 버튼 클릭시 datepicker 동작
         binding.dateButton.setOnClickListener {
             var cal = Calendar.getInstance()
             var temp_cal = Calendar.getInstance()
             var dateSetListener = DatePickerDialog.OnDateSetListener {
-                view, year, month, dayOfMonth -> temp_cal.set(year, month, dayOfMonth)
+                view, yearVal, monthVal, dayOfMonthVal -> temp_cal.set(yearVal, monthVal, dayOfMonthVal)
                 var dayOfWeek = temp_cal.get(Calendar.DAY_OF_WEEK)
-                dateString = "${year}. ${month+1}. ${dayOfMonth} ${dayOfWeekToString(dayOfWeek)}"
+                dateString = "${yearVal}. ${monthVal+1}. ${dayOfMonthVal} ${dayOfWeekToString(dayOfWeek)}"
                 binding.dateButton.text = dateString
+                // 지정한 값 넣어주기
+                year = yearVal
+                month = monthVal
+                day = dayOfMonthVal
             }
             DatePickerDialog(this, dateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+
         }
         // 버튼 클릭시 timepicker 동작
-        binding.timeButton.setOnClickListener {
+        binding.startTimeButton.setOnClickListener {
             var cal = Calendar.getInstance()
-            var timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                timeString = "${hourOfDay}:${minute}"
-                binding.timeButton.text = timeString
+            var timeSetListener = TimePickerDialog.OnTimeSetListener { view, startHourOfDayVal, startMinuteVal ->
+                timeString = "${startHourOfDayVal}:${startMinuteVal}"
+                binding.startTimeButton.text = timeString
+                startHour = startHourOfDayVal
+                startMinute = startMinuteVal
             }
             var TimeDialog = TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
+            // spinner의 백그라운드 투명하게
+            TimeDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            TimeDialog.show()
+        }
+        // 버튼 클릭시 timepicker 동작
+        binding.endTimeButton.setOnClickListener {
+            var cal = Calendar.getInstance()
+            var timeSetListener = TimePickerDialog.OnTimeSetListener { view, endHourOfDayVal, endMinuteVal ->
+                timeString = "${endHourOfDayVal}:${endMinuteVal}"
+                binding.endTimeButton.text = timeString
+                endHour = endHourOfDayVal
+                endMinute = endMinuteVal
+            }
+            var TimeDialog = TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE)+30, true)
             // spinner의 백그라운드 투명하게
             TimeDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
             TimeDialog.show()
@@ -62,9 +122,27 @@ class ChatScheduleAddActivity : AppCompatActivity() {
 
 
         // 이제 여기서 정보를 다 종합해서 schedule 객체를 채운 후 파이어베이스와 room을 통해 저장
+        // 버튼에 클릭리스너를 달아서 editText 정보, 유저 정보, 저장할 정보 모두 사용
+        binding.createScheduleButton.setOnClickListener {
+            val title = binding.chatScheduleTitle.text.toString()
+            val content = binding.chatScheduleContent.text.toString()
+            var db = FirebaseFirestore.getInstance()
 
+            var newSchedule = Schedule(title, content, year, month, day, "${startHour}:${startMinute}", "${endHour}:${endMinute}", currentStudyId, 0, "")
+            db.collection("study_schedules")
+                .add(newSchedule)
+                .addOnSuccessListener {
+                    println("success!")
+                    returnChatScheduleActivity()
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("test", "${exception}")
+                }
+
+
+        }
         // 파이어베이스에 추가하고 나서 원래 액티비티로 돌아가는 코드
-//        returnChatScheduleActivity()
+//
     }
    fun dayOfWeekToString(dayOfWeek: Int): String {
         var dayOfWeekString = ""
