@@ -18,6 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.widget.addTextChangedListener
@@ -77,33 +78,41 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
 
-        model.studyWithChats.observe(this,  {
+        model.studyWithChats.observe(this, {
             val chatList = it.chats
             val storageRef = Firebase.storage.reference
+
             for (i in startIdx until chatList.size) {
                 val chat = chatList[i]
                 if (chat.file_name.isNotEmpty()) {
 
-                    var source: ImageDecoder.Source? = null
+                    map[i] = null
 
                     val path = "images/${chat.file_name}"
                     val pathRef = storageRef.child(path)
 
-                    val localFile = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES), chat.file_name)
+                    val localFile = File(
+                        applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                        chat.file_name
+                    )
                     if (localFile.exists()) {
-                        source = ImageDecoder.createSource(localFile)
+                        Log.d("로컬에 존재할 때", "ㅇㅇㅇㅇ")
+                        val source = ImageDecoder.createSource(localFile)
+                        map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
                     } else {
+                        Log.d("로컬에 존재하지 않을 때", "ㅇㅇㅇㅇ")
                         pathRef.getFile(localFile).addOnSuccessListener {
-                            source = ImageDecoder.createSource(localFile)
+                            if (localFile.exists()) {
+                                Log.d("로컬에 생성후", "ㅇㅇㅇㅇㅇ")
+                                val source = ImageDecoder.createSource(localFile)
+                                map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
+                                chatAdapter.notifyDataSetChanged()
+                            }
                         }.addOnFailureListener {
 
                         }
                     }
-                    if (source == null) {
-                        map[i] = null
-                    } else {
-                        map[i] = ImgChat(ImageDecoder.decodeDrawable(source!!))
-                    }
+
                 }
             }
 
@@ -364,8 +373,10 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         riversRef.putFile(gifFile).addOnFailureListener {
             binding.gifProgressChat.visibility = View.GONE
+            Toast.makeText(this, "파일 생성 실패!", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener {
             binding.gifProgressChat.visibility = View.GONE
+            Toast.makeText(this, "파일 생성!", Toast.LENGTH_SHORT).show()
         }
 
     }
