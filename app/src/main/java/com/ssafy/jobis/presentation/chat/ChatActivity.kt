@@ -8,6 +8,7 @@ import android.graphics.ImageDecoder
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.drawable.AnimatedImageDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -15,7 +16,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.widget.addTextChangedListener
@@ -23,28 +23,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.storage.ktx.storage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
-import com.ssafy.jobis.data.model.study.Chat
 import com.ssafy.jobis.databinding.ActivityChatBinding
-import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_ID
-import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_NAME
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
 import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
 import com.ssafy.jobis.presentation.chat.viewholder.GIFViewHolder
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatViewModel
-import com.ssafy.jobis.presentation.study.StudyViewModel
-import com.ssafy.jobis.presentation.study.adapter.MyStudyAdapter
 import com.ssafy.jobis.view.DrawingView
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.*
 
 
@@ -88,6 +84,9 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         display.getRealSize(size)
         val density = resources.displayMetrics.density
         val width = (size.x - 300*density)/4
+
+        binding.frameEmoticonChat.layoutParams.width = size.x
+        binding.frameEmoticonChat.layoutParams.height = size.x
 
         binding.gridEmoticonChat.apply {
             adapter = girdAdapter
@@ -155,6 +154,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgRight.setOnClickListener(this@ChatActivity)
             imgCheck.setOnClickListener(this@ChatActivity)
             imgCloseGif.setOnClickListener(this@ChatActivity)
+            gifProgressChat.setOnClickListener(this@ChatActivity)
             chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
         }
     }
@@ -189,8 +189,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_emoticon_chat -> {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                val scope = CoroutineScope(Dispatchers.Main)
-                scope.launch {
+                CoroutineScope(Dispatchers.Main).launch {
                     if (binding.frameEmoticonChat.visibility == View.GONE) {
                         showCanvas(view, imm)
                         binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
@@ -234,7 +233,13 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                     .show(this)
             }
             R.id.img_save -> {
-                viewPagerAdapter.saveView()
+                CoroutineScope(Dispatchers.Main).launch {
+                    binding.gifProgressChat.visibility = View.VISIBLE
+                    launch {
+                        viewPagerAdapter.saveView()
+                    }.join()
+                    binding.gifProgressChat.visibility = View.GONE
+                }
             }
             R.id.img_left -> {
                 binding.viewpagerChat.apply {
@@ -268,6 +273,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             R.id.img_close_gif -> {
                 clearGIFLayout()
             }
+            R.id.gif_progress_chat -> return
         }
     }
 
@@ -309,8 +315,23 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
     }
 
-    override fun onSuccess() {
-        girdAdapter.getGif()
+    override fun onSuccess(file: File) {
+        girdAdapter.getGif()                                       // gif파일 그리드를 새로고침한다
+
+
+        val gifFile = Uri.fromFile(file)                           // gif파일의 로컬 경로를 가져온다
+        val filePath = "images/${gifFile.lastPathSegment}"         // gif파일을 저장할 파이어스토어 경로를 지정한다
+        model.fileReference = filePath                             // 도중에 취소될 경우를 대비하여 뷰모델에 저장
+
+        val storageRef = Firebase.storage.reference                // 파이어스토어의 루트 경로를 가져온다
+        val riversRef = storageRef.child(filePath)                 // gif파일을 저장할 파이어스토어 경로를 가져온다
+
+        riversRef.putFile(gifFile).addOnFailureListener {
+
+        }.addOnSuccessListener {
+
+        }
+
     }
 
     override fun chooseGIF(source: ImageDecoder.Source?) {
@@ -336,6 +357,21 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         super.onPause()
         currentStudyId = ""
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("reference", model.fileReference)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val StringRef = savedInstanceState.getString("reference") ?: return
+        val storageRef = Firebase.storage.getReference(StringRef)
+        storageRef.activeUploadTasks
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (R.id.item_1 == item.itemId) {
             var intent = Intent(this, ChatScheduleActivity::class.java)
