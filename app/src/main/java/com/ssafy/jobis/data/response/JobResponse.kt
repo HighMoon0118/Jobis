@@ -10,7 +10,7 @@ data class JobResponse(
     val day: Long,
     val end_time: String,
     val groupId: Long,
-    val studyId: Long,
+    val studyId: String,
     val title: String,
 ) {
     companion object {
@@ -31,7 +31,7 @@ data class JobResponse(
                     day as Long,
                     end_time as String,
                     groupId = 0,
-                    studyId = 0,
+                    studyId = "",
                     title as String
                 )
             }.data

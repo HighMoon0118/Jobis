@@ -134,8 +134,8 @@ class JobFragment: Fragment() {
                     day=job.day.toInt(),
                     start_time = "",
                     end_time = job.end_time,
-                    studyId = 0,
-                    groupId = 0,
+                    study_id = "",
+                    group_id = 0,
                     companyName = job.companyName
                 )
                 showSetPopup(newSchedule)

@@ -338,7 +338,9 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         if (R.id.item_1 == item.itemId) {
-            startActivity(Intent(this, ChatScheduleActivity::class.java))
+            var intent = Intent(this, ChatScheduleActivity::class.java)
+            intent.putExtra("study_id", currentStudyId)
+            startActivity(intent)
         }
         return true
     }
