@@ -11,11 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
-import com.ssafy.jobis.data.model.calendar.RoutineSchedule
+
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.databinding.FragmentSingleScheduleBinding
 import kotlinx.android.synthetic.main.fragment_single_schedule.*
@@ -308,58 +307,58 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
             }
         }
 
-        view.singleScheduleAddBtn.setOnClickListener{
-        
-                if (startYear == 0) {
-                    startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
-                    startMonth = SimpleDateFormat("MM").format(calendar.time).toInt()
-                    startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
-
-                }
-                if (startTimeString == "") {
-                    startTimeString = scheduleStartTime
-                    println(startTimeString)
-
-                }
-                if (endTimeString == "") {
-                    endTimeString = scheduleEndTime
-                    println(endTimeString)
-                }
-
-                title = view.scheduleTitleEditText.text.toString()
-                content = view.scheduleContentEditText.text.toString()
-
-                println("시작, $startTimeString")
-                println("끝, $endTimeString")
-       
-            val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
-            val db = CalendarDatabase.getInstance(activity)
-            CoroutineScope(Dispatchers.IO).launch {
-                db!!.calendarDao().insert(newSchedule)
-                val dbList = db.calendarDao().getAll()
-                println("DB 결과: $dbList")
-            }
-
-
-//            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
-//            var db = CalendarDatabase.getInstance(this.context)
+//        view.singleScheduleAddBtn.setOnClickListener{
+//
+//                if (startYear == 0) {
+//                    startYear = SimpleDateFormat("yyyy").format(calendar.time).toInt()
+//                    startMonth = SimpleDateFormat("MM").format(calendar.time).toInt()
+//                    startDay = SimpleDateFormat("dd").format(calendar.time).toInt()
+//
+//                }
+//                if (startTimeString == "") {
+//                    startTimeString = scheduleStartTime
+//                    println(startTimeString)
+//
+//                }
+//                if (endTimeString == "") {
+//                    endTimeString = scheduleEndTime
+//                    println(endTimeString)
+//                }
+//
+//                title = view.scheduleTitleEditText.text.toString()
+//                content = view.scheduleContentEditText.text.toString()
+//
+//                println("시작, $startTimeString")
+//                println("끝, $endTimeString")
+//
+//            val newSchedule = Schedule(title, content, startYear, startMonth+1, startDay, startTimeString, endTimeString, 0, 0, "")
+//            val db = CalendarDatabase.getInstance(activity)
 //            CoroutineScope(Dispatchers.IO).launch {
 //                db!!.calendarDao().insert(newSchedule)
-//                var dbList = db!!.calendarDao().getAll()
-//                println("DB 결과: " + dbList)
+//                val dbList = db.calendarDao().getAll()
+//                println("DB 결과: $dbList")
 //            }
-            
-
-        }
-
-        view.scheduleList.setOnClickListener {
-            println("일정 확인")
-            val db = CalendarDatabase.getInstance(this.context)
-            CoroutineScope(Dispatchers.IO).launch {
-                val dbList = db!!.calendarDao().getAll()
-                println("일정 결과: $dbList")
-            }
-        }
+//
+//
+////            var newSchedule = Schedule(title, content, startYear, startMonth+1, startDay)
+////            var db = CalendarDatabase.getInstance(this.context)
+////            CoroutineScope(Dispatchers.IO).launch {
+////                db!!.calendarDao().insert(newSchedule)
+////                var dbList = db!!.calendarDao().getAll()
+////                println("DB 결과: " + dbList)
+////            }
+//
+//
+//        }
+//
+//        view.scheduleList.setOnClickListener {
+//            println("일정 확인")
+//            val db = CalendarDatabase.getInstance(this.context)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val dbList = db!!.calendarDao().getAll()
+//                println("일정 결과: $dbList")
+//            }
+//        }
         return view
 
     }
