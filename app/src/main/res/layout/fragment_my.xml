@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -39,20 +40,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/myImageView"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                app:civ_circle_background_color="@color/light_gray"
-                android:src="@drawable/fui_ic_anonymous_white_24dp" />
+                android:src="@drawable/fui_ic_anonymous_white_24dp"
+                app:civ_circle_background_color="@color/light_gray" />
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
+                android:layout_marginStart="15dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -62,6 +63,7 @@
                     android:fontFamily="sans-serif-black"
                     android:text="닉네임"
                     android:textSize="24sp" />
+
 
                 <!--                <LinearLayout-->
                 <!--                    android:layout_width="wrap_content"-->
@@ -88,6 +90,16 @@
 
             </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/nickNameEditButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
+                android:src="@drawable/icons8_edit_24"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,89 +119,115 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="실력있는 개발자가 되고 싶은 사람" />
+            android:padding="10dp" />
 
-        <ToggleButton
-            android:id="@+id/jobToggleButton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:drawableEnd="@drawable/toggle_button"
-            android:fontFamily="@font/comfortaa_bold"
-            android:padding="10dp"
-            android:shadowColor="#191616"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white"
-            android:textOff="마감이 다가오는 공고"
-            android:textOn="마감이 다가오는 공고"
-            android:textSize="14sp" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myJobRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            <ToggleButton
+                android:id="@+id/jobToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:drawableEnd="@drawable/toggle_button"
+                android:fontFamily="@font/comfortaa_bold"
+                android:padding="10dp"
+                android:shadowColor="#191616"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/white"
+                android:textOff="마감이 다가오는 공고"
+                android:textOn="마감이 다가오는 공고"
+                android:textSize="14sp" />
 
-        <ToggleButton
-            android:id="@+id/likeToggleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:drawableEnd="@drawable/toggle_button"
-            android:fontFamily="@font/comfortaa_bold"
-            android:padding="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white"
-            android:textOff="내가 좋아요 한 글"
-            android:textOn="내가 좋아요 한 글"
-            android:textSize="14sp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myJobRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myLikeRecyclerView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+            <ToggleButton
+                android:id="@+id/likeToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:drawableEnd="@drawable/toggle_button"
+                android:fontFamily="@font/comfortaa_bold"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/white"
+                android:textOff="내가 좋아요 한 글"
+                android:textOn="내가 좋아요 한 글"
+                android:textSize="14sp" />
 
-        <ToggleButton
-            android:id="@+id/postToggleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:drawableEnd="@drawable/toggle_button"
-            android:fontFamily="@font/comfortaa_bold"
-            android:padding="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white"
-            android:textOff="내가 쓴 글"
-            android:textOn="내가 쓴 글"
-            android:textSize="14sp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myLikeRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myPostRecyclerView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
 
-        <ToggleButton
-            android:id="@+id/commentToggleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:drawableEnd="@drawable/toggle_button"
-            android:fontFamily="@font/comfortaa_bold"
-            android:padding="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white"
-            android:textOff="내가 쓴 댓글"
-            android:textOn="내가 쓴 댓글"
-            android:textSize="14sp" />
+            <ToggleButton
+                android:id="@+id/postToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:drawableEnd="@drawable/toggle_button"
+                android:fontFamily="@font/comfortaa_bold"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/white"
+                android:textOff="내가 쓴 글"
+                android:textOn="내가 쓴 글"
+                android:textSize="14sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myCommentRecyclerView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myPostRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+            <ToggleButton
+                android:id="@+id/commentToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                android:drawableEnd="@drawable/toggle_button"
+                android:fontFamily="@font/comfortaa_bold"
+                android:padding="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/white"
+                android:textOff="내가 쓴 댓글"
+                android:textOn="내가 쓴 댓글"
+                android:textSize="14sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myCommentRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
 
     </LinearLayout>
 

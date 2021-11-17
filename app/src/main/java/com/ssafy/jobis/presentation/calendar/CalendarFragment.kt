@@ -92,7 +92,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this) // 뷰 페이저 만들어주기
         selectedDate(firstDay) // 선택한 날짜로 이동
-
         // 처음 선택되어 있는 날짜 = 현재 날짜, + 버튼에 연결된 날짜 = 현재 날짜
         binding.calendarView.setSelectedDate(calc)
 
@@ -301,7 +300,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 intent.putExtra("selected_day", selectedDay)
                 startActivity(intent)
             }
-
         }
     }
 }

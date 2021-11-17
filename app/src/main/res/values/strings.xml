@@ -72,7 +72,6 @@
     <string name="empty_routine_select">선택된 날짜가 없습니다.\n기간과 요일을 확인해주세요.</string>
 
 
-
     <string name="create_study_upperbar">스터디 생성</string>
     <string name="create_study_title">제목</string>
     <string name="create_study_describe">설명</string>
@@ -114,4 +113,7 @@
         <item>8</item>
     </string-array>
 
+
+    <string name="search_activity_name">StudySearch</string>
+    <string name="search_upper_bar">검색</string>
 </resources>

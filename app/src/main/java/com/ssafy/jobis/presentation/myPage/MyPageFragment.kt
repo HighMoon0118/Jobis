@@ -1,12 +1,20 @@
 package com.ssafy.jobis.presentation.myPage
 
+import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,12 +25,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.model.community.Comment
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.data.response.PostResponseList
+import com.ssafy.jobis.presentation.calendar.AlarmReceiver
 import com.ssafy.jobis.presentation.community.CustomPostAdapter
 import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
 import com.ssafy.jobis.presentation.community.detail.ui.detail.CustomCommentAdapter
+import com.ssafy.jobis.presentation.job.JobAdapter
+import com.ssafy.jobis.presentation.job.JobScheduleAdapter
 import com.ssafy.jobis.presentation.login.Jobis
 
 class MyPageFragment: Fragment() {
@@ -31,13 +44,13 @@ class MyPageFragment: Fragment() {
     private var mainActivity: MainActivity? = null
     private var _binding: FragmentMyBinding? = null
     private val binding get() = _binding!!
+    private var uid: String? = null
     lateinit var auth: FirebaseAuth
     var db = FirebaseFirestore.getInstance()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentMyBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -47,7 +60,7 @@ class MyPageFragment: Fragment() {
         myPageViewModel = ViewModelProvider(this, MyPageViewModelFactory())
             .get(MyPageViewModel::class.java)
         auth = Firebase.auth
-
+        uid = Firebase.auth.currentUser?.uid
         myPageViewModel.myLikeList.observe(viewLifecycleOwner,
             Observer { myLikeList ->
                 myLikeList ?: return@Observer
@@ -63,7 +76,31 @@ class MyPageFragment: Fragment() {
                 myCommentList ?: return@Observer
                 updateMyComment(myCommentList)
             })
-
+        myPageViewModel.myJobList.observe(viewLifecycleOwner,
+            Observer { myJobList ->
+                myJobList ?: return@Observer
+                updateMyJob(myJobList)
+            })
+        myPageViewModel.isScheduleDeleted.observe(viewLifecycleOwner,
+            Observer { isScheduleDeleted ->
+                isScheduleDeleted ?: return@Observer
+                if (isScheduleDeleted) {
+                    myPageViewModel.loadMyJobList(requireContext())
+                    Toast.makeText(context, "공고가 달력에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            })
+        myPageViewModel.isNicknameChanged.observe(viewLifecycleOwner,
+            Observer { isNicknameChanged ->
+                isNicknameChanged ?: return@Observer
+                if (isNicknameChanged) {
+                    binding.myPageNickNameTextView.text = Jobis.prefs.getString("nickname", "??")
+                    Toast.makeText(context, "닉네임 변경 완료", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "닉네임 변경 실패", Toast.LENGTH_SHORT).show()
+                }
+            })
 
         binding.myPageNickNameTextView.text = Jobis.prefs.getString("nickname", "??")
         binding.logoutButton.setOnClickListener {
@@ -75,8 +112,10 @@ class MyPageFragment: Fragment() {
         binding.jobToggleButton.setOnClickListener {
             val isChecked = binding.jobToggleButton.isChecked
             if (isChecked) {
+                binding.myJobRecyclerView.visibility = View.VISIBLE
+                myPageViewModel.loadMyJobList(requireContext())
             } else {
-
+                binding.myJobRecyclerView.visibility = View.GONE
             }
         }
 
@@ -84,18 +123,20 @@ class MyPageFragment: Fragment() {
             val isChecked = binding.likeToggleButton.isChecked
             // 체크되어있으면 리사이클러뷰를 활성화시킨다.
             if (isChecked) {
+                binding.myLikeRecyclerView.visibility = View.VISIBLE
                 myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
             } else {
-
+                binding.myLikeRecyclerView.visibility = View.GONE
             }
         }
 
         binding.postToggleButton.setOnClickListener {
             val isChecked = binding.postToggleButton.isChecked
             if (isChecked) {
+                binding.myPostRecyclerView.visibility = View.VISIBLE
                 myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
             } else {
-
+                binding.myPostRecyclerView.visibility = View.GONE
             }
         }
 
@@ -103,11 +144,19 @@ class MyPageFragment: Fragment() {
             val isChecked = binding.commentToggleButton.isChecked
             if (isChecked) {
                 myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
+                binding.myCommentRecyclerView.visibility = View.VISIBLE
             } else {
-
+                binding.myCommentRecyclerView.visibility = View.GONE
             }
         }
 
+        binding.nickNameEditButton.setOnClickListener {
+            openEditDialog()
+        }
+        myPageViewModel.loadMyJobList(requireContext())
+        myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+        myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
+        myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
     }
 
 
@@ -169,4 +218,82 @@ class MyPageFragment: Fragment() {
             1,
             StaggeredGridLayoutManager.VERTICAL)
     }
+
+    fun updateMyJob(jobList: List<Schedule>) {
+        val adapter = JobScheduleAdapter()
+        adapter.listData = jobList
+        adapter.setOnItemClickListener(object: JobScheduleAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, schedule: Schedule, post: Int) {
+                showDeletePopup(schedule)
+            }
+        })
+        binding.myJobRecyclerView.adapter = adapter
+        binding.myJobRecyclerView.layoutManager = StaggeredGridLayoutManager(
+            2,
+            StaggeredGridLayoutManager.VERTICAL
+        )
+    }
+
+    private fun showDeletePopup(schedule: Schedule) {
+        val inflater = (activity as MainActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val alertDialog = AlertDialog.Builder((activity as MainActivity))
+        alertDialog.setTitle("${schedule.companyName}")
+            .setMessage("공고를 달력에서 삭제하시겠습니까?")
+            .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                cancelAlarm(schedule, schedule.id)
+                myPageViewModel.deleteSchedule(schedule, requireContext())
+            })
+            .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
+                return@OnClickListener
+            })
+            .create()
+        alertDialog.setView(view)
+        alertDialog.show()
+    }
+
+    private fun cancelAlarm(schedule: Schedule, alarm_id: Int) {
+        val alarmManager = ContextCompat.getSystemService(
+            requireContext(),
+            AlarmManager::class.java
+        ) as AlarmManager
+        val intent = Intent(this.context, AlarmReceiver::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this.context, alarm_id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        alarmManager.cancel(pendingIntent) // 알람 취소
+        pendingIntent.cancel() // pendingIntent 취소
+
+        Toast.makeText(this.context, "Alaram Cancelled", Toast.LENGTH_LONG).show()
+    }
+
+    private fun openEditDialog() {
+        val inflater = (activity as MainActivity).getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.select_popup, null)
+        val container = FrameLayout(requireContext())
+        val editText = EditText(context)
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        params.leftMargin = resources.getDimensionPixelSize(R.dimen.activity_horizontal_margin)
+        params.rightMargin = resources.getDimensionPixelSize(R.dimen.activity_horizontal_margin)
+        editText.layoutParams = params
+        container.addView(editText)
+
+        val alertDialog = AlertDialog.Builder((activity as MainActivity))
+        alertDialog.setTitle("닉네임 변경하기")
+            .setMessage("변경할 닉네임을 입력하세요.")
+            .setPositiveButton("변경", DialogInterface.OnClickListener { dialogInterface, i ->
+                val value = editText.text.toString()
+                if (value.isNotEmpty()) {
+                    myPageViewModel.updateNickName(uid!!, value)
+                } else {
+                    Toast.makeText(context, "닉네임을 입력하세요.", Toast.LENGTH_SHORT).show()
+                }
+            })
+            .setNegativeButton("취소", DialogInterface.OnClickListener { dialogInterface, i ->
+                return@OnClickListener
+            })
+            .setCancelable(false)
+            .setView(container)
+            .create()
+        alertDialog.show()
+    }
 }
+
