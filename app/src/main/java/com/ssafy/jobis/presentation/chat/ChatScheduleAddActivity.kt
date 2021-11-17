@@ -60,7 +60,32 @@ class ChatScheduleAddActivity : AppCompatActivity() {
 
         var currentDateString = "${currentYear}. ${currentMonth}. ${currentDay} ${currentDayOfWeekString}"
         var currentStartTimeString = "${currentHour}:${currentMinute}"
-        var currentEndTimeString = "${currentHour}:${currentMinute + 30}"
+        var currentEndTimeString = ""
+
+        if (currentMinute < 10) {
+            currentStartTimeString = "${currentHour}:0${currentMinute}"
+            currentEndTimeString = "${currentHour}:${currentMinute + 30}"
+            if (currentHour < 10) {
+                currentStartTimeString = "0${currentHour}:0${currentMinute}"
+                currentEndTimeString = "0${currentHour}:${currentMinute + 30}"
+            }
+        }
+        else if (currentMinute + 30 > 59) {
+            currentStartTimeString = "${currentHour}:${currentMinute}"
+            currentEndTimeString = "${currentHour}:${59}"
+            if (currentHour < 10) {
+                currentStartTimeString = "0${currentHour}:${currentMinute}"
+                currentEndTimeString = "0${currentHour}:${59}"
+            }
+        } else {
+            currentStartTimeString = "${currentHour}:${currentMinute}"
+            currentEndTimeString = "${currentHour}:${currentMinute + 30}"
+            if (currentHour < 10) {
+                currentStartTimeString = "0${currentHour}:${currentMinute}"
+                currentEndTimeString = "0${currentHour}:${currentMinute + 30}"
+            }
+        }
+
 
         binding.dateButton.text = currentDateString
         binding.startTimeButton.text = currentStartTimeString
@@ -96,6 +121,14 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             var cal = Calendar.getInstance()
             var timeSetListener = TimePickerDialog.OnTimeSetListener { view, startHourOfDayVal, startMinuteVal ->
                 timeString = "${startHourOfDayVal}:${startMinuteVal}"
+                if (startHourOfDayVal < 10) {
+                    timeString = "0${startHourOfDayVal}:${startMinuteVal}"
+                    if (startMinuteVal < 10) {
+                        timeString = "0${startHourOfDayVal}:0${startMinuteVal}"
+                    }
+                } else if (startMinuteVal < 10) {
+                    timeString = "${startHourOfDayVal}:0${startMinuteVal}"
+                }
                 binding.startTimeButton.text = timeString
                 startHour = startHourOfDayVal
                 startMinute = startMinuteVal
@@ -110,6 +143,14 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             var cal = Calendar.getInstance()
             var timeSetListener = TimePickerDialog.OnTimeSetListener { view, endHourOfDayVal, endMinuteVal ->
                 timeString = "${endHourOfDayVal}:${endMinuteVal}"
+                if (endHourOfDayVal < 10) {
+                    timeString = "0${endHourOfDayVal}:${endMinuteVal}"
+                    if (endMinuteVal < 10) {
+                        timeString = "0${endHourOfDayVal}:0${endMinuteVal}"
+                    }
+                } else if (endMinuteVal < 10) {
+                    timeString = "${endHourOfDayVal}:0${endMinuteVal}"
+                }
                 binding.endTimeButton.text = timeString
                 endHour = endHourOfDayVal
                 endMinute = endMinuteVal
@@ -127,6 +168,8 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             val title = binding.chatScheduleTitle.text.toString()
             val content = binding.chatScheduleContent.text.toString()
             var db = FirebaseFirestore.getInstance()
+
+
 
             var newSchedule = Schedule(title, content, year, month, day, "${startHour}:${startMinute}", "${endHour}:${endMinute}", currentStudyId, 0, "")
             db.collection("study_schedules")
@@ -162,5 +205,9 @@ class ChatScheduleAddActivity : AppCompatActivity() {
         val returnIntent = Intent()
         setResult(RESULT_OK, returnIntent)
         finish()
+    }
+
+    fun putZeroForward(s: String) : String {
+        return "0" + s
     }
 }
