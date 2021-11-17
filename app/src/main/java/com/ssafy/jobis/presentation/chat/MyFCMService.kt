@@ -19,12 +19,14 @@ class MyFCMService: FirebaseMessagingService() {
         val CHANNEL_ID = "FCM"
         val CHANNEL_NAME = "MyChatFCM"
         val NOTIFICATION_ID = 12345678
-    }
 
+        var currentStudyId = ""
+    }
     private lateinit var mNotificationManager: NotificationManager
 
     override fun onCreate() {
         Log.d("파이어베이스 메시징 서비스", "onCreate")
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -42,26 +44,29 @@ class MyFCMService: FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d("안녕하세요", "안녕하시려니까")
 
-        var roomId = "디폴트"
-        var userId = "디폴트"
-        var content = "디폴트"
+        var studyId = ""
+        var userId = ""
+        var content = ""
+        var createdAt = ""
 
         if (remoteMessage.data.isNotEmpty()) {
             Log.d("값이 들어왔나요?", remoteMessage.data.toString())
             remoteMessage.let {
-                roomId = it.data["roomId"].toString()
-                userId = it.data["userId"].toString()
+                studyId = it.data["study_id"].toString()
+                userId = it.data["user_id"].toString()
                 content = it.data["content"].toString()
+                createdAt = it.data["created_at"].toString()
             }
         }
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("타이틀")
-            .setContentText("${roomId}에서 ${userId}가 ${content}라고 말헀습니다.")
+            .setContentTitle("메세지가 도착했습니다.")
+            .setContentText(content)
             .setSmallIcon(R.mipmap.ic_main)
-            .setVibrate(longArrayOf(1000, 1000, 1000))
+            .setVibrate(longArrayOf(1000, 0, 0))
 
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build())
+        if (currentStudyId == "")
+            mNotificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
 

@@ -1,6 +1,7 @@
 package com.ssafy.jobis.presentation.job
 
 import android.text.TextUtils.split
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,9 +44,7 @@ class JobScheduleAdapter: RecyclerView.Adapter<JobScheduleAdapter.Holder>() {
             binding.jobScheduleTitleTextView.text = schedule.companyName
             binding.jobScheduleContentTextView.text = schedule.content
 
-
-            val deadline = getDDay(schedule.year.toInt(), schedule.month.toInt(), schedule.day.toInt()).toInt()
-
+            val deadline = getDDay(schedule.year, schedule.month+1, schedule.day).toInt()
             if (deadline < 0) {
                 binding.scheduleDueTextView.text = "마감된 공고"
             } else if (deadline == 0) {

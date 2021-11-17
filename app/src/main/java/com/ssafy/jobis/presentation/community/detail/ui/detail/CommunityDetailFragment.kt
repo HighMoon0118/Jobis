@@ -75,6 +75,16 @@ class CommunityDetailFragment : Fragment() {
                     Toast.makeText(context, "게시글이 삭제 실패", Toast.LENGTH_LONG).show()
                 }
             })
+        communityDetailViewModel.reportResult.observe(viewLifecycleOwner,
+            Observer { reportResult ->
+                reportResult ?: return@Observer
+                (activity as CommunityDetailActivity).loadingOff()
+                if (reportResult) {
+                    Toast.makeText(context, "신고되었습니다. 관리자 검토 후 조치됩니다.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "신고실패", Toast.LENGTH_LONG).show()
+                }
+            })
         id = arguments?.getString("id")
         uid = Firebase.auth.currentUser?.uid
         binding.detailLikeImageView.setOnClickListener {
@@ -84,6 +94,7 @@ class CommunityDetailFragment : Fragment() {
         binding.commentButton.setOnClickListener {
             val text = binding.commentEditText.text.toString()
             if (text.length > 0) {
+                (activity as CommunityDetailActivity).loadingOn()
                 communityDetailViewModel.createComment(text, id!!, uid!!)
                 binding.commentEditText.text.clear()
             }
@@ -98,6 +109,10 @@ class CommunityDetailFragment : Fragment() {
             if (post != null) {
                 (activity as CommunityDetailActivity).goPostEditFragment(id!!, uid!!, post)
             }
+        }
+
+        binding.postDeclarationButton.setOnClickListener {
+            showPopup(2, null)
         }
 
         if (id != null && uid != null) {
@@ -142,6 +157,7 @@ class CommunityDetailFragment : Fragment() {
         binding.detailCommentRecyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
+        (activity as CommunityDetailActivity).loadingOff()
     }
 
     fun showPopup(option: Int, comment: Comment?) {
@@ -164,12 +180,22 @@ class CommunityDetailFragment : Fragment() {
             1 -> {
                 alertDialog.setTitle("댓글을 삭제하시겠습니까?")
                     .setPositiveButton("네", DialogInterface.OnClickListener { dialogInterface, i ->
+                        (activity as CommunityDetailActivity).loadingOn()
                         communityDetailViewModel.deleteComment(id!!, comment!!, uid!!)
                     })
                     .setNegativeButton("아니오", DialogInterface.OnClickListener { dialogInterface, i ->
                         return@OnClickListener
                     })
                     .create()
+            }
+            2 -> {
+                val mList = arrayOf("광고", "도배", "음란물", "욕설", "개인정보침해", "저작권침해", "기타")
+                lateinit var reason : String
+                alertDialog.setTitle("신고 사유를 선택해주세요.")
+                    .setItems(mList, DialogInterface.OnClickListener { dialogInterface, i ->
+                        (activity as CommunityDetailActivity).loadingOn()
+                        communityDetailViewModel.reportPost(id!!, uid!!, mList[i])
+                    })
             }
         }
 

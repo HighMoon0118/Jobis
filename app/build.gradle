@@ -20,8 +20,8 @@ android {
         applicationId "com.ssafy.jobis"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 3
-        versionName "1.1"
+        versionCode 4
+        versionName "1.2"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,6 +52,7 @@ dependencies {
 
     // 칼라 피커(Color Picker)
     implementation 'com.jaredrummler:colorpicker:1.1.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.2'
     // GIF 라이브러리
     compile('com.waynejo:androidndkgif:0.3.3')
 
