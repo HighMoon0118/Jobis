@@ -52,9 +52,7 @@ class CustomCommentAdapter: RecyclerView.Adapter<CustomCommentAdapter.Holder>() 
                 binding.imageButton.setOnClickListener {
                     val pos = adapterPosition
                     if (pos != RecyclerView.NO_POSITION) {
-                        itemView.imageButton.setOnClickListener {
-                            listener?.onItemClick(itemView, comment, pos)
-                        }
+                        listener?.onItemClick(itemView, comment, pos)
                     }
                 }
             }
