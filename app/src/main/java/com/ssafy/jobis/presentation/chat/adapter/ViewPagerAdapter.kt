@@ -1,7 +1,6 @@
 package com.ssafy.jobis.presentation.chat.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -11,9 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
-
-import androidx.viewpager2.widget.ViewPager2
-
+import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.jobis.presentation.chat.DrawingFragment
 import com.waynejo.androidndkgif.GifEncoder
 import kotlinx.coroutines.CoroutineScope
@@ -21,11 +18,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 
 class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
 
     interface CanvasListener {
-        fun onSuccess()
+        fun onSuccess(file: File)
     }
 
     private val canvasList:Array<DrawingFragment> by lazy {
@@ -56,7 +54,7 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
     }
 
     @SuppressLint("ShowToast", "CommitPrefEdits")
-    fun saveView() {
+    suspend fun saveView() {
         bitmapList.clear()
 
         for (i in used.indices) {
@@ -65,12 +63,29 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
             }
         }
 
+        val userId = FirebaseAuth.getInstance().currentUser?.email!!.split("@")[0]
+
         if (bitmapList.size == 0) {
+            Toast.makeText(fragmentActivity, "프레임을 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        } else if (bitmapList.size == 1) {
+        if (bitmapList.size == 1) {
+            val fileName = userId + System.currentTimeMillis().toString()+".png"
+            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
 
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val fo = FileOutputStream(file)
+                    bitmapList[0].compress(Bitmap.CompressFormat.PNG, 100, fo)
+                    fo.close()
+                } catch (e: Exception) {
+                } finally {
+                    savePathAndUpdate(file)
+                }
+            }.join()
         } else {
-            val fileName = System.currentTimeMillis().toString()+".gif"
+            val fileName = userId + "_" + System.currentTimeMillis().toString()+".gif"
             val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
 
             val filePath = file.absolutePath
@@ -80,37 +95,17 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    Log.d("인코딩 시작", "ㅇㅇㅇㅇㅇ")
                     encodeGIF(wh[0], wh[1], filePath, delayMs)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 } finally {
-                    Log.d("인코딩 끝", "ㅇㅇㅇㅇㅇ")
-                    val pref = PreferenceManager.getDefaultSharedPreferences(fragmentActivity)
-                    val files = pref.getString("gif", "").toString() + filePath + "#"
-                    pref.edit().apply {
-                        putString("gif", files)
-                        apply()
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(fragmentActivity, "GIF파일 생성!", Toast.LENGTH_SHORT).show()
-                        if (fragmentActivity is CanvasListener) {
-                            fragmentActivity.onSuccess()
-                        }
-                    }
-                    Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also {
-                        it.data = Uri.fromFile(file)
-                        fragmentActivity.sendBroadcast(it)
-                    }
-
+                    savePathAndUpdate(file)
                 }
-            }
+            }.join()
         }
     }
 
     private fun encodeGIF(w: Int, h: Int, filePath: String, delayMs: Int) {
-
         val gifEncoder = GifEncoder()
         gifEncoder.init(w, h, filePath, GifEncoder.EncodingType.ENCODING_TYPE_NORMAL_LOW_MEMORY)
         gifEncoder.setDither(false)
@@ -118,5 +113,25 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
             gifEncoder.encodeFrame(bm, delayMs)
         }
         gifEncoder.close()
+    }
+
+    private suspend fun savePathAndUpdate(file: File) {
+        val pref = PreferenceManager.getDefaultSharedPreferences(fragmentActivity)
+        val files = pref.getString("gif", "").toString() + file.absolutePath + "#"
+        pref.edit().apply {
+            putString("gif", files)
+            apply()
+        }
+        withContext(Dispatchers.Main) {
+            Toast.makeText(fragmentActivity, "파일 생성!", Toast.LENGTH_SHORT).show()
+        }
+        Log.d("장난하니", "장난하니")
+        if (fragmentActivity is CanvasListener) {
+            fragmentActivity.onSuccess(file)
+        }
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also {
+            it.data = Uri.fromFile(file)
+            fragmentActivity.sendBroadcast(it)
+        }
     }
 }
