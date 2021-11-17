@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -21,6 +22,7 @@ import com.ssafy.jobis.databinding.ActivityChatCalendarBinding
 import com.ssafy.jobis.presentation.chat.adapter.ChatScheduleAdapter
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModel
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModelFactory
+import com.ssafy.jobis.presentation.community.search.CommunitySearchActivity
 import com.ssafy.jobis.presentation.job.JobAdapter
 import com.ssafy.jobis.presentation.job.JobViewModel
 import com.ssafy.jobis.presentation.job.JobViewModelFactory
@@ -31,13 +33,20 @@ import kotlinx.coroutines.launch
 
 class ChatScheduleActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatCalendarBinding
+    private lateinit var chatScheduleViewModel: ChatScheduleViewModel
+    private val getResultChatScheduleAddActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            chatScheduleViewModel.loadScheduleList()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatCalendarBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var chatScheduleViewModel = ViewModelProvider(this, ChatScheduleViewModelFactory())
+        chatScheduleViewModel = ViewModelProvider(this, ChatScheduleViewModelFactory())
             .get(ChatScheduleViewModel::class.java)
 
         chatScheduleViewModel.scheduleList.observe(this, Observer { scheduleList ->
@@ -48,9 +57,16 @@ class ChatScheduleActivity : AppCompatActivity() {
         chatScheduleViewModel.loadScheduleList()
 
         binding.addStudySchedule.setOnClickListener {
-            startActivity(Intent(this, ChatScheduleAddActivity::class.java))
+            var intent = Intent(this, ChatScheduleAddActivity::class.java)
+            getResultChatScheduleAddActivity.launch(intent)
         }
     }
+
+//    fun goCommunitySearchActivity() {
+//        val intent = Intent(this, CommunitySearchActivity::class.java)
+//        getResultCommunityDetail.launch(intent)
+//    }
+
 
 
     private fun updateStudyScheduleList(scheduleList: MutableList<ScheduleResponse>) {

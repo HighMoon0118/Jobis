@@ -2,6 +2,7 @@ package com.ssafy.jobis.presentation.chat
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.ssafy.jobis.R
@@ -60,7 +61,10 @@ class ChatScheduleAddActivity : AppCompatActivity() {
         }
 
 
-        // 이제 여기서 정보를 다 종합해서 schedule 객체를 채운 후 파이어베이스와 room을 통햏 저장장
+        // 이제 여기서 정보를 다 종합해서 schedule 객체를 채운 후 파이어베이스와 room을 통해 저장
+
+        // 파이어베이스에 추가하고 나서 원래 액티비티로 돌아가는 코드
+//        returnChatScheduleActivity()
     }
    fun dayOfWeekToString(dayOfWeek: Int): String {
         var dayOfWeekString = ""
@@ -74,5 +78,11 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             7 -> dayOfWeekString = "토요일"
         }
         return dayOfWeekString
+    }
+
+    fun returnChatScheduleActivity() {
+        val returnIntent = Intent()
+        setResult(RESULT_OK, returnIntent)
+        finish()
     }
 }
