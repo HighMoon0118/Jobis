@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,9 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
+import com.squareup.okhttp.Dispatcher
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
+import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.response.ScheduleResponse
@@ -35,17 +38,17 @@ import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModel
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModelFactory
 import com.ssafy.materialcalendar.EventDecorator
 import kotlinx.android.synthetic.main.fragment_calendar.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newCoroutineContext
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener {
+class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener, CalendarScheduleAdapter.OnDeleteScheduleListener{
     private lateinit var chatScheduleViewModel: ChatScheduleViewModel
+    private var currentDay: Int = 0
+    private var currentMonth: Int = 0
+    private var currentYear: Int = 0
     private var totalStudySchedule = ArrayList<Schedule>()
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
@@ -58,10 +61,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
 
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             // 내 아이디를 포함하고 있는 스터디 id 가져오기
             var study_id_list = getStudyIdList()
             var study_schedule_list = getStudyScheduleList(study_id_list)
+
             // 뷰페이저2 사용
             // 첫 화면에서 보여줄 달의 정보를 가지고 있는 뷰를 여기서 만들어줘야 한다.
             var calc = Calendar.getInstance()
@@ -74,8 +78,9 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             var firstDay = calc.get(Calendar.DATE)
 
             // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
-            var viewPagerInfo = calculateCalendarDates(firstYear, firstMonth, firstDay, scheduleDatabase, routineScheduleDatabase)
-            binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, CalendarFragment()) // 뷰 페이저 만들어주기
+            var viewPagerInfo = calculateCalendarDates(firstYear, firstMonth, firstDay, scheduleDatabase, routineScheduleDatabase, study_schedule_list)
+            binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
+            dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             selectedDate(firstDay) // 선택한 날짜로 이동
         }
 
@@ -85,7 +90,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var scheduleDatabase = CalendarDatabase.getInstance(this.context)
         var routineScheduleDatabase = RoutineScheduleDatabase.getInstance(this.context)
 
-        dotDecorator(calendar, scheduleDatabase, routineScheduleDatabase)
         // 1. 맨 처음 달력 "yyyy년 yy월"로 표기하기
         calendar.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
@@ -111,11 +115,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var firstMonth = calc.get(Calendar.MONTH)
         var firstDay = calc.get(Calendar.DATE)
 
-        // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
-//        var viewPagerInfo = calculateCalendarDates(firstYear, firstMonth, firstDay, scheduleDatabase, routineScheduleDatabase)
 
-//        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this) // 뷰 페이저 만들어주기
-//        selectedDate(firstDay) // 선택한 날짜로 이동
         // 처음 선택되어 있는 날짜 = 현재 날짜, + 버튼에 연결된 날짜 = 현재 날짜
         binding.calendarView.setSelectedDate(calc)
 
@@ -126,6 +126,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             intent.putExtra("selected_day", firstDay)
             startActivity(intent)
         }
+
 
         return binding.root
     }
@@ -184,7 +185,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         return studyScheduleList
     }
 
-    suspend fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?): ArrayList<ArrayList<Schedule>> {
+    suspend fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
         var calendarDates = ArrayList<ArrayList<Schedule>>()  // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         calc.set(year, month, day)
@@ -224,10 +225,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 }
 
                 // 파이어베이스에서 study 단일 일정 모두 가져오기
-                if (totalStudySchedule.size != 0) {
-                    for (q in 0..totalStudySchedule.size-1) {
-                        if (totalStudySchedule[q].year == year && totalStudySchedule[q].month == month && totalStudySchedule[q].day == day) {
-                            temp_schedule.add(totalStudySchedule[q])
+                if (studyScheduleList.size != 0) {
+                    for (q in 0..studyScheduleList.size-1) {
+                        if (studyScheduleList[q].year == year && studyScheduleList[q].month == month && studyScheduleList[q].day == k) {
+                            temp_schedule.add(studyScheduleList[q])
+                            totalStudySchedule.add(studyScheduleList[q])
                         }
                     }
                 }
@@ -261,7 +263,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     }
 
 
-    fun dotDecorator(calendar: MaterialCalendarView?, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?) {
+    fun dotDecorator(calendar: MaterialCalendarView?, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, totalStudySchedule: ArrayList<Schedule>) {
         // 사전작업1. room에서 단일 일정 데이터 가져와서 표시해주기
         var dates = ArrayList<CalendarDay>()
 
@@ -312,6 +314,18 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             }
         }
 
+        // 사전작업3. 파이어베이스에서 가져와서 표시해주기
+        var study_dates = ArrayList<CalendarDay>()
+        for (j: Int in 0..totalStudySchedule.size-1) {
+            var study_year = totalStudySchedule[j].year
+            var study_month = totalStudySchedule[j].month
+            var study_day = totalStudySchedule[j].day
+            var date = Calendar.getInstance()
+            date.set(study_year, study_month, study_day)
+            var day = CalendarDay.from(date)
+            study_dates.add(day)
+        }
+
         Handler(Looper.getMainLooper()).postDelayed({
             calendar!!.removeDecorators()
             calendar!!.invalidateDecorators()
@@ -320,7 +334,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             for (v: Int in 0..routineDates.size-1) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
             }
-            println("dates2 size:" + routineDates)
+            println("study_dates: " + study_dates)
+            calendar.addDecorator(EventDecorator(Color.parseColor("#ff4e7e"), study_dates))
         }, 0)
     }
 
@@ -348,21 +363,42 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var scheduleDatabase = CalendarDatabase.getInstance(this.context)
         var routineScheduleDatabase = RoutineScheduleDatabase.getInstance(this.context)
 
+        CoroutineScope(Dispatchers.IO).launch {
+            // 내 아이디를 포함하고 있는 스터디 id 가져오기
+            var viewPagerInfo = ArrayList<ArrayList<Schedule>>()
+            launch {
+                var study_id_list = getStudyIdList()
+                var study_schedule_list = getStudyScheduleList(study_id_list)
 
-        // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
-//        var viewPagerInfo = calculateCalendarDates(year, month, day, scheduleDatabase, routineScheduleDatabase)
-//        binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this)
+                // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
+               viewPagerInfo = calculateCalendarDates(
+                    year,
+                    month,
+                    day,
+                    scheduleDatabase,
+                    routineScheduleDatabase,
+                    study_schedule_list
+                )
+            }.join()
+            withContext(Dispatchers.Main) {
+            binding.calendarViewpager.adapter =
+                CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
+                println("출력3")
 
 
-        binding.calendarViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                calc.set(year, month, position+1) // position은 0부터 시작, 날짜는 1부터 시작하므로
-                // you are on the first page
-                binding.calendarView.setSelectedDate(calc)
+            binding.calendarViewpager.registerOnPageChangeCallback(object :
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    calc.set(year, month, position + 1) // position은 0부터 시작, 날짜는 1부터 시작하므로
+                    // you are on the first page
+                    binding.calendarView.setSelectedDate(calc)
+                    println("출력4")
+                }
+            })
+                dotDecorator(widget, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             }
-        })
-        dotDecorator(widget, scheduleDatabase, routineScheduleDatabase)
+        }
     }
 
     override fun onDateSelected(
@@ -370,6 +406,9 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         date: CalendarDay,
         selected: Boolean
     ) {
+        currentDay = date.day
+        currentMonth = date.month
+        currentYear = date.year
         // 지금 11월달이 10월로, 1월달이 0월로 표기된다. Month에 +1을 하고 보여줘야 함
         var selectedDay = date.day
         var selectedMonth = date.month + 1
@@ -384,6 +423,51 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 intent.putExtra("selected_day", selectedDay)
                 startActivity(intent)
             }
+        }
+    }
+
+    override fun onDeleteSchedule(schedule: Schedule) {
+        CoroutineScope(Dispatchers.IO).launch {
+            launch {
+                if (schedule.group_id == 0) {
+                    var scheduleData = CalendarDatabase.getInstance(requireContext())
+                    scheduleData!!.calendarDao().delete(schedule)
+                } else {
+                    var routineScheduleData = RoutineScheduleDatabase.getInstance(requireContext())
+                    routineScheduleData!!.routineScheduleDao().deleteRoutineSchedules(schedule.group_id)
+                    Log.d("test", "확인")
+                }
+            }.join()
+            Log.d("test2", "확인2")
+            updateAdapter()
+        }
+
+    }
+
+    fun updateAdapter() {
+        CoroutineScope(Dispatchers.Main).launch {
+            // 내 아이디를 포함하고 있는 스터디 id 가져오기
+            var study_id_list = getStudyIdList()
+            var study_schedule_list = getStudyScheduleList(study_id_list)
+
+            // 뷰페이저2 사용
+            // 첫 화면에서 보여줄 달의 정보를 가지고 있는 뷰를 여기서 만들어줘야 한다.
+            var calc = Calendar.getInstance()
+            calc.set(currentYear, currentMonth, currentDay)
+
+            var scheduleDatabase = CalendarDatabase.getInstance(context)
+            var routineScheduleDatabase = RoutineScheduleDatabase.getInstance(context)
+            // 처음 보여줄 날짜
+            var firstYear = calc.get(Calendar.YEAR)
+            var firstMonth = calc.get(Calendar.MONTH)
+            var firstDay = calc.get(Calendar.DATE)
+
+            // 뷰 페이저에 넣을 내용들(한 달간의 일정들)
+            var viewPagerInfo = calculateCalendarDates(firstYear, firstMonth, firstDay, scheduleDatabase, routineScheduleDatabase, study_schedule_list)
+            binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
+            dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
+
+            selectedDate(currentDay) // 선택한 날짜로 이동
         }
     }
 }
