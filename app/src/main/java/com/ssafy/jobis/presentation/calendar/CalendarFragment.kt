@@ -1,31 +1,17 @@
 package com.ssafy.jobis.presentation.calendar
 
-import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.getSystemServiceName
 import androidx.fragment.app.Fragment
-import androidx.room.ColumnInfo
 import androidx.viewpager2.widget.ViewPager2
-import com.google.firebase.messaging.RemoteMessage
 import com.ssafy.jobis.databinding.FragmentCalendarBinding
 import com.ssafy.jobis.presentation.CalendarPagerAdapter
-import com.ssafy.jobis.presentation.CalendarScheduleActivity
-import com.ssafy.jobis.presentation.calendar.decorators.TextDecorator
 import com.ssafy.materialcalendar.OneDayDecorator
 import com.ssafy.materialcalendar.SaturdayDecorator
 import com.ssafy.materialcalendar.SundayDecorator
@@ -45,7 +31,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import com.ssafy.jobis.data.model.calendar.OnDeleteClick as OnDeleteClick
 
 class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener {
 
