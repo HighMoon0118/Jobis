@@ -27,6 +27,31 @@
         app:layout_constraintTop_toBottomOf="@id/tv_my_study_header"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_search_study"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#3f51b5"
+        android:src="@drawable/icons8_search_24"
+        app:layout_constraintBottom_toBottomOf="@id/fab_my_study"
+        app:layout_constraintEnd_toEndOf="@id/fab_my_study"
+        app:layout_constraintStart_toStartOf="@id/fab_my_study"
+        app:layout_constraintTop_toTopOf="@id/fab_my_study" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_create_study"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="#3f51b5"
+        android:src="@drawable/ic_add_box_24"
+        app:layout_constraintBottom_toBottomOf="@id/fab_my_study"
+        app:layout_constraintEnd_toEndOf="@id/fab_my_study"
+        app:layout_constraintStart_toStartOf="@id/fab_my_study"
+        app:layout_constraintTop_toTopOf="@id/fab_my_study" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_my_study"
         android:layout_width="wrap_content"
@@ -36,6 +61,8 @@
         android:backgroundTint="#3f51b5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
