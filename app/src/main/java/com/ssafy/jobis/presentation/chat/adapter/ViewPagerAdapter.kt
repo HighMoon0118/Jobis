@@ -122,10 +122,6 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
             putString("gif", files)
             apply()
         }
-        withContext(Dispatchers.Main) {
-            Toast.makeText(fragmentActivity, "파일 생성!", Toast.LENGTH_SHORT).show()
-        }
-        Log.d("장난하니", "장난하니")
         if (fragmentActivity is CanvasListener) {
             fragmentActivity.onSuccess(file)
         }
