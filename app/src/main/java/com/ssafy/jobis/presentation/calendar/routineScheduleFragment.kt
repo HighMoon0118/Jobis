@@ -512,23 +512,8 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
             if (endTimeString == "") {
                 endHour = calendar.get(Calendar.HOUR_OF_DAY)
                 endMinute = calendar.get(Calendar.MINUTE)
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    endHour,
-//                    endMinute,
-//                    true,
-//                ).show()
             }
-//            else {
-//                TimePickerDialog(
-//                    activity,
-//                    timeSetListener,
-//                    endHour,
-//                    endMinute,
-//                    true,
-//                ).show()
-//            }
+
             TimePickerDialog(
                 activity,
                 timeSetListener,
@@ -539,16 +524,16 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         }
 
 
-        view.routineScheduleList.setOnClickListener {
-            println("일정 확인")
-            val db = RoutineScheduleDatabase.getInstance(activity)
-            CoroutineScope(Dispatchers.IO).launch {
-                val dbList = db!!.routineScheduleDao().getAll()
-                println("일정 결과: $dbList")
-            }
-//            Log.d("로그 저장 정보", "$title, $content, $startYear, ${startMonth}, $startDay, $startTimeString, $endTimeString")
-//            Log.d("시작끝시간", "$startHour, $endHour, $startMinute, $endMinute")
-        }
+//        view.routineScheduleList.setOnClickListener {
+//            println("일정 확인")
+//            val db = RoutineScheduleDatabase.getInstance(activity)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val dbList = db!!.routineScheduleDao().getAll()
+//                println("일정 결과: $dbList")
+//            }
+////            Log.d("로그 저장 정보", "$title, $content, $startYear, ${startMonth}, $startDay, $startTimeString, $endTimeString")
+////            Log.d("시작끝시간", "$startHour, $endHour, $startMinute, $endMinute")
+//        }
 
 
         return view

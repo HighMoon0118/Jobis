@@ -49,7 +49,9 @@
         </activity>
         <activity android:name=".presentation.chat.ChatActivity" />
         <activity android:name=".presentation.calendar.CalendarScheduleActivity"
-            android:theme="@style/Theme.Jobis"/>
+            android:theme="@style/Theme.Jobis"
+            android:windowSoftInputMode="adjustNothing"
+            />
 
 
         <service
