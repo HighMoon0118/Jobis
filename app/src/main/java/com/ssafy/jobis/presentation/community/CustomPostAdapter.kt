@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.data.response.PostResponse
 import com.ssafy.jobis.databinding.PostRecyclerBinding
 import java.text.SimpleDateFormat
+import java.util.*
 
 class CustomPostAdapter: RecyclerView.Adapter<CustomPostAdapter.Holder>() {
 
@@ -36,12 +37,16 @@ class CustomPostAdapter: RecyclerView.Adapter<CustomPostAdapter.Holder>() {
 
     inner class Holder(val binding: PostRecyclerBinding): RecyclerView.ViewHolder(binding.root) {
         fun setPost(post: PostResponse) {
-            val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            val cal = Calendar.getInstance()
+            cal.time = post.created_at.toDate()
+            cal.add(Calendar.HOUR, 9)
             binding.postCategoryText.text = post.category
             binding.postCommentText.text = "댓글 " + post.comment_list.size.toString()
             binding.postContentText.text = post.content
             binding.postLikeText.text = "좋아요 " + post.like.size.toString()
-            binding.postTimeText.text = sdf.format(post.created_at.toDate()).toString()
+            binding.postTimeText.text = sdf.format(cal.time).toString()
+//            binding.postTimeText.text = sdf.format(post.created_at.toDate())
             binding.postTitleText.text = post.title
 
             val pos = adapterPosition
