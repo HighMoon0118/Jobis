@@ -6,17 +6,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".presentation.chat.ChatScheduleAddActivity">
-    <Button
-        android:id="@+id/create_schedule_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_gravity="end"
-        android:text="저장"
-        android:background="@color/fui_transparent"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="일정 추가" />
+        <Button
+            android:id="@+id/create_schedule_button"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_gravity="end|center"
+            android:text="저장"
+            android:background="@color/fui_transparent"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
 
     <EditText
         android:id="@+id/chat_schedule_title"
