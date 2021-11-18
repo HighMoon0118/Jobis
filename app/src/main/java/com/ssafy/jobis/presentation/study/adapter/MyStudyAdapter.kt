@@ -22,6 +22,7 @@ class MyStudyAdapter(val context: Context, val studyList: List<Study>): Recycler
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val study = studyList[position]
+        // val dday = list[position]
         if (holder is MyStudyViewHolder)
             holder.bind(study)
     }

@@ -61,7 +61,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
 
     private lateinit var model: ChatViewModel
-    private lateinit var userId: String
     private val map = HashMap<Int, ImgChat?>()
     private var startIdx = 0
 
@@ -74,7 +73,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         currentStudyId = intent.getStringExtra("study_id").toString()
         Log.d("액티비티에서 얻은 스터디 아이디", currentStudyId)
-        userId = FirebaseAuth.getInstance().currentUser!!.uid
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
 
@@ -96,27 +94,21 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                         chat.file_name
                     )
                     if (localFile.exists()) {
-                        Log.d("로컬에 존재할 때", "ㅇㅇㅇㅇ")
                         val source = ImageDecoder.createSource(localFile)
                         map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
                     } else {
-                        Log.d("로컬에 존재하지 않을 때", "ㅇㅇㅇㅇ")
                         pathRef.getFile(localFile).addOnSuccessListener {
                             if (localFile.exists()) {
-                                Log.d("로컬에 생성후", "ㅇㅇㅇㅇㅇ")
                                 val source = ImageDecoder.createSource(localFile)
                                 map[i] = ImgChat(ImageDecoder.decodeDrawable(source))
                                 chatAdapter.notifyDataSetChanged()
                             }
-                        }.addOnFailureListener {
-
                         }
                     }
 
                 }
             }
-
-            chatAdapter = ChatAdapter(chatList, map)
+            chatAdapter = ChatAdapter(model.uid, chatList, map)
             binding.rvChat.adapter = chatAdapter
             goToRecentChat()
             startIdx = chatList.size
@@ -249,13 +241,13 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_send_chat -> {
                 if (model.chooseFileName.isNotEmpty()) {
-                    model.sendMessage(currentStudyId, userId, "이모티콘을 보냈습니다.", model.chooseFileName)
+                    model.sendMessage(currentStudyId, "이모티콘을 보냈습니다.", model.chooseFileName)
                     clearGIFLayout()
                 }
                 val text = binding.editTextChat.text?.trim().toString()
                 if (text != "") {
                     binding.editTextChat.text = null
-                    model.sendMessage(currentStudyId, userId, text)
+                    model.sendMessage(currentStudyId, text)
                 }
             }
             R.id.edit_text_chat -> {

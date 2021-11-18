@@ -61,7 +61,9 @@ data class Chat(
     @ColumnInfo(name = "chat_id")
     @PrimaryKey(autoGenerate = true)
     var chat_id: Int = 0,
+    var is_me: Boolean,
     var user_id: String,
+    var nickname: String,
     var content: String,
     var file_name: String = "",
     var created_at: String,
