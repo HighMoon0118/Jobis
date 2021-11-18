@@ -1,11 +1,14 @@
 package com.ssafy.jobis.presentation.calendar
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +31,7 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import com.squareup.okhttp.Dispatcher
+import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
@@ -428,21 +432,41 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     }
 
     override fun onDeleteSchedule(schedule: Schedule) {
-        CoroutineScope(Dispatchers.IO).launch {
-            launch {
-                if (schedule.group_id == 0) {
-                    var scheduleData = CalendarDatabase.getInstance(requireContext())
-                    scheduleData!!.calendarDao().delete(schedule)
-                } else {
-                    var routineScheduleData = RoutineScheduleDatabase.getInstance(requireContext())
-                    routineScheduleData!!.routineScheduleDao().deleteRoutineSchedules(schedule.group_id)
-                    Log.d("test", "확인")
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this.context, R.style.ThemeOverlay_AppCompat_Dialog))
+        if (schedule.study_id != "") {
+            builder.setTitle("안내")
+            builder.setMessage("스터디 일정은 개인 캘린더에서 삭제할 수 없습니다.")
+            builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                println("확인 버튼")
+            })
+        } else {
+            builder.setTitle("일정")
+            builder.setMessage("일정을 삭제하시겠습니까?")
+            builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                println("삭제 시작")
+                CoroutineScope(Dispatchers.IO).launch {
+                    launch {
+                        if (schedule.group_id == 0) {
+                            var scheduleData = CalendarDatabase.getInstance(requireContext())
+                            scheduleData!!.calendarDao().delete(schedule)
+                        } else {
+                            var routineScheduleData =
+                                RoutineScheduleDatabase.getInstance(requireContext())
+                            routineScheduleData!!.routineScheduleDao()
+                                .deleteRoutineSchedules(schedule.group_id)
+                            Log.d("test", "확인")
+                        }
+                    }.join()
+                    Log.d("test2", "확인2")
+                    updateAdapter()
                 }
-            }.join()
-            Log.d("test2", "확인2")
-            updateAdapter()
+            })
+            builder.setNegativeButton("취소") {
+                    _, _ -> println("취소 버튼")
+            }
         }
 
+        builder.show()
     }
 
     fun updateAdapter() {

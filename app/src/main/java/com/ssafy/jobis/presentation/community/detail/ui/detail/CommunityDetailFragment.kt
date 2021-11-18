@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.ssafy.jobis.R
@@ -28,6 +29,7 @@ class CommunityDetailFragment : Fragment() {
     private var _binding: CommunityDetailFragmentBinding? = null
     private val binding get() = _binding!!
     private var uid: String? = null
+    private var auth: FirebaseAuth? = null
     var id: String? = null
     companion object {
         fun newInstance() = CommunityDetailFragment()
@@ -87,7 +89,8 @@ class CommunityDetailFragment : Fragment() {
                 }
             })
         id = arguments?.getString("id")
-        uid = Firebase.auth.currentUser?.uid
+        auth = Firebase.auth
+        uid = auth!!.currentUser?.uid
         binding.detailLikeImageView.setOnClickListener {
             communityDetailViewModel.updateLike(id!!, uid!!)
         }
@@ -133,7 +136,7 @@ class CommunityDetailFragment : Fragment() {
         binding.detailLikeCountTextView.text = post.like.size.toString()
         binding.detailNickNameTextView.text = "by " + post.user_nickname + "  |  "
         binding.commentCountTextView.text = "댓글 " +post.comment_list.size.toString() + "개"
-        if (post.user_id == uid) {
+        if (post.user_id == uid || auth?.currentUser?.email == "ssafy@gmail.com") {
             binding.postEditButton.visibility = View.VISIBLE
             binding.postDeleteButton.visibility = View.VISIBLE
         }

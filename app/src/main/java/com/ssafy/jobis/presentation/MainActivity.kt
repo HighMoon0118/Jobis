@@ -49,13 +49,15 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.beginTransaction().add(R.id.frame_main, CalendarFragment()).commit()
+//        supportFragmentManager.beginTransaction().add(R.id.frame_main, CalendarFragment()).commit()
 
         val calendarFragment = CalendarFragment()
         val myStudyFragment = MyStudyFragment(this)
         val jobFragment = JobFragment()
         val communityFragment = CommunityFragment()
         val myPageFragment = MyPageFragment()
+
+        supportFragmentManager.beginTransaction().add(R.id.frame_main, calendarFragment).commit()
 
         binding.btmNavi.run {
             setOnNavigationItemSelectedListener {
