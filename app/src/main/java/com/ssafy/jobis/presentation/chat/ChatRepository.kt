@@ -21,8 +21,7 @@ class ChatRepository(context: Context) {
         return dao?.getChatList(studyId)
     }
 
-    fun saveMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String) {
-        Log.d("saveMessage", "데이터 들어옴")
+    fun saveMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String, isEntrance: Boolean = false) {
         val chat = Chat(
             study_id = studyId,
             user_id = userId,
@@ -30,6 +29,7 @@ class ChatRepository(context: Context) {
             nickname = nickname,
             content = content,
             file_name = fileName,
+            is_entrance = isEntrance,
             created_at = createdAt)
         dao?.insertChat(chat)
     }
@@ -46,7 +46,6 @@ class ChatRepository(context: Context) {
             put("content", content)
             put("file_name", fileName)
             put("created_at", createdAt)
-            put("nickname", nickname)
         }
         root.put("data", data)
 //        val notification = JSONObject()
@@ -54,10 +53,28 @@ class ChatRepository(context: Context) {
 //        notification.put("body", "안녕하세요ㅋㅋㅋ")
 //        notification을 넣으면 자동으로 알림이 옴. 커스텀하고싶다면 서비스에서 재정의해야 됨
 //        root.put("notification", notification)
-
         root.put("to", "/topics/${studyId}")
 
+        sendFCM(root)
+    }
 
+    fun entrance(studyId: String, uid: String, nickname: String, createdAt: String) {
+        val root = JSONObject()
+        val data = JSONObject()
+        data.apply {
+            put("is_entrance", true)
+            put("study_id", studyId)
+            put("user_id", uid)
+            put("content", "${nickname}님이 입장하셨습니다.")
+            put("created_at", createdAt)
+        }
+        root.put("data", data)
+        root.put("to", "/topics/${studyId}")
+
+        sendFCM(root)
+    }
+
+    fun sendFCM(root: JSONObject) {
         val url = URL("https://fcm.googleapis.com/fcm/send")
         val httpConnect = url.openConnection() as HttpURLConnection
         httpConnect.apply {
@@ -74,7 +91,8 @@ class ChatRepository(context: Context) {
         os.flush()
         val responseCode = httpConnect.responseCode
         if (responseCode == 200) {
-            Log.d("성공", inputStreamToString(httpConnect.inputStream))
+            Log.d("성공", "성공")
+//            Log.d("성공", inputStreamToString(httpConnect.inputStream))
         } else {
             Log.d("실패", "실패")
         }

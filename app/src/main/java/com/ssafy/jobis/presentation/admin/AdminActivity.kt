@@ -1,7 +1,9 @@
 package com.ssafy.jobis.presentation.admin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,11 +13,20 @@ import com.ssafy.jobis.data.repository.AdminRepository
 import com.ssafy.jobis.databinding.AdminActivityBinding
 import com.ssafy.jobis.presentation.admin.report.AdminReportFragment
 import com.ssafy.jobis.presentation.admin.user.AdminUserFragment
+import com.ssafy.jobis.presentation.community.detail.CommunityDetailActivity
 import java.lang.IllegalArgumentException
 
 class AdminActivity : AppCompatActivity() {
 
     val binding by lazy { AdminActivityBinding.inflate(layoutInflater)}
+
+    private val getResultAdminDetail = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            adminViewModel.loadAllReport()
+        }
+    }
+
     private val adminViewModel: AdminViewModel by viewModels {
         object: ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -64,5 +75,11 @@ class AdminActivity : AppCompatActivity() {
 
         adminViewModel.loadAllUser()
         adminViewModel.loadAllReport()
+    }
+
+    fun goCommunityDetailActivity(post_id: String) {
+        val intent = Intent(this, CommunityDetailActivity::class.java)
+        intent.putExtra("id", post_id)
+        getResultAdminDetail.launch(intent)
     }
 }

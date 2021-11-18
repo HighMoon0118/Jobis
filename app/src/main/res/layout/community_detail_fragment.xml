@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#D3E0EA"
     android:visibility="visible"
     tools:context=".presentation.community.detail.ui.detail.CommunityDetailFragment">
 
@@ -15,10 +14,12 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:cardElevation="5dp">
+            android:layout_margin="2dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,7 +41,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="TextView"
                         android:textColor="@color/black"
                         android:textSize="24sp" />
 
@@ -52,14 +52,12 @@
                         <TextView
                             android:id="@+id/detailNickNameTextView"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="TextView" />
+                            android:layout_height="wrap_content" />
 
                         <TextView
                             android:id="@+id/detailCategoryTextView"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="TextView" />
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
@@ -69,8 +67,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/box_border"
                         android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:text="TextView" />
+                        android:paddingBottom="5dp" />
 
                     <TextView
                         android:id="@+id/detailContentTextView"
@@ -81,7 +78,6 @@
                         android:minHeight="75dp"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:text="TextView"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
@@ -162,14 +158,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginBottom="5dp"
-            android:text="TextView"
             android:textColor="@color/primary"
             android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@drawable/comment_border"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -182,6 +177,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <EditText
@@ -190,15 +186,15 @@
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:background="@drawable/comment_border"
-                android:ems="15"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
                 android:minHeight="50dp"
+                android:minEms="14"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <Button
                 android:id="@+id/commentButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
                 android:backgroundTint="@color/primary_dark"

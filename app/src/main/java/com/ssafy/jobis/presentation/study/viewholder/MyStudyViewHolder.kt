@@ -18,10 +18,15 @@ class MyStudyViewHolder(val view: View, val context: Context): RecyclerView.View
     private val myStudyMsgCnt: TextView = view.findViewById(R.id.tv_my_study_msg_cnt)
     private val myStudyDDay: TextView = view.findViewById(R.id.tv_my_study_dday)
 
-    fun bind(study: Study) {
+    fun bind(study: Study, dDay: Int?) {
 
         myStudyTitle.text = study.title
-
+        if (dDay == null) {
+            myStudyDDay.text = ""
+        }
+        else {
+            myStudyDDay.text = "D-${dDay.toString()}"
+        }
         view.setOnClickListener{
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("study_id", study.id)

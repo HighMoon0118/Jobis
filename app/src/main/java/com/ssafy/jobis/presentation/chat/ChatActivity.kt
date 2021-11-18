@@ -49,7 +49,7 @@ import java.util.*
 
 class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener,
     ViewPagerAdapter.CanvasListener, GIFViewHolder.OnClickGIFListener,
-    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener {
+    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener{
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var chatAdapter: ChatAdapter
@@ -72,9 +72,14 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
-        Log.d("액티비티에서 얻은 스터디 아이디", currentStudyId)
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
+
+        val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
+
+        if (isFirstTime) {  // 처음 이 방에 입장
+            model.setFirstTime()
+        }
 
         model.studyWithChats.observe(this, {
             val chatList = it.chats
@@ -241,6 +246,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_send_chat -> {
                 if (model.chooseFileName.isNotEmpty()) {
+                    Log.d("내가 고른 파일", "파일이름 = "+model.chooseFileName)
                     model.sendMessage(currentStudyId, "이모티콘을 보냈습니다.", model.chooseFileName)
                     clearGIFLayout()
                 }
@@ -419,6 +425,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         }
         return true
     }
+
 }
 
 data class ImgChat(

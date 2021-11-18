@@ -1,11 +1,14 @@
 package com.ssafy.jobis.presentation.calendar
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
@@ -28,11 +32,14 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter
 import com.squareup.okhttp.Dispatcher
+import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.CalendarDatabase
 import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.response.ScheduleResponse
+import com.ssafy.jobis.databinding.ActivityMainBinding
+import com.ssafy.jobis.presentation.MainActivity
 import com.ssafy.jobis.presentation.chat.adapter.ChatScheduleAdapter
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModel
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModelFactory
@@ -43,6 +50,11 @@ import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.view.MotionEvent
+
+import android.view.View.OnTouchListener
+import androidx.constraintlayout.widget.ConstraintLayout
+
 
 class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener, CalendarScheduleAdapter.OnDeleteScheduleListener{
     private lateinit var chatScheduleViewModel: ChatScheduleViewModel
@@ -53,15 +65,16 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
     private val uid = Firebase.auth.currentUser?.uid
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
-
-
         CoroutineScope(Dispatchers.Main).launch {
+            val dialog = LoadingDialog(requireContext())
+            dialog.show()
             // 내 아이디를 포함하고 있는 스터디 id 가져오기
             var study_id_list = getStudyIdList()
             var study_schedule_list = getStudyScheduleList(study_id_list)
@@ -82,11 +95,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
             dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             selectedDate(firstDay) // 선택한 날짜로 이동
+            dialog.dismiss()
         }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
-
         var scheduleDatabase = CalendarDatabase.getInstance(this.context)
         var routineScheduleDatabase = RoutineScheduleDatabase.getInstance(this.context)
 
@@ -145,7 +158,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 var user_list = data["user_list"] as ArrayList<HashMap<String, String>>
                 for (k in 0..user_list.size-1) {
                     if (uid == user_list[k]["id"]) {
-                        println("일치: " + key)
+
                         study_id_list.add(key.toString())
                     }
                 }
@@ -185,12 +198,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         return studyScheduleList
     }
 
-    suspend fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
+    fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
         var calendarDates = ArrayList<ArrayList<Schedule>>()  // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         calc.set(year, month, day)
 
-        println("year, month, day: " + year + month + day)
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -233,7 +245,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                         }
                     }
                 }
-                println("temp schedule: " + temp_schedule)
 
                 // 단일 일정 처리
                 // calendarDates의 원소를 하나하나 만들어 넣을 것임
@@ -256,7 +267,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // coroutine이 끝나고 나서 뷰페이저를 구성해야 빈 화면이 보이지 않으므로..
         while (calendarDates.size == 0) {
-            println("아직 coroutine")
         }
 
         return calendarDates
@@ -274,7 +284,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     var dot_year = scheduleList[i].year
                     var dot_month = scheduleList[i].month
                     var dot_day = scheduleList[i].day
-                    println("DB결과: " + scheduleList[i])
+
                     // 점 찍기 => 여러 날에 표시하려고 days를 구성해서 추가해주는 방식..
                     // 달력에 표시할 날짜 가져오기
                     var date = Calendar.getInstance()
@@ -334,7 +344,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             for (v: Int in 0..routineDates.size-1) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
             }
-            println("study_dates: " + study_dates)
             calendar.addDecorator(EventDecorator(Color.parseColor("#ff4e7e"), study_dates))
         }, 0)
     }
@@ -347,6 +356,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
 
     override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+        val dialog = LoadingDialog(requireContext())
+        dialog.show()
         // 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
@@ -383,7 +394,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             withContext(Dispatchers.Main) {
             binding.calendarViewpager.adapter =
                 CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
-                println("출력3")
 
 
             binding.calendarViewpager.registerOnPageChangeCallback(object :
@@ -393,9 +403,10 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     calc.set(year, month, position + 1) // position은 0부터 시작, 날짜는 1부터 시작하므로
                     // you are on the first page
                     binding.calendarView.setSelectedDate(calc)
-                    println("출력4")
+
                 }
             })
+                dialog.dismiss()
                 dotDecorator(widget, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             }
         }
@@ -427,21 +438,39 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     }
 
     override fun onDeleteSchedule(schedule: Schedule) {
-        CoroutineScope(Dispatchers.IO).launch {
-            launch {
-                if (schedule.group_id == 0) {
-                    var scheduleData = CalendarDatabase.getInstance(requireContext())
-                    scheduleData!!.calendarDao().delete(schedule)
-                } else {
-                    var routineScheduleData = RoutineScheduleDatabase.getInstance(requireContext())
-                    routineScheduleData!!.routineScheduleDao().deleteRoutineSchedules(schedule.group_id)
-                    Log.d("test", "확인")
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this.context, R.style.ThemeOverlay_AppCompat_Dialog))
+        if (schedule.study_id != "") {
+            builder.setTitle("안내")
+            builder.setMessage("스터디 일정은 개인 캘린더에서 삭제할 수 없습니다.")
+            builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+            })
+        } else {
+            builder.setTitle("일정")
+            builder.setMessage("일정을 삭제하시겠습니까?")
+            builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    launch {
+                        if (schedule.group_id == 0) {
+                            var scheduleData = CalendarDatabase.getInstance(requireContext())
+                            scheduleData!!.calendarDao().delete(schedule)
+                        } else {
+                            var routineScheduleData =
+                                RoutineScheduleDatabase.getInstance(requireContext())
+                            routineScheduleData!!.routineScheduleDao()
+                                .deleteRoutineSchedules(schedule.group_id)
+                            Log.d("test", "확인")
+                        }
+                    }.join()
+                    Log.d("test2", "확인2")
+                    updateAdapter()
                 }
-            }.join()
-            Log.d("test2", "확인2")
-            updateAdapter()
+            })
+            builder.setNegativeButton("취소") {
+                    _, _ -> println("취소 버튼")
+            }
         }
 
+        builder.show()
     }
 
     fun updateAdapter() {
@@ -468,6 +497,14 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
 
             selectedDate(currentDay) // 선택한 날짜로 이동
+        }
+    }
+    private fun showLoadingDialog() {
+        val dialog = LoadingDialog(this.requireContext())
+        CoroutineScope(Dispatchers.Main).launch {
+            dialog.show()
+            delay(3000)
+            dialog.dismiss()
         }
     }
 }
