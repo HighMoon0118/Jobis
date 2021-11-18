@@ -26,5 +26,6 @@
         app:tint="@android:color/white"
         android:layout_alignBottom="@+id/calendar_view"
         android:layout_alignEnd="@+id/calendar_view"
+        app:borderWidth="0dp"
         android:backgroundTint="#3f51b5" />
 </RelativeLayout>
