@@ -18,8 +18,11 @@ data class Study(
     var current_user: Int? = 1,
     var user_list: MutableList<Crew>? = null,
     var created_at: String = "",
-    var unread_chat_cnt : Int = 0
 
+    var last_chat: String = "",
+    var last_nickname: String = "",
+    var last_date: String = "",
+    var unread_chat_cnt : Int = 0
 ){
     @Exclude
     fun toMap(): Map<String, Any?> {
