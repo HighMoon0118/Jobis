@@ -360,6 +360,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
 
     override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+        val dialog = LoadingDialog(requireContext())
+        dialog.show()
         // 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
@@ -409,6 +411,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     println("출력4")
                 }
             })
+                dialog.dismiss()
                 dotDecorator(widget, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             }
         }
