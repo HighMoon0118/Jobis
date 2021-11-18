@@ -75,6 +75,7 @@ class CreateStudy : AppCompatActivity() {
             }
         }
 
+
         binding.spTopic.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,

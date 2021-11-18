@@ -66,6 +66,7 @@ data class Chat(
     var nickname: String,
     var content: String,
     var file_name: String = "",
+    var is_entrance: Boolean = false,
     var created_at: String,
     @ColumnInfo(name = "study_id") var study_id: String,
 )

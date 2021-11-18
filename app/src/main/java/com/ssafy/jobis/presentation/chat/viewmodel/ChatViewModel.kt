@@ -66,4 +66,15 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun entrance(studyId: String) {
+        if (uid=="") return
+
+        val date = Date()
+        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm").format(date)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            repo.entrance(studyId, uid, nickname, createdAt)
+        }
+    }
 }
