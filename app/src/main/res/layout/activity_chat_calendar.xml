@@ -21,14 +21,14 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
         <Button
             android:id="@+id/add_study_schedule"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="+"
-            android:textSize="24dp"
+            android:layout_weight="2"
+            android:text="추가"
+            android:textSize="16dp"
             android:background="@color/fui_transparent"
             android:textColor="@color/black"
             android:textStyle="bold"
@@ -43,5 +43,13 @@
         app:layout_constraintTop_toBottomOf="@+id/study_schedule_header"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"/>
+    <TextView
+        android:id="@+id/empty_study_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="일정을 추가해주세요"
+        android:textStyle="bold"
+        android:layout_gravity="center|top"
+        android:layout_margin="10dp" />
 </LinearLayout>
 
