@@ -1,5 +1,8 @@
 package com.ssafy.jobis.presentation.myPage
 
+import android.animation.ObjectAnimator
+import android.animation.ObjectAnimator.ofFloat
+import android.animation.ValueAnimator
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
@@ -7,16 +10,20 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.ssafy.jobis.databinding.FragmentMyBinding
 import com.ssafy.jobis.presentation.MainActivity
@@ -24,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.protobuf.Value
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.model.community.Comment
@@ -36,6 +44,7 @@ import com.ssafy.jobis.presentation.community.CustomPostAdapter
 import com.ssafy.jobis.presentation.community.detail.ui.detail.CustomCommentAdapter
 import com.ssafy.jobis.presentation.job.JobScheduleAdapter
 import com.ssafy.jobis.presentation.login.Jobis
+import kotlinx.android.synthetic.main.fragment_my.*
 
 class MyPageFragment: Fragment() {
 
@@ -121,45 +130,49 @@ class MyPageFragment: Fragment() {
             Jobis.prefs.setString("nickname", "??")
             mainActivity?.goUserActivity()
         }
+        var jobTextView = binding.jobExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var likeTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var postTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var commentTextView = binding.commentExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
 
-        binding.jobToggleButton.setOnClickListener {
-            val isChecked = binding.jobToggleButton.isChecked
-            if (isChecked) {
-                binding.myJobRecyclerView.visibility = View.VISIBLE
+        binding.jobExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.jobExpandableLayout.isExpanded
+            if (checked) {
+                binding.jobExpandableLayout.collapse()
+                jobTextView.visibility = View.GONE
+            } else {
                 myPageViewModel.loadMyJobList(requireContext())
-            } else {
-                binding.myJobRecyclerView.visibility = View.GONE
+                binding.jobExpandableLayout.expand()
             }
         }
-
-        binding.likeToggleButton.setOnClickListener {
-            val isChecked = binding.likeToggleButton.isChecked
-            // 체크되어있으면 리사이클러뷰를 활성화시킨다.
-            if (isChecked) {
-                binding.myLikeRecyclerView.visibility = View.VISIBLE
-                myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+        binding.likeExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.likeExpandableLayout.isExpanded
+            if (checked) {
+                likeTextView.visibility = View.GONE
+                binding.likeExpandableLayout.collapse()
             } else {
-                binding.myLikeRecyclerView.visibility = View.GONE
+                myPageViewModel.loadMyLikeList(uid!!)
+                binding.likeExpandableLayout.expand()
             }
         }
-
-        binding.postToggleButton.setOnClickListener {
-            val isChecked = binding.postToggleButton.isChecked
-            if (isChecked) {
-                binding.myPostRecyclerView.visibility = View.VISIBLE
-                myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
+        binding.postExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.postExpandableLayout.isExpanded
+            if (checked) {
+                postTextView.visibility = View.GONE
+                binding.postExpandableLayout.collapse()
             } else {
-                binding.myPostRecyclerView.visibility = View.GONE
+                myPageViewModel.loadMyPostList(uid!!)
+                binding.postExpandableLayout.expand()
             }
         }
-
-        binding.commentToggleButton.setOnClickListener {
-            val isChecked = binding.commentToggleButton.isChecked
-            if (isChecked) {
-                myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
-                binding.myCommentRecyclerView.visibility = View.VISIBLE
+        binding.commentExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.commentExpandableLayout.isExpanded
+            if (checked) {
+                commentTextView.visibility = View.GONE
+                binding.commentExpandableLayout.collapse()
             } else {
-                binding.myCommentRecyclerView.visibility = View.GONE
+                myPageViewModel.loadMyCommentList(uid!!)
+                binding.commentExpandableLayout.expand()
             }
         }
 
@@ -197,6 +210,10 @@ class MyPageFragment: Fragment() {
     }
 
     fun updateMyLike(postList: PostResponseList) {
+        if (postList.size == 0) {
+            var likeTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            likeTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomPostAdapter()
         adapter.listData = postList
         adapter.setOnItemClickListener(object: CustomPostAdapter.OnItemClickListener{
@@ -206,14 +223,22 @@ class MyPageFragment: Fragment() {
                 }
             }
         })
-
-        binding.myLikeRecyclerView.adapter = adapter
-        binding.myLikeRecyclerView.layoutManager = StaggeredGridLayoutManager(
+        val recyclerView = binding.likeExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
+//        binding.myLikeRecyclerView.adapter = adapter
+//        binding.myLikeRecyclerView.layoutManager = StaggeredGridLayoutManager(
+//            1,
+//            StaggeredGridLayoutManager.VERTICAL)
     }
 
     fun updateMyPost(postList: PostResponseList) {
+        if (postList.size == 0) {
+            var postTextView = binding.postExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            postTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomPostAdapter()
         adapter.listData = postList
         adapter.setOnItemClickListener(object: CustomPostAdapter.OnItemClickListener{
@@ -223,14 +248,18 @@ class MyPageFragment: Fragment() {
                 }
             }
         })
-
-        binding.myPostRecyclerView.adapter = adapter
-        binding.myPostRecyclerView.layoutManager = StaggeredGridLayoutManager(
+        val recyclerView = binding.postExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
     }
 
     fun updateMyComment(commentList: MutableList<Comment>) {
+        if (commentList.size == 0) {
+            var commentTextView = binding.commentExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            commentTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomCommentAdapter()
         adapter.listData = commentList
         adapter.setOnItemClickListener(object: CustomCommentAdapter.OnItemClickListener{
@@ -238,13 +267,19 @@ class MyPageFragment: Fragment() {
                 (activity as MainActivity).goCommunityDetailActivity(comment.post_id)
             }
         })
-        binding.myCommentRecyclerView.adapter = adapter
-        binding.myCommentRecyclerView.layoutManager = StaggeredGridLayoutManager(
+
+        val recyclerView = binding.commentExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
     }
 
     fun updateMyJob(jobList: List<Schedule>) {
+        if (jobList.size == 0) {
+            var jobTextView = binding.jobExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            jobTextView.visibility = View.VISIBLE
+        }
         val adapter = JobScheduleAdapter()
         adapter.listData = jobList
         adapter.setOnItemClickListener(object: JobScheduleAdapter.OnItemClickListener{
@@ -252,11 +287,12 @@ class MyPageFragment: Fragment() {
                 showDeletePopup(schedule)
             }
         })
-        binding.myJobRecyclerView.adapter = adapter
-        binding.myJobRecyclerView.layoutManager = StaggeredGridLayoutManager(
+
+        val recyclerView = binding.jobExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             2,
-            StaggeredGridLayoutManager.VERTICAL
-        )
+            StaggeredGridLayoutManager.VERTICAL)
     }
 
     private fun showDeletePopup(schedule: Schedule) {
@@ -336,6 +372,19 @@ class MyPageFragment: Fragment() {
         alertDialog.setView(view)
         alertDialog.show()
     }
+
+//    private fun changeVisibility(view: View, isExpanded: Boolean) {
+//        val objectAnimator = ObjectAnimator.ofFloat(view, "translationY", -1200)
+//        objectAnimator.du
+//        val va = if (isExpanded) ValueAnimator.ofInt(0, 600) else ValueAnimator.ofInt(600 ,0)
+//        va.duration = 500
+//        va.addUpdateListener { ValueAnimator.AnimatorUpdateListener {
+//            view.layoutParams.height = it.animatedValue as Int
+//            view.requestLayout()
+//            view.visibility = if (isExpanded) View.VISIBLE else View.GONE
+//        } }
+//        va.start()
+//    }
 
 }
 
