@@ -81,7 +81,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             model.setFirstTime()
         }
 
-        model.studyWithChats.observe(this, {
+        model.studyWithChats.observe(this, {  // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될듯
             val chatList = it.chats
             val storageRef = Firebase.storage.reference
 
