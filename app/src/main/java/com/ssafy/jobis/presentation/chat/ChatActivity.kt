@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -97,6 +98,10 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
 
         if (isFirstTime) {  // 처음 이 방에 입장
             model.setFirstTime()
+        }
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getString("gif", "")?.length!! > 0) {
+            binding.txtEmoticonBlank.visibility = View.GONE
         }
 
         // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될줄 알았는데
@@ -217,6 +222,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             gifProgressChat.setOnClickListener(this@ChatActivity)
             chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
             chatNavigation.menu.getItem(0).setActionView(R.layout.menu_image)
+            imgUndo.setOnClickListener(this@ChatActivity)
+            imgRedo.setOnClickListener(this@ChatActivity)
         }
     }
 
@@ -256,6 +263,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                         binding.gridEmoticonChat.visibility = View.GONE
                         showCanvas(view, imm)
                     } else if(binding.gridEmoticonChat.visibility == View.VISIBLE) {
+                        binding.txtEmoticonBlank.visibility = View.GONE
                         binding.imgAddChat.setColorFilter(Color.parseColor("#448aff"))
                         binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
                         binding.gridEmoticonChat.visibility = View.GONE
@@ -275,6 +283,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                         binding.gridEmoticonChat.visibility = View.VISIBLE
                         showCanvas(view, imm)
                     } else if(binding.gridEmoticonChat.visibility == View.GONE) {
+                        if(girdAdapter.itemCount == 0 ) binding.txtEmoticonBlank.visibility = View.VISIBLE
                         binding.imgEmoticonChat.setColorFilter(Color.parseColor("#448aff"))
                         binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
                         binding.gridEmoticonChat.visibility = View.VISIBLE
@@ -356,6 +365,12 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                 }
 
             }
+            R.id.img_undo -> {
+                viewPagerAdapter.unDo(binding.viewpagerChat.currentItem)
+            }
+            R.id.img_redo -> {
+                viewPagerAdapter.reDo(binding.viewpagerChat.currentItem)
+            }
             R.id.img_close_gif -> {
                 clearGIFLayout()
             }
@@ -420,6 +435,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         }.addOnSuccessListener {
             binding.gifProgressChat.visibility = View.GONE
             Toast.makeText(this, "파일 생성!", Toast.LENGTH_SHORT).show()
+            binding.txtEmoticonBlank.visibility = View.GONE
         }
 
     }
