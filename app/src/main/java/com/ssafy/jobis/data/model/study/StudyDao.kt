@@ -29,4 +29,10 @@ interface StudyDao {
     @Transaction
     @Query("SELECT * FROM Study WHERE study_id = :study_id")
     fun getChatList(study_id: String): LiveData<StudyWithChats>
+
+    @Query("DELETE FROM Study WHERE study_id = :study_id")
+    fun removeStudy(study_id: String)
+
+    @Query("DELETE FROM Chat WHERE study_id = :study_id")
+    fun removeChat(study_id: String)
 }

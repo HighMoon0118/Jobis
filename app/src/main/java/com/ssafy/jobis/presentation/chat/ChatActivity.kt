@@ -1,8 +1,10 @@
 package com.ssafy.jobis.presentation.chat
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.NotificationManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.ImageDecoder
@@ -30,12 +32,16 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.storage.ktx.storage
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
+import com.ssafy.jobis.data.model.study.Study
 import com.ssafy.jobis.databinding.ActivityChatBinding
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyTitle
@@ -239,7 +245,6 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
 
 
-    @SuppressLint("ResourceType")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.img_add_chat -> {
@@ -378,6 +383,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
 
     override fun onBackPressed() {  // 뒤로가기를 눌렀을 때
+        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
+        binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
         if (binding.dlChat.isDrawerOpen(GravityCompat.END)) {  // 네이게이션 뷰가 열려있다면 닫아 주고 아니라면 뒤로가기
             binding.dlChat.closeDrawer(GravityCompat.END)
         } else if(binding.frameEmoticonChat.visibility == View.VISIBLE) {
@@ -456,10 +463,40 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        if (R.id.item_1 == item.itemId) {
-            var intent = Intent(this, ChatScheduleActivity::class.java)
-            intent.putExtra("study_id", currentStudyId)
-            startActivity(intent)
+        when (item.itemId) {
+            R.id.item_1 -> {
+                val intent = Intent(this, ChatScheduleActivity::class.java)
+                intent.putExtra("study_id", currentStudyId)
+                startActivity(intent)
+            }
+            R.id.item_2 -> { // 네비게이션 뷰에 이미지뷰를 넣고 클릭 이벤트를 달아도 클릭이 안됨. 애초에 아이템 말고는 클릭이 안되고 Dialog도 안뜬다...
+                var removeStudy = false
+                Firebase.database.reference.child("Study").child(currentStudyId).get().addOnSuccessListener {
+                    val study = it.getValue<Study>() ?: return@addOnSuccessListener
+
+                    study.current_user--
+                    if (study.current_user == 0) removeStudy = true
+                    var idx = 0
+                    for (i in study.user_list?.indices!!) {
+                        if (study.user_list!![i].id == FirebaseAuth.getInstance().currentUser?.uid ?: "") {
+                            idx = i
+                            break
+                        }
+                    }
+                    study.user_list!!.removeAt(idx)
+                    Firebase.database.reference.child("Study").updateChildren(hashMapOf<String, Any>(currentStudyId to study)).addOnSuccessListener {
+                        if (removeStudy) {
+                            Firebase.database.reference.child("Study").child(currentStudyId).removeValue()
+                        }
+                    }.addOnSuccessListener {
+
+                        Firebase.messaging.unsubscribeFromTopic(currentStudyId)
+                        model.studyWithChats.removeObservers(this)
+                        model.exitStudy(currentStudyId)
+                        finish()
+                    }
+                }
+            }
         }
         return true
     }

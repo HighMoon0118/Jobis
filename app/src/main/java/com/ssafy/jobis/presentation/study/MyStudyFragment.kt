@@ -62,14 +62,12 @@ class MyStudyFragment(val myContext: Context): Fragment() {
 
         binding.fabCreateStudy.setOnClickListener {
             isFabOpen = !isFabOpen
-            Toast.makeText(activity, "생성", Toast.LENGTH_SHORT).show()
             val intent = Intent(context, CreateStudy::class.java)
             startActivity(intent)
         }
 
         binding.fabSearchStudy.setOnClickListener {
             isFabOpen = !isFabOpen
-            Toast.makeText(activity, "검색", Toast.LENGTH_SHORT).show()
             val intent = Intent(context, SearchStudy::class.java)
             startActivity(intent)
         }

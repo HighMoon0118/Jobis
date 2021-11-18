@@ -107,4 +107,9 @@ class ChatRepository(context: Context) {
         }
         return stringBuilder.toString()
     }
+
+    fun removeChat(studyId: String) {
+        if (dao == null) return
+        dao.removeChat(studyId)
+    }
 }
