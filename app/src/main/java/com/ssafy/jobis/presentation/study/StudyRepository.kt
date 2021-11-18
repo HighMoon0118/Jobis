@@ -28,6 +28,13 @@ class StudyRepository(context: Context) {
         dao.updateStudy(study)
     }
 
+    fun addPerson(studyId: String) {
+        if (dao == null) return
+        val study = dao.getStudy(studyId)
+        study.current_user ++
+        dao.updateStudy(study)
+    }
+
     fun readAllChat(studyId: String) {
         if (dao == null) return
         val study = dao.getStudy(studyId)

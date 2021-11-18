@@ -37,9 +37,8 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
 import com.ssafy.jobis.databinding.ActivityChatBinding
-import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_ID
-import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.NOTIFICATION_ID
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyTitle
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
 import com.ssafy.jobis.presentation.chat.adapter.ViewPagerAdapter
@@ -76,8 +75,10 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
-        val currentStudyTitle = intent.getStringExtra("study_title")
+
+        currentStudyTitle = intent.getStringExtra("study_title").toString()
         binding.tvTbTitle.text = currentStudyTitle
+
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
         model.readAllChat()
 
@@ -92,7 +93,9 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             model.setFirstTime()
         }
 
-        model.studyWithChats.observe(this, {  // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될듯
+        // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될줄 알았는데
+        // 결국 이미지는 하나씩 받아오는 거임. 근데 어차피 채팅도 하나씩 들어오자네? 모르것다 일단 다른것부터 하자.
+        model.studyWithChats.observe(this, {
             val chatList = it.chats
             val storageRef = Firebase.storage.reference
 
@@ -280,13 +283,13 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             R.id.img_send_chat -> {
                 if (model.chooseFileName.isNotEmpty()) {
                     Log.d("내가 고른 파일", "파일이름 = "+model.chooseFileName)
-                    model.sendMessage(currentStudyId, "이모티콘을 보냈습니다.", model.chooseFileName)
+                    model.sendMessage("이모티콘을 보냈습니다.", model.chooseFileName)
                     clearGIFLayout()
                 }
                 val text = binding.editTextChat.text?.trim().toString()
                 if (text != "") {
                     binding.editTextChat.text = null
-                    model.sendMessage(currentStudyId, text)
+                    model.sendMessage(text)
                 }
             }
             R.id.edit_text_chat -> {
