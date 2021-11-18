@@ -55,8 +55,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
+            android:background="@drawable/box_border"
             android:minHeight="100dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/myImageView"
@@ -157,8 +159,16 @@
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/expandableLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp" />
+            app:expandable_duration="300"
+            app:expandable_isExpanded="false"
+            app:expandable_parentLayout="@layout/mypage_toggle_button"
+            app:expandable_secondLayout="@layout/tmp_recycler" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -186,6 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
+
         </LinearLayout>
 
         <LinearLayout

@@ -1,5 +1,8 @@
 package com.ssafy.jobis.presentation.myPage
 
+import android.animation.ObjectAnimator
+import android.animation.ObjectAnimator.ofFloat
+import android.animation.ValueAnimator
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
@@ -17,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.ssafy.jobis.databinding.FragmentMyBinding
 import com.ssafy.jobis.presentation.MainActivity
@@ -24,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.protobuf.Value
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.model.community.Comment
@@ -36,6 +41,7 @@ import com.ssafy.jobis.presentation.community.CustomPostAdapter
 import com.ssafy.jobis.presentation.community.detail.ui.detail.CustomCommentAdapter
 import com.ssafy.jobis.presentation.job.JobScheduleAdapter
 import com.ssafy.jobis.presentation.login.Jobis
+import kotlinx.android.synthetic.main.fragment_my.*
 
 class MyPageFragment: Fragment() {
 
@@ -122,6 +128,15 @@ class MyPageFragment: Fragment() {
             mainActivity?.goUserActivity()
         }
 
+        binding.expandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.expandableLayout.isExpanded
+            if (checked) {
+                binding.expandableLayout.collapse()
+            } else {
+                binding.expandableLayout.expand()
+            }
+        }
+
         binding.jobToggleButton.setOnClickListener {
             val isChecked = binding.jobToggleButton.isChecked
             if (isChecked) {
@@ -135,6 +150,7 @@ class MyPageFragment: Fragment() {
         binding.likeToggleButton.setOnClickListener {
             val isChecked = binding.likeToggleButton.isChecked
             // 체크되어있으면 리사이클러뷰를 활성화시킨다.
+            myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
             if (isChecked) {
                 binding.myLikeRecyclerView.visibility = View.VISIBLE
                 myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
@@ -336,6 +352,19 @@ class MyPageFragment: Fragment() {
         alertDialog.setView(view)
         alertDialog.show()
     }
+
+//    private fun changeVisibility(view: View, isExpanded: Boolean) {
+//        val objectAnimator = ObjectAnimator.ofFloat(view, "translationY", -1200)
+//        objectAnimator.du
+//        val va = if (isExpanded) ValueAnimator.ofInt(0, 600) else ValueAnimator.ofInt(600 ,0)
+//        va.duration = 500
+//        va.addUpdateListener { ValueAnimator.AnimatorUpdateListener {
+//            view.layoutParams.height = it.animatedValue as Int
+//            view.requestLayout()
+//            view.visibility = if (isExpanded) View.VISIBLE else View.GONE
+//        } }
+//        va.start()
+//    }
 
 }
 
