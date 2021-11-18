@@ -1,35 +1,70 @@
 package com.ssafy.jobis.presentation.chat
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.database.FirebaseDatabase
 import com.ssafy.jobis.R
 import com.ssafy.jobis.databinding.ActivityChatBinding
 import com.ssafy.jobis.databinding.ActivityChatScheduleAddBinding
 import java.util.*
 import com.google.firebase.database.DataSnapshot
-
 import androidx.annotation.NonNull
-
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.DatabaseError
-
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.ssafy.jobis.data.model.calendar.Schedule
+import com.ssafy.jobis.presentation.calendar.AlarmReceiver
 import kotlinx.coroutines.tasks.await
 import kotlin.collections.ArrayList
 
 
 class ChatScheduleAddActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatScheduleAddBinding
+    var alarmReceiverInChat = AlarmReceiver()
     var dateString = ""
     var timeString = ""
+
+//    private fun setAlarm(scheduleId: String, title:String, content:String, year: Int, month:Int, day:Int, startHour: Int, startDay: Int) {
+//        val alarmCalendar = Calendar.getInstance()
+//        alarmCalendar.set(Calendar.YEAR, year)
+//        alarmCalendar.set(Calendar.MONTH, month)
+//        alarmCalendar.set(Calendar.DAY_OF_MONTH, day)
+//        alarmCalendar.set(Calendar.HOUR_OF_DAY, startHour)
+//        alarmCalendar.set(Calendar.MINUTE, startDay)
+//        alarmCalendar.set(Calendar.SECOND, 0)
+//        println("스케줄 확인합니다, $year, $month, $day, $startHour, $startDay")
+//        println("스케쥴 아이디, $scheduleId")
+//        var scheduleIdToInt = scheduleId.toInt()
+
+//        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//        val intent = Intent(this, alarmReceiverInChat::class.java)  // 1
+//        intent.putExtra("title", title)
+//        intent.putExtra("content", content)
+//
+//        var pendingIntent = PendingIntent.getBroadcast(this, , intent, PendingIntent.FLAG_CANCEL_CURRENT )
+//
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+//        }
+//        else {
+//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.timeInMillis, pendingIntent)
+//        }
+//        Toast.makeText(this, "알람이 설정되었습니다.", Toast.LENGTH_SHORT).show()
+//    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatScheduleAddBinding.inflate(layoutInflater)
@@ -170,18 +205,20 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             var db = FirebaseFirestore.getInstance()
 
 
-
+            var scheduleId = ""
             var newSchedule = Schedule(title, content, year, month, day, "${startHour}:${startMinute}", "${endHour}:${endMinute}", currentStudyId, 0, "")
             db.collection("study_schedules")
                 .add(newSchedule)
                 .addOnSuccessListener {
                     println("success!" + it.id)
+                    scheduleId = it.id
                     returnChatScheduleActivity()
                 }
                 .addOnFailureListener { exception ->
                     Log.d("test", "${exception}")
                 }
 
+//            setAlarm(scheduleId, title,content, year, month, day, startHour, startMinute)
 
         }
     }

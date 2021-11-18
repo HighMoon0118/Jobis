@@ -382,11 +382,17 @@ class RoutineScheduleFragment(val activity: Activity, private val year: Int, val
         // 현재 시간 50~59분 이면 59로 강제 지정 -> 안그러면 날짜 변경됨
         if (SimpleDateFormat("HH").format(calendar.time) == "23" ){
             if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
-                scheduleEndTime = "59"
+
                 calendar.set(Calendar.MINUTE, 59)
                 scheduleEndTime = "23:59"
                 endMinute = 59
                 endHour = calendar.get(Calendar.HOUR_OF_DAY)
+            }
+            else{
+                calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
+                scheduleEndTime = dateFormat2.format(calendar.time)
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
+                endMinute = calendar.get(Calendar.MINUTE)
             }
         } else{
             calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
