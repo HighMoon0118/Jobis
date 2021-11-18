@@ -112,7 +112,7 @@ class CreateStudy : AppCompatActivity() {
 
             val location = location
             val topic = topic
-            val max_user = 5
+            val max_user = max_user.toString().toInt()
             val current_user = 1
 
             val username = Crew(mAuth!!.uid.toString())
@@ -154,7 +154,7 @@ class CreateStudy : AppCompatActivity() {
             unread_chat_cnt = unread_chat_cnt
         )
 
-
+            Log.i("maxuser", a.toString())
             val ref = FirebaseDatabase.getInstance().getReference("/Study")
 
             var pushedStudy = ref.push()
