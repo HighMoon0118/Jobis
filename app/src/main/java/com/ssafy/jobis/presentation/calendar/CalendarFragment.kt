@@ -65,13 +65,14 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
     private val uid = Firebase.auth.currentUser?.uid
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
-        val job = CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val dialog = LoadingDialog(requireContext())
             dialog.show()
             // 내 아이디를 포함하고 있는 스터디 id 가져오기
@@ -197,7 +198,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         return studyScheduleList
     }
 
-    suspend fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
+    fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
         var calendarDates = ArrayList<ArrayList<Schedule>>()  // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         calc.set(year, month, day)

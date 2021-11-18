@@ -11,10 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Chat
 import com.ssafy.jobis.presentation.chat.ImgChat
-import com.ssafy.jobis.presentation.chat.viewholder.ChatGIFViewHolder
-import com.ssafy.jobis.presentation.chat.viewholder.ChatMyGIFViewHolder
-import com.ssafy.jobis.presentation.chat.viewholder.ChatMyViewHolder
-import com.ssafy.jobis.presentation.chat.viewholder.ChatViewHolder
+import com.ssafy.jobis.presentation.chat.viewholder.*
 import java.util.HashMap
 
 class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<Int, ImgChat?>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -22,12 +19,12 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
     interface onAddedChatListener {
         fun onAddedChat()
     }
-//    private val chatList = ArrayList<StudyChat>()
 
     val CHAT_MY_ITEM = 0
     val CHAT_ITEM = 1
     val GIF_ITEM = 2
     val GIF_MY_ITEM = 3
+    val ENTRANCE = 4
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -35,6 +32,7 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
             CHAT_ITEM -> ChatViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false))
             GIF_MY_ITEM -> ChatMyGIFViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat_gif_me, parent, false))
             GIF_ITEM -> ChatGIFViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat_gif, parent, false))
+            ENTRANCE -> ChatEntranceViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat_entrance, parent, false))
             else -> ChatMyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.itme_chat_me, parent, false))
         }
     }
@@ -53,9 +51,10 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
         }
 
         when (holder) {
+            is ChatEntranceViewHolder -> holder.bind(chatList[position])
             is ChatMyViewHolder -> holder.bind(chatList[position], isSameTime, nowTime)
             is ChatViewHolder -> holder.bind(chatList[position], isSameTime, nowTime)
-            is ChatMyGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, nowTime)
+            is ChatMyGIFViewHolder -> holder.bind(map[position], isSameTime, nowTime)
             is ChatGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, nowTime)
         }
     }
@@ -63,11 +62,15 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
     override fun getItemViewType(position: Int): Int {
 
         if (chatList != null) {
-            return if (chatList[position].file_name.isNotEmpty()) {
+            return if (chatList[position].is_entrance) {
+                ENTRANCE
+            } else if (chatList[position].file_name.isNotEmpty()) {
                 if (chatList[position].is_me) GIF_MY_ITEM
                 else GIF_ITEM
-            } else if (chatList[position].is_me) CHAT_MY_ITEM
-            else CHAT_ITEM
+            } else {
+                if (chatList[position].is_me) CHAT_MY_ITEM
+                else CHAT_ITEM
+            }
         }
         return 0
     }
@@ -75,6 +78,13 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
     override fun getItemCount(): Int {
         return chatList?.size?:0
     }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+        recyclerView.scrollToPosition(itemCount-1)
+    }
+
 
 //    fun addChat(isGif: Boolean, source: ImageDecoder.Source?, content: String?) {
 //        val drawable = if (source != null) ImageDecoder.decodeDrawable(source!!) else null

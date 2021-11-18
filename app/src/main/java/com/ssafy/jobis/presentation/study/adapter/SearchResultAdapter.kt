@@ -67,6 +67,7 @@ class SearchResultAdapter(val context: Context, val searchResultList: ArrayList<
                             ref.updateChildren(studyUpdates)
 
                             var intent = Intent(context, ChatActivity::class.java)
+                            intent.putExtra("isFirstTime", true)
                             intent.putExtra("study_id", searchResultList[curPos].id)
                             context.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
                         }
