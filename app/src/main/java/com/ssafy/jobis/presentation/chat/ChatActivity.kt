@@ -49,7 +49,7 @@ import java.util.*
 
 class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialogListener,
     ViewPagerAdapter.CanvasListener, GIFViewHolder.OnClickGIFListener,
-    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener {
+    ChatAdapter.onAddedChatListener, NavigationView.OnNavigationItemSelectedListener{
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var chatAdapter: ChatAdapter
@@ -72,15 +72,13 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
-        val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
-        Log.d("처음 입장", isFirstTime.toString())
-
-        Log.d("액티비티에서 얻은 스터디 아이디", currentStudyId)
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
 
+        val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
+
         if (isFirstTime) {  // 처음 이 방에 입장
-            model.entrance(currentStudyId)
+            model.setFirstTime()
         }
 
         model.studyWithChats.observe(this, {
@@ -427,6 +425,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         }
         return true
     }
+
 }
 
 data class ImgChat(
