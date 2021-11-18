@@ -4,52 +4,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/study_schedule_header"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp">
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="7"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
             android:text="그룹 이름"
             android:textSize="24dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_gravity="center" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
         <Button
             android:id="@+id/add_study_schedule"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="추가"
-            android:textSize="16dp"
+            android:layout_gravity="center"
             android:background="@color/fui_transparent"
+            android:gravity="right|center_vertical"
+            android:padding="0dp"
+            android:layout_margin="0dp"
+            android:text="추가"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="center"/>
+            android:textSize="16dp"
+            android:textStyle="bold" />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/study_schedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         app:layout_constraintTop_toBottomOf="@+id/study_schedule_header"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        />
+
     <TextView
         android:id="@+id/empty_study_schedule"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:text="일정을 추가해주세요"
-        android:textStyle="bold"
-        android:layout_gravity="center|top"
-        android:layout_margin="10dp" />
+        android:layout_marginBottom="100dp"
+        android:textStyle="bold" />
 </LinearLayout>
 

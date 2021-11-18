@@ -1,6 +1,7 @@
 package com.ssafy.jobis.presentation.chat
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -10,6 +11,7 @@ import android.graphics.Rect
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -35,6 +37,8 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.ssafy.jobis.R
 import com.ssafy.jobis.databinding.ActivityChatBinding
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.CHANNEL_ID
+import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.NOTIFICATION_ID
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
 import com.ssafy.jobis.presentation.chat.adapter.GridAdapter
@@ -75,6 +79,12 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         val currentStudyTitle = intent.getStringExtra("study_title")
         binding.tvTbTitle.text = currentStudyTitle
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
+        model.readAllChat()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val mNotificationManager = getSystemService(NotificationManager::class.java)
+            mNotificationManager.cancel(currentStudyId.hashCode())
+        }
 
         val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
 
@@ -82,7 +92,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             model.setFirstTime()
         }
 
-        model.studyWithChats.observe(this, {
+        model.studyWithChats.observe(this, {  // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될듯
             val chatList = it.chats
             val storageRef = Firebase.storage.reference
 
@@ -224,24 +234,45 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         goToRecentChat()
     }
 
+
     @SuppressLint("ResourceType")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.img_add_chat -> {
-
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (binding.frameEmoticonChat.visibility == View.GONE) {
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                        binding.gridEmoticonChat.visibility = View.GONE
+                        showCanvas(view, imm)
+                    } else if(binding.gridEmoticonChat.visibility == View.VISIBLE) {
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                        binding.gridEmoticonChat.visibility = View.GONE
+                    } else {
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.frameEmoticonChat.visibility = View.GONE
+                    }
+                }
             }
             R.id.img_emoticon_chat -> {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 CoroutineScope(Dispatchers.Main).launch {
                     if (binding.frameEmoticonChat.visibility == View.GONE) {
-                        showCanvas(view, imm)
-                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
-                    } else if(binding.gridEmoticonChat.visibility == View.GONE) {
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
                         binding.gridEmoticonChat.visibility = View.VISIBLE
-                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_create_24)
+                        showCanvas(view, imm)
+                    } else if(binding.gridEmoticonChat.visibility == View.GONE) {
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                        binding.gridEmoticonChat.visibility = View.VISIBLE
                     } else {
-                        binding.gridEmoticonChat.visibility = View.GONE
-                        binding.imgEmoticonChat.setImageResource(R.drawable.ic_faces_24)
+                        binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                        binding.imgAddChat.setColorFilter(Color.parseColor("#448aff"))
+                        binding.frameEmoticonChat.visibility = View.GONE
                     }
                 }
             }
@@ -258,6 +289,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                 }
             }
             R.id.edit_text_chat -> {
+                binding.imgAddChat.setColorFilter(Color.parseColor("#7C7C7C"))
+                binding.imgEmoticonChat.setColorFilter(Color.parseColor("#7C7C7C"))
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 val scope = CoroutineScope(Job() + Dispatchers.Main)
                 scope.launch {
