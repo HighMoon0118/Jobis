@@ -360,6 +360,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
 
     override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+        val dialog = LoadingDialog(requireContext())
+        dialog.show()
         // 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
@@ -396,7 +398,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             withContext(Dispatchers.Main) {
             binding.calendarViewpager.adapter =
                 CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
-                println("출력3")
 
 
             binding.calendarViewpager.registerOnPageChangeCallback(object :
@@ -406,9 +407,10 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     calc.set(year, month, position + 1) // position은 0부터 시작, 날짜는 1부터 시작하므로
                     // you are on the first page
                     binding.calendarView.setSelectedDate(calc)
-                    println("출력4")
+
                 }
             })
+                dialog.dismiss()
                 dotDecorator(widget, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             }
         }
