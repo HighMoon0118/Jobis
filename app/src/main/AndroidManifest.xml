@@ -22,28 +22,35 @@
             android:exported="true" />
         <activity
             android:name=".presentation.chat.ChatScheduleAddActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="false" />
         <activity
             android:name=".presentation.chat.ChatScheduleActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="false" />
         <activity
             android:name=".presentation.community.search.CommunitySearchActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="true" />
         <activity
             android:name=".presentation.community.detail.CommunityDetailActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".presentation.study.CreateStudy"
             android:exported="true"
+            android:theme="@style/Theme.Jobis.chat"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".presentation.study.SearchStudy"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="true" />
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/Theme.Jobis.chat"/>
         <activity
             android:name=".presentation.login.UserActivity"
             android:exported="true"
@@ -60,6 +67,7 @@
             android:windowSoftInputMode="adjustNothing"
             />
         <activity android:name=".presentation.chat.ChatActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <service
