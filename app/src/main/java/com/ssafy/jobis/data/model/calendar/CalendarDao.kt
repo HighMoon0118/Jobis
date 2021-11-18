@@ -9,7 +9,7 @@ interface CalendarDao {
     @Query("SELECT * FROM schedule")
     fun getAll(): List<Schedule>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(schedule: Schedule): Long
 
 

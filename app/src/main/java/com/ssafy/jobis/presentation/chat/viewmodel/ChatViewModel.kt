@@ -2,9 +2,16 @@ package com.ssafy.jobis.presentation.chat.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.ssafy.jobis.data.model.study.StudyWithChats
 import com.ssafy.jobis.presentation.chat.ChatRepository
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
@@ -12,12 +19,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     private val _studyWithChats: LiveData<StudyWithChats>
     val studyWithChats: LiveData<StudyWithChats> get() = _studyWithChats
+    var uid: String = ""
+    var nickname: String = ""
     var fileReference: String = ""
     var chooseFileName = ""
 
@@ -26,27 +37,32 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     init {
         Log.d("현재 스터디", currentStudyId)
         _studyWithChats = repo.getChatList(currentStudyId)!!
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    fun sendMessage(studyId: String, userId: String, content: String, fileName: String = "") {
-
-        val date = Date(System.currentTimeMillis())
-        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date)
-
-        saveMessage(studyId, userId, content, fileName, createdAt)
-        uploadMessage(studyId, userId, content, fileName, createdAt)
-    }
-
-    fun saveMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            repo.saveMessage(studyId, userId, content, fileName, createdAt)
+        uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        FirebaseFirestore.getInstance().collection("users").document(uid).get().addOnSuccessListener {
+            nickname = it["nickname"].toString()
         }
     }
 
-    fun uploadMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
+    @SuppressLint("SimpleDateFormat")
+    fun sendMessage(studyId: String, content: String, fileName: String = "") {
+
+        val date = Date()
+        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm").format(date)
+
+        saveMessage(studyId, content, fileName, createdAt)
+        uploadMessage(studyId, content, fileName, createdAt)
+    }
+
+    fun saveMessage(studyId: String, content: String, fileName: String, createdAt: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            repo.uploadMessage(studyId, userId, content, fileName, createdAt)
+            repo.saveMessage(studyId, uid, true, nickname, content, fileName, createdAt)
+        }
+    }
+
+    fun uploadMessage(studyId: String, content: String, fileName: String, createdAt: String) {
+        if (uid=="") return
+        CoroutineScope(Dispatchers.IO).launch {
+            repo.uploadMessage(studyId, uid, false, nickname, content, fileName, createdAt)
         }
     }
 
