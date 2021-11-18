@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
@@ -37,6 +38,8 @@ import com.ssafy.jobis.data.model.calendar.RoutineSchedule
 import com.ssafy.jobis.data.model.calendar.RoutineScheduleDatabase
 import com.ssafy.jobis.data.model.calendar.Schedule
 import com.ssafy.jobis.data.response.ScheduleResponse
+import com.ssafy.jobis.databinding.ActivityMainBinding
+import com.ssafy.jobis.presentation.MainActivity
 import com.ssafy.jobis.presentation.chat.adapter.ChatScheduleAdapter
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModel
 import com.ssafy.jobis.presentation.chat.viewmodel.ChatScheduleViewModelFactory
@@ -47,6 +50,11 @@ import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.view.MotionEvent
+
+import android.view.View.OnTouchListener
+import androidx.constraintlayout.widget.ConstraintLayout
+
 
 class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener, CalendarScheduleAdapter.OnDeleteScheduleListener{
     private lateinit var chatScheduleViewModel: ChatScheduleViewModel
@@ -57,15 +65,16 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
     private val uid = Firebase.auth.currentUser?.uid
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         _binding = FragmentCalendarBinding.inflate(inflater, container, false)
-
-
         CoroutineScope(Dispatchers.Main).launch {
+            val dialog = LoadingDialog(requireContext())
+            dialog.show()
             // 내 아이디를 포함하고 있는 스터디 id 가져오기
             var study_id_list = getStudyIdList()
             var study_schedule_list = getStudyScheduleList(study_id_list)
@@ -86,11 +95,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             binding.calendarViewpager.adapter = CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
             dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             selectedDate(firstDay) // 선택한 날짜로 이동
+            dialog.dismiss()
         }
 
         // 캘린더 레이아웃
         var calendar = binding.calendarView
-
         var scheduleDatabase = CalendarDatabase.getInstance(this.context)
         var routineScheduleDatabase = RoutineScheduleDatabase.getInstance(this.context)
 
@@ -189,7 +198,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         return studyScheduleList
     }
 
-    suspend fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
+    fun calculateCalendarDates(year : Int, month : Int, day : Int, scheduleDatabase: CalendarDatabase?, routineScheduleDatabase: RoutineScheduleDatabase?, studyScheduleList: ArrayList<Schedule>): ArrayList<ArrayList<Schedule>> {
         var calendarDates = ArrayList<ArrayList<Schedule>>()  // 각 날짜의 스케줄들을 담고 있는 List<Schedule>을 원소로 하는 ArrayList
         val calc = Calendar.getInstance()
         calc.set(year, month, day)
@@ -492,6 +501,14 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             dotDecorator(binding.calendarView, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
 
             selectedDate(currentDay) // 선택한 날짜로 이동
+        }
+    }
+    private fun showLoadingDialog() {
+        val dialog = LoadingDialog(this.requireContext())
+        CoroutineScope(Dispatchers.Main).launch {
+            dialog.show()
+            delay(3000)
+            dialog.dismiss()
         }
     }
 }
