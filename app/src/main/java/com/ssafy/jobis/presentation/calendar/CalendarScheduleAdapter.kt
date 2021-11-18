@@ -71,62 +71,6 @@ class CalendarScheduleAdapter(private val datas: ArrayList<Schedule>, private va
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(datas[position])
-//        val deleteBtn = holder.itemView.findViewById<Button>(R.id.schedule_delete) // 삭제 버튼
-//        deleteBtn.setOnClickListener {
-//            println("item확인" + datas[position].group_id)
-//            // 삭제하시겠습니까? 화면
-//            val builder = AlertDialog.Builder(ContextThemeWrapper(holder.itemView.context, R.style.ThemeOverlay_AppCompat_Dialog))
-//            builder.setTitle("일정")
-//            builder.setMessage("일정을 삭제하시겠습니까?")
-//
-//            builder.setPositiveButton("확인", DialogInterface.OnClickListener {
-//                dialog, which -> println("삭제 시작")
-//                var year = datas[position].year
-//                var month = datas[position].month
-//                var day = datas[position].day
-//                var scheduleData = CalendarDatabase.getInstance(holder.itemView.context)
-//                var routineScheduleData = RoutineScheduleDatabase.getInstance(holder.itemView.context)
-//                var calendarDay = CalendarDay.from(year, month, day)
-//                // room으로 db에서 삭제
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    val job = launch {
-//                        var scheduleList = scheduleData!!.calendarDao().getAll() // 모든 일정 가져오기 [Schedule, Schedule, Schedule, ...]
-//                        var routineList = routineScheduleData!!.routineScheduleDao().getAll() // 모든 루틴 가져오기
-//                        for (num in 0..routineList.size-1) {
-//                            if (routineList[num].id == datas[position].group_id) {
-//                                routineScheduleData.routineScheduleDao().delete(routineList[num]) // 해당 routineSchedule 객체 삭제
-//                            }
-//                        }
-//                        println("알람 삭제: ${datas[position].id}")
-//                        cancelAlarm(holder, datas[position], datas[position].id)
-//                        scheduleData.calendarDao().delete(datas[position])
-////                        frag.onMonthChanged(frag.calendar_view, calendarDay)
-//                        println("출력1")
-//                    }
-//                    job.join()
-//                    withContext(Dispatchers.Main) {
-//                        frag.selectedDate(day)
-//                        println("출력2")
-//                    }
-//
-//                }
-//
-////                android.os.Handler(Looper.getMainLooper()).postDelayed({
-////
-////                }, 0)
-//
-//
-//
-//
-//            })
-//            builder.setNegativeButton("취소") {
-//                _, _ -> println("취소 버튼")
-//            }
-//            builder.show()
-//
-//            // yes를 누르면 room과 파이어베이스에서 모두 삭제 후 연동
-//
-//        }
     }
 
     override fun getItemCount(): Int {
