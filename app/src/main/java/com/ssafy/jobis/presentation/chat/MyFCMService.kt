@@ -82,7 +82,7 @@ class MyFCMService: FirebaseMessagingService() {
                     .setContentTitle("메세지가 도착했습니다.")
                     .setContentText(content)
                     .setSmallIcon(R.mipmap.ic_main)
-                    .setVibrate(longArrayOf(1000, 0, 0))
+                    .setVibrate(longArrayOf(1000))
 
                 mNotificationManager.notify(NOTIFICATION_ID, builder.build())
             }
