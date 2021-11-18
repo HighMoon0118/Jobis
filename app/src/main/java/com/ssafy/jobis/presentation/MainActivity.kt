@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -27,7 +28,7 @@ import com.ssafy.jobis.presentation.study.MyStudyFragment
 
 class MainActivity : AppCompatActivity() {
 
-
+    private var backButtonTime = 0L
     private lateinit var binding: ActivityMainBinding
     private val getResultCommunityDetail = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()) { result ->
@@ -168,6 +169,18 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        val currentTime = System.currentTimeMillis()
+        val gapTime = currentTime - backButtonTime
+        Log.d("test", "뒤로가기버튼 ${gapTime}")
+        if (gapTime in 0..2000) {
+            super.onBackPressed()
+        } else {
+            backButtonTime = currentTime
+            Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
         }
     }
 }
