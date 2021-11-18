@@ -206,6 +206,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgCloseGif.setOnClickListener(this@ChatActivity)
             gifProgressChat.setOnClickListener(this@ChatActivity)
             chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
+            chatNavigation.menu.getItem(0).setActionView(R.layout.menu_image)
         }
     }
 

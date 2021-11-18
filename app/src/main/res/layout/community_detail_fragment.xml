@@ -189,7 +189,7 @@
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
                 android:minHeight="50dp"
-                android:minEms="14"
+                android:minEms="12"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <Button
