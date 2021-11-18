@@ -72,9 +72,16 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
+        val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
+        Log.d("처음 입장", isFirstTime.toString())
+
         Log.d("액티비티에서 얻은 스터디 아이디", currentStudyId)
 
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
+
+        if (isFirstTime) {  // 처음 이 방에 입장
+            model.entrance(currentStudyId)
+        }
 
         model.studyWithChats.observe(this, {
             val chatList = it.chats
@@ -241,6 +248,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             }
             R.id.img_send_chat -> {
                 if (model.chooseFileName.isNotEmpty()) {
+                    Log.d("내가 고른 파일", "파일이름 = "+model.chooseFileName)
                     model.sendMessage(currentStudyId, "이모티콘을 보냈습니다.", model.chooseFileName)
                     clearGIFLayout()
                 }
