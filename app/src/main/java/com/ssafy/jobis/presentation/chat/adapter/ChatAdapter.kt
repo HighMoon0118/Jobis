@@ -60,7 +60,6 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
     }
 
     override fun getItemViewType(position: Int): Int {
-
         if (chatList != null) {
             return if (chatList[position].is_entrance) {
                 ENTRANCE
