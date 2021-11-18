@@ -93,7 +93,7 @@ class ChatScheduleAddActivity : AppCompatActivity() {
         var currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
         var currentMinute = currentTime.get(Calendar.MINUTE)
 
-        var currentDateString = "${currentYear}. ${currentMonth}. ${currentDay} ${currentDayOfWeekString}"
+        var currentDateString = "${currentYear}. ${currentMonth+1}. ${currentDay} ${currentDayOfWeekString}"
         var currentStartTimeString = "${currentHour}:${currentMinute}"
         var currentEndTimeString = ""
 
@@ -204,7 +204,9 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             val content = binding.chatScheduleContent.text.toString()
             var db = FirebaseFirestore.getInstance()
 
-
+            if (endMinute > 59){
+                endMinute = 59
+            }
             var scheduleId = ""
             var newSchedule = Schedule(title, content, year, month, day, "${startHour}:${startMinute}", "${endHour}:${endMinute}", currentStudyId, 0, "")
             db.collection("study_schedules")
