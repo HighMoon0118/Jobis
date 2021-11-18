@@ -71,7 +71,7 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
         }
 
         if (bitmapList.size == 1) {
-            val fileName = userId + System.currentTimeMillis().toString()+".png"
+            val fileName = userId + "_" + System.currentTimeMillis().toString()+".png"
             val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
 
             CoroutineScope(Dispatchers.IO).launch {
