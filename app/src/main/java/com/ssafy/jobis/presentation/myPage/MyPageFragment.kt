@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -128,56 +130,74 @@ class MyPageFragment: Fragment() {
             mainActivity?.goUserActivity()
         }
 
-        binding.expandableLayout.parentLayout.setOnClickListener {
-            val checked = binding.expandableLayout.isExpanded
+        binding.jobExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.jobExpandableLayout.isExpanded
             if (checked) {
-                binding.expandableLayout.collapse()
-            } else {
-                binding.expandableLayout.expand()
-            }
-        }
-
-        binding.jobToggleButton.setOnClickListener {
-            val isChecked = binding.jobToggleButton.isChecked
-            if (isChecked) {
-                binding.myJobRecyclerView.visibility = View.VISIBLE
+                binding.jobExpandableLayout.collapse()
                 myPageViewModel.loadMyJobList(requireContext())
             } else {
-                binding.myJobRecyclerView.visibility = View.GONE
+                binding.jobExpandableLayout.expand()
+            }
+        }
+        binding.likeExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.likeExpandableLayout.isExpanded
+            if (checked) {
+                binding.likeExpandableLayout.collapse()
+            } else {
+                myPageViewModel.loadMyLikeList(uid!!)
+                binding.likeExpandableLayout.expand()
+            }
+        }
+        binding.postExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.postExpandableLayout.isExpanded
+            if (checked) {
+                myPageViewModel.loadMyPostList(uid!!)
+                binding.postExpandableLayout.collapse()
+            } else {
+                binding.postExpandableLayout.expand()
+            }
+        }
+        binding.commentExpandableLayout.parentLayout.setOnClickListener {
+            val checked = binding.commentExpandableLayout.isExpanded
+            if (checked) {
+                myPageViewModel.loadMyCommentList(uid!!)
+                binding.commentExpandableLayout.collapse()
+            } else {
+                binding.commentExpandableLayout.expand()
             }
         }
 
-        binding.likeToggleButton.setOnClickListener {
-            val isChecked = binding.likeToggleButton.isChecked
-            // 체크되어있으면 리사이클러뷰를 활성화시킨다.
-            myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
-            if (isChecked) {
-                binding.myLikeRecyclerView.visibility = View.VISIBLE
-                myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
-            } else {
-                binding.myLikeRecyclerView.visibility = View.GONE
-            }
-        }
-
-        binding.postToggleButton.setOnClickListener {
-            val isChecked = binding.postToggleButton.isChecked
-            if (isChecked) {
-                binding.myPostRecyclerView.visibility = View.VISIBLE
-                myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
-            } else {
-                binding.myPostRecyclerView.visibility = View.GONE
-            }
-        }
-
-        binding.commentToggleButton.setOnClickListener {
-            val isChecked = binding.commentToggleButton.isChecked
-            if (isChecked) {
-                myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
-                binding.myCommentRecyclerView.visibility = View.VISIBLE
-            } else {
-                binding.myCommentRecyclerView.visibility = View.GONE
-            }
-        }
+//        binding.likeToggleButton.setOnClickListener {
+//            val isChecked = binding.likeToggleButton.isChecked
+//            // 체크되어있으면 리사이클러뷰를 활성화시킨다.
+//            myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+//            if (isChecked) {
+//                binding.myLikeRecyclerView.visibility = View.VISIBLE
+//                myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
+//            } else {
+//                binding.myLikeRecyclerView.visibility = View.GONE
+//            }
+//        }
+//
+//        binding.postToggleButton.setOnClickListener {
+//            val isChecked = binding.postToggleButton.isChecked
+//            if (isChecked) {
+//                binding.myPostRecyclerView.visibility = View.VISIBLE
+//                myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
+//            } else {
+//                binding.myPostRecyclerView.visibility = View.GONE
+//            }
+//        }
+//
+//        binding.commentToggleButton.setOnClickListener {
+//            val isChecked = binding.commentToggleButton.isChecked
+//            if (isChecked) {
+//                myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
+//                binding.myCommentRecyclerView.visibility = View.VISIBLE
+//            } else {
+//                binding.myCommentRecyclerView.visibility = View.GONE
+//            }
+//        }
 
         binding.nickNameEditButton.setOnClickListener {
             openEditDialog()
@@ -222,11 +242,15 @@ class MyPageFragment: Fragment() {
                 }
             }
         })
-
-        binding.myLikeRecyclerView.adapter = adapter
-        binding.myLikeRecyclerView.layoutManager = StaggeredGridLayoutManager(
+        val recyclerView = binding.likeExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
+//        binding.myLikeRecyclerView.adapter = adapter
+//        binding.myLikeRecyclerView.layoutManager = StaggeredGridLayoutManager(
+//            1,
+//            StaggeredGridLayoutManager.VERTICAL)
     }
 
     fun updateMyPost(postList: PostResponseList) {
@@ -239,9 +263,9 @@ class MyPageFragment: Fragment() {
                 }
             }
         })
-
-        binding.myPostRecyclerView.adapter = adapter
-        binding.myPostRecyclerView.layoutManager = StaggeredGridLayoutManager(
+        val recyclerView = binding.postExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
     }
@@ -254,8 +278,10 @@ class MyPageFragment: Fragment() {
                 (activity as MainActivity).goCommunityDetailActivity(comment.post_id)
             }
         })
-        binding.myCommentRecyclerView.adapter = adapter
-        binding.myCommentRecyclerView.layoutManager = StaggeredGridLayoutManager(
+
+        val recyclerView = binding.commentExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             1,
             StaggeredGridLayoutManager.VERTICAL)
     }
@@ -268,11 +294,12 @@ class MyPageFragment: Fragment() {
                 showDeletePopup(schedule)
             }
         })
-        binding.myJobRecyclerView.adapter = adapter
-        binding.myJobRecyclerView.layoutManager = StaggeredGridLayoutManager(
+
+        val recyclerView = binding.jobExpandableLayout.secondLayout.findViewById<RecyclerView>(R.id.myPageRecyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = StaggeredGridLayoutManager(
             2,
-            StaggeredGridLayoutManager.VERTICAL
-        )
+            StaggeredGridLayoutManager.VERTICAL)
     }
 
     private fun showDeletePopup(schedule: Schedule) {
