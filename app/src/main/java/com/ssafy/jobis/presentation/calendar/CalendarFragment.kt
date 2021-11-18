@@ -54,6 +54,7 @@ import android.view.MotionEvent
 
 import android.view.View.OnTouchListener
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.ssafy.jobis.data.model.study.Study
 
 
 class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListener, CalendarScheduleAdapter.OnDeleteScheduleListener{
@@ -152,17 +153,32 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         var study_id_list = ArrayList<String>()
         var study_info = FirebaseDatabase.getInstance().getReference("/Study")
         study_info.get().addOnSuccessListener {
-            val datas = it.value as HashMap<*, *>
-            for ((key, v) in datas) {
-                val data = v as HashMap<*, *>
-                var user_list = data["user_list"] as ArrayList<HashMap<*, *>>
-                for (k in 0..user_list.size-1) {
-                    if (uid == user_list[k]["id"]) {
 
-                        study_id_list.add(key.toString())
+//            val datas = it.value as HashMap<*, *>
+//            for ((key, v) in datas) {
+//                val data = v as HashMap<*, *>
+//                var user_list = data["user_list"] as ArrayList<HashMap<*, *>>
+//                for (k in 0..user_list.size-1) {
+//                    if (uid == user_list[k]["id"]) {
+//
+//                        study_id_list.add(key.toString())
+//                    }
+//                }
+//            }
+
+            val mDatas = it.value as HashMap<*, *>
+            for ((key, study) in mDatas) {
+                if (study is Study) {
+                    if (study.user_list == null) continue
+                    for (userId in study.user_list!!) {
+                        if (uid == userId.toString()) {
+                            study_id_list.add(key.toString())
+                        }
                     }
                 }
             }
+
+
         }.await()
         return study_id_list
     }

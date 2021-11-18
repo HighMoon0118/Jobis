@@ -208,7 +208,7 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_chat_navi"
-        app:menu="@menu/menu_chat_navi">
-    </com.google.android.material.navigation.NavigationView>
+        app:menu="@menu/menu_chat_navi"/>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
