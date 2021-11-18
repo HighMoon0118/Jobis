@@ -34,15 +34,16 @@ class ChatRepository(context: Context) {
         dao?.insertChat(chat)
     }
 
-    fun uploadMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String) {
+    fun uploadMessage(studyId: String, studyTitle: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String) {
 
         val root = JSONObject()
         val data = JSONObject()
         data.apply {
+            put("study_id", studyId)
+            put("study_title", studyTitle)
             put("user_id", userId)
             put("is_me", isMe)
             put("nickname", nickname)
-            put("study_id", studyId)
             put("content", content)
             put("file_name", fileName)
             put("created_at", createdAt)
