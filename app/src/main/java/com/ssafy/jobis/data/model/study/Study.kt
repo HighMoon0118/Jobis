@@ -14,8 +14,8 @@ data class Study(
     var content: String? = "",
     var location: String? = "",
     var topic: String? = "",
-    var max_user: Int? = 0,
-    var current_user: Int? = 1,
+    var max_user: Int = 1,
+    var current_user: Int = 1,
     var user_list: MutableList<Crew>? = null,
     var created_at: String = "",
 

@@ -51,14 +51,18 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
             }
         }
 
+        var startChat = true
+        if (0 < position && chatList[position-1].user_id == chatList[position].user_id)
+            startChat = false
+
         val time = "$noon $nowTime"
 
         when (holder) {
             is ChatEntranceViewHolder -> holder.bind(chatList[position])
             is ChatMyViewHolder -> holder.bind(chatList[position], isSameTime, time)
-            is ChatViewHolder -> holder.bind(chatList[position], isSameTime, time)
+            is ChatViewHolder -> holder.bind(chatList[position], isSameTime, time, startChat)
             is ChatMyGIFViewHolder -> holder.bind(map[position], isSameTime, time)
-            is ChatGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, time)
+            is ChatGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, time, startChat)
         }
     }
 
