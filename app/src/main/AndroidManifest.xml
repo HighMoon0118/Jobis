@@ -21,9 +21,11 @@
             android:exported="true" />
         <activity
             android:name=".presentation.chat.ChatScheduleAddActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="false" />
         <activity
             android:name=".presentation.chat.ChatScheduleActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:exported="false" />
         <activity
             android:name=".presentation.community.search.CommunitySearchActivity"
@@ -38,9 +40,6 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".presentation.study.SearchStudy"
-            android:exported="true" />
-        <activity
-            android:name=".presentation.chat.ChatLogActivity"
             android:exported="true" />
         <activity
             android:name=".presentation.MainActivity"
@@ -62,6 +61,7 @@
             android:windowSoftInputMode="adjustNothing"
             />
         <activity android:name=".presentation.chat.ChatActivity"
+            android:theme="@style/Theme.Jobis.chat"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <service
