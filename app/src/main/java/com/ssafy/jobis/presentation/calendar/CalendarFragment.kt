@@ -154,8 +154,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         study_info.get().addOnSuccessListener {
             val datas = it.value as HashMap<*, *>
             for ((key, v) in datas) {
-                val data = v as HashMap<String, *>
-                var user_list = data["user_list"] as ArrayList<HashMap<String, String>>
+                val data = v as HashMap<*, *>
+                var user_list = data["user_list"] as ArrayList<HashMap<*, *>>
                 for (k in 0..user_list.size-1) {
                     if (uid == user_list[k]["id"]) {
                         println("일치: " + key)

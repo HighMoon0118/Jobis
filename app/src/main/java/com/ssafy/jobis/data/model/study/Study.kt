@@ -18,7 +18,7 @@ data class Study(
     var current_user: Int? = 1,
     var user_list: MutableList<Crew>? = null,
     var created_at: String = "",
-    var unread_chat_cnt : Int? = 0
+    var unread_chat_cnt : Int = 0
 
 ){
     @Exclude
