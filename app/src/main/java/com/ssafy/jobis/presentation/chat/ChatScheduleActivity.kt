@@ -77,19 +77,12 @@ class ChatScheduleActivity : AppCompatActivity() {
         }
     }
 
-//    fun goCommunitySearchActivity() {
-//        val intent = Intent(this, CommunitySearchActivity::class.java)
-//        getResultCommunityDetail.launch(intent)
-//    }
-
-
-
     private fun updateStudyScheduleList(scheduleList: MutableList<ScheduleResponse>, currentStudyId: String) {
         var schedules = ArrayList<Schedule>()
         for (i: Int in 0..scheduleList.size-1) {
             println("scheduleList[${i}]" + scheduleList[i].title)
             println("scheduleList[${i}]" + scheduleList[i].study_id)
-            if (scheduleList[i].study_id == currentStudyId) { // studyId가 있는 경우만
+            if (scheduleList[i].study_id == currentStudyId) { // studyId가 일치하는 경우만
                 var year = scheduleList[i].year.toInt()
                 var month = scheduleList[i].month.toInt()
                 var day = scheduleList[i].day.toInt()
