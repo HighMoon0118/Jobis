@@ -33,6 +33,10 @@ class MyStudyFragment(val myContext: Context): Fragment() {
         }
 
         viewModel.studyList.observe(viewLifecycleOwner,  {
+// for문을 통해 스터디를 다 돌면서 파이어스토어 스케쥴이 있으면 가져옴
+// 거기서 오늘과 가장 가까운 스케쥴의 dday를 계산해서 새로운 리스트에 넣음, 만약 스케쥴이 없다면 -1을 넣음
+//            val list = List<Int>(it.size){0}
+
             val studyAdapter = MyStudyAdapter(myContext, it)
             binding.rvMyStudy.adapter = studyAdapter
         })
