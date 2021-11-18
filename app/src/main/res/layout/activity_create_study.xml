@@ -10,39 +10,45 @@
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:background="#448AFF"
         android:text="@string/create_study_upperbar"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:weightSum="3">
 
         <Spinner
             android:id="@+id/sp_region"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginVertical="2dp"
             android:layout_weight="1"/>
 
         <Spinner
             android:id="@+id/sp_topic"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="2dp"/>
 
         <Spinner
             android:id="@+id/sp_population"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="2dp"/>
+            android:layout_marginLeft="2dp"
+            android:layout_marginVertical="2dp"/>
 
     </LinearLayout>
 
@@ -55,9 +61,10 @@
         android:hint="@string/create_study_title"
         android:inputType="textPersonName"
         android:textCursorDrawable="@drawable/text_cursor"
-        android:textStyle="bold"
-        android:layout_margin="10dp"
-        android:padding="5dp"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:padding="12dp"
+        />
 
     <EditText
         android:id="@+id/et_describe"
@@ -66,10 +73,12 @@
         android:background="#D1E2FF"
         android:ems="10"
         android:hint="@string/create_study_describe"
-        android:inputType="textPersonName"
+        android:inputType="textMultiLine"
         android:textCursorDrawable="@drawable/text_cursor"
-        android:layout_margin="10dp"
-        android:padding="5dp"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:padding="12dp"
+        android:gravity="top"/>
 
     <Button
         android:id="@+id/btn_submit"
@@ -79,6 +88,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
         app:backgroundTint="#3F51B5"
-        android:layout_margin="10dp"/>
+        android:layout_margin="16dp"/>
 
 </LinearLayout>
