@@ -6,7 +6,11 @@ import androidx.room.*
 interface RoutineScheduleDao {
     @Query("SELECT * FROM routineSchedule")
     fun getAll(): List<RoutineSchedule>
-    @Insert
+
+    @Query("DELETE FROM RoutineSchedule where id = :id")
+    fun deleteRoutineSchedules(id: Int)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(routineSchedule: RoutineSchedule) : Long
 
     @Update

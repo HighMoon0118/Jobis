@@ -20,7 +20,8 @@ data class RoutineSchedule(
     @ColumnInfo var companyName: String,
     @ColumnInfo var studyId: String,
 ) {
-    @PrimaryKey(autoGenerate = true) var id: Int=0
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 }
 
 class Converters {

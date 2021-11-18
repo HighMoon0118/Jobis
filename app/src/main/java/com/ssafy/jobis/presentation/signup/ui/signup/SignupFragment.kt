@@ -115,7 +115,6 @@ class SignupFragment : Fragment() {
         }
 
         signupButton.setOnClickListener {
-            Log.d("test", "회원가입버튼 클릭 시 : ${userActivty}")
             userActivty?.loadingOn()
 //            loadingProgressBar.visibility = View.VISIBLE
             signupViewModel.login(

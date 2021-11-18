@@ -4,22 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Study
 import com.ssafy.jobis.data.model.study.StudyDatabase
 import com.ssafy.jobis.presentation.chat.ChatActivity
-import com.ssafy.jobis.presentation.chat.ChatLogActivity
-import com.ssafy.jobis.presentation.study.CreateStudy
-import com.ssafy.jobis.presentation.study.SearchResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,6 +67,7 @@ class SearchResultAdapter(val context: Context, val searchResultList: ArrayList<
                             ref.updateChildren(studyUpdates)
 
                             var intent = Intent(context, ChatActivity::class.java)
+                            intent.putExtra("isFirstTime", true)
                             intent.putExtra("study_id", searchResultList[curPos].id)
                             context.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
                         }
