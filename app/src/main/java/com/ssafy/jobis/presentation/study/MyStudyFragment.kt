@@ -49,6 +49,7 @@ class MyStudyFragment(val myContext: Context): Fragment() {
         isFabOpen = false
 
         viewModel.studyList.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) binding.txtStudyBlank.visibility = View.GONE
             fetchSchedule()
             studyAdapter = MyStudyAdapter(myContext, it, dDayList )
             binding.rvMyStudy.adapter = studyAdapter
