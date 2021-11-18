@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.ssafy.jobis.data.repository.AdminRepository
+import com.ssafy.jobis.data.response.PostResponseList
 import com.ssafy.jobis.data.response.ReportResponse
 import com.ssafy.jobis.data.response.UserResponse
 import kotlinx.coroutines.CoroutineScope
@@ -21,6 +22,9 @@ class AdminViewModel(private val adminRepository: AdminRepository): ViewModel() 
     private val _reportList = MutableLiveData<MutableList<ReportResponse>>()
     val reportList: LiveData<MutableList<ReportResponse>> = _reportList
 
+    private val _postList = MutableLiveData<PostResponseList>()
+    val postList: LiveData<PostResponseList> = _postList
+
     private val _isUserDeleted = MutableLiveData<Boolean>()
     val isUserDeleted: LiveData<Boolean> = _isUserDeleted
 
@@ -32,7 +36,9 @@ class AdminViewModel(private val adminRepository: AdminRepository): ViewModel() 
 
     fun loadAllReport() {
         CoroutineScope(Dispatchers.Main).launch {
-            _reportList.value = adminRepository.loadAllReports()
+            val reportList = adminRepository.loadAllReports()
+            _postList.value = adminRepository.loadReportedPosts(reportList)
+
         }
     }
 
