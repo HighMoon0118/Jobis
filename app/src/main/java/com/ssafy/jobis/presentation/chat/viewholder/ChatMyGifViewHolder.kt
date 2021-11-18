@@ -1,6 +1,5 @@
 package com.ssafy.jobis.presentation.chat.viewholder
 
-import android.graphics.ImageDecoder
 import android.graphics.drawable.AnimatedImageDrawable
 import android.view.View
 import android.widget.ImageView
@@ -8,22 +7,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
 import com.ssafy.jobis.presentation.chat.ImgChat
-import com.ssafy.jobis.presentation.chat.adapter.ChatAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class ChatGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
+class ChatMyGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    private val name: TextView = view.findViewById(R.id.tv_gif_name)
-    private val img: ImageView = view.findViewById(R.id.img_gif)
-    private val date: TextView = view.findViewById(R.id.tv_gif_date)
+    private val img: ImageView = view.findViewById(R.id.img_my_gif)
+    private val date: TextView = view.findViewById(R.id.tv_my_gif_date)
 
     fun bind(imgChat: ImgChat?, nickname: String, isSameTime: Boolean, nowTime: String) {
         if (imgChat == null) return
-        name.text = nickname
         if (!isSameTime) date.text = nowTime
-
 
         val drawable = imgChat.drawable
 
