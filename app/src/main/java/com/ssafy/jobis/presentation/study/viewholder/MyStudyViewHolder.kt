@@ -17,6 +17,7 @@ class MyStudyViewHolder(val view: View, val context: Context): RecyclerView.View
     private val myStudyDate: TextView = view.findViewById(R.id.tv_my_study_date)
     private val myStudyMsgCnt: TextView = view.findViewById(R.id.tv_my_study_msg_cnt)
     private val myStudyDDay: TextView = view.findViewById(R.id.tv_my_study_dday)
+    private val myStudyPerson: TextView = view.findViewById(R.id.tv_my_study_person)
 
     fun bind(study: Study, dDay: Int?) {
 
@@ -27,6 +28,7 @@ class MyStudyViewHolder(val view: View, val context: Context): RecyclerView.View
             myStudyMsgCnt.visibility = View.VISIBLE
         }
 
+        myStudyPerson.text = study.current_user.toString()+"/"+study.max_user.toString()
         myStudyMsg.text = study.last_chat
 
         if (study.last_date != "") {
