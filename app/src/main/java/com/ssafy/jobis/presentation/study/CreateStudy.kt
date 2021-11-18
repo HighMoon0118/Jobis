@@ -1,6 +1,5 @@
 package com.ssafy.jobis.presentation.study
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,8 +8,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.room.Room
-import androidx.room.Room.databaseBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.FirebaseDatabase
@@ -19,13 +16,10 @@ import com.ssafy.jobis.data.model.study.Crew
 import com.ssafy.jobis.data.model.study.Study
 import com.ssafy.jobis.data.model.study.StudyDatabase
 import com.ssafy.jobis.databinding.ActivityCreateStudyBinding
-import com.ssafy.jobis.presentation.MainActivity
 import com.ssafy.jobis.presentation.chat.ChatActivity
-import com.ssafy.jobis.presentation.chat.ChatLogActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.String.format
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -21,22 +21,32 @@ class ChatRepository(context: Context) {
         return dao?.getChatList(studyId)
     }
 
-    fun saveMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
+    fun saveMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String) {
         Log.d("saveMessage", "데이터 들어옴")
-        val chat = Chat(study_id = studyId, user_id = userId, content = content, file_name = fileName, created_at = createdAt)
+        val chat = Chat(
+            study_id = studyId,
+            user_id = userId,
+            is_me = isMe,
+            nickname = nickname,
+            content = content,
+            file_name = fileName,
+            created_at = createdAt)
         dao?.insertChat(chat)
     }
 
-    fun uploadMessage(studyId: String, userId: String, content: String, fileName: String, createdAt: String) {
+    fun uploadMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String) {
 
         val root = JSONObject()
         val data = JSONObject()
         data.apply {
             put("user_id", userId)
+            put("is_me", isMe)
+            put("nickname", nickname)
             put("study_id", studyId)
             put("content", content)
             put("file_name", fileName)
             put("created_at", createdAt)
+            put("nickname", nickname)
         }
         root.put("data", data)
 //        val notification = JSONObject()

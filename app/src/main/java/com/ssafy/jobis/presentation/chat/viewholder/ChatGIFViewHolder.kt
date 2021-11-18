@@ -15,10 +15,16 @@ import kotlinx.coroutines.launch
 
 class ChatGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+    private val name: TextView = view.findViewById(R.id.tv_gif_name)
     private val img: ImageView = view.findViewById(R.id.img_gif)
+    private val date: TextView = view.findViewById(R.id.tv_gif_date)
 
-    fun bind(imgChat: ImgChat?) {
+    fun bind(imgChat: ImgChat?, nickname: String, isSameTime: Boolean, nowTime: String) {
         if (imgChat == null) return
+        name.text = nickname
+        if (!isSameTime) date.text = nowTime
+
+
         val drawable = imgChat.drawable
 
         img.setImageDrawable(drawable)
