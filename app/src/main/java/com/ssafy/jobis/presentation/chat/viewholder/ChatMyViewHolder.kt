@@ -6,16 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.jobis.R
 import com.ssafy.jobis.data.model.study.Chat
 
-class ChatViewHolder(view: View): RecyclerView.ViewHolder(view) {
+class ChatMyViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    private val chatName: TextView = view.findViewById(R.id.tv_chat_name)
-    private val chatText: TextView = view.findViewById(R.id.tv_chat_msg)
-    private val chatDate: TextView = view.findViewById(R.id.tv_chat_date)
+    private val chatText: TextView = view.findViewById(R.id.tv_my_chat_msg)
+    private val chatDate: TextView = view.findViewById(R.id.tv_my_chat_date)
 
     fun bind(chat: Chat, isSameTime: Boolean, nowTime: String) {
 
         chatText.text = chat.content
-        chatName.text = chat.nickname
         if (!isSameTime) chatDate.text = nowTime
     }
 }

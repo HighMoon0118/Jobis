@@ -44,7 +44,9 @@ class MyFCMService: FirebaseMessagingService() {
         Log.d("안녕하세요", "안녕하시려니까")
 
         var studyId = ""
+        var isMe = false
         var userId = ""
+        var nickname = ""
         var content = ""
         var fileName = ""
         var createdAt = ""
@@ -54,12 +56,14 @@ class MyFCMService: FirebaseMessagingService() {
             remoteMessage.let {
                 studyId = it.data["study_id"].toString()
                 userId = it.data["user_id"].toString()
+                isMe = it.data["is_me"].toBoolean()
+                nickname = it.data["nickname"].toString()
                 content = it.data["content"].toString()
                 fileName = it.data["file_name"].toString()
                 createdAt = it.data["created_at"].toString()
             }
             if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
-                repo.saveMessage(studyId, userId, content, fileName, createdAt)
+                repo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt)
             }
 
         }
