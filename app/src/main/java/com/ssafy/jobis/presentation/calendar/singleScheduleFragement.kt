@@ -121,12 +121,13 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
         val time = schedule.start_time.split(":")
         val hourOfDay = time[0].toInt()
         val minute = time[1].toInt()
-        alarmCalendar.set(Calendar.YEAR, schedule.year)
-        alarmCalendar.set(Calendar.MONTH, schedule.month)
-        alarmCalendar.set(Calendar.DAY_OF_MONTH, schedule.day)
+        alarmCalendar.set(Calendar.YEAR, startYear)
+        alarmCalendar.set(Calendar.MONTH, startMonth)
+        alarmCalendar.set(Calendar.DAY_OF_MONTH, startDay)
         alarmCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
         alarmCalendar.set(Calendar.MINUTE, minute)
         alarmCalendar.set(Calendar.SECOND, 0)
+        println("스케줄 확인합니다, $startYear, $startMonth, $startDay")
         var scheduleIdToInt = scheduleId.toInt()
 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -190,14 +191,20 @@ class SingleScheduleFragment(val activity: Activity, private val year: Int, val 
 
         // 현재 시간 50~59분 이면 59로 강제 지정 -> 안그러면 날짜 변경됨
         if (SimpleDateFormat("HH").format(calendar.time) == "23" ){
-            if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59){
+            if (SimpleDateFormat("mm").format(calendar.time).toInt() in 50..59) {
                 scheduleEndTime = "59"
                 calendar.set(Calendar.MINUTE, 59)
                 scheduleEndTime = "23:59"
                 endMinute = 59
                 endHour = calendar.get(Calendar.HOUR_OF_DAY)
+            } else{
+                calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
+                scheduleEndTime = dateFormat2.format(calendar.time)
+                endHour = calendar.get(Calendar.HOUR_OF_DAY)
+                endMinute = calendar.get(Calendar.MINUTE)
             }
-        } else{
+        }
+        else{
             calendar.add(Calendar.MINUTE, 10) // 10분 후 자동 지정
             scheduleEndTime = dateFormat2.format(calendar.time)
             endHour = calendar.get(Calendar.HOUR_OF_DAY)

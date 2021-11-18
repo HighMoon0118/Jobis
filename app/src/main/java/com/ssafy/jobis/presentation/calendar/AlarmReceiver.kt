@@ -10,11 +10,10 @@ import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.ssafy.jobis.R
 import com.ssafy.jobis.presentation.MainActivity
 
-class AlarmReceiver() : BroadcastReceiver() {
+open class AlarmReceiver() : BroadcastReceiver() {
 
     companion object {
         const val TAG = "AlarmReceiver"

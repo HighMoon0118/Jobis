@@ -16,6 +16,7 @@ import com.ssafy.jobis.data.model.study.StudyWithChats
 import com.ssafy.jobis.presentation.chat.ChatActivity
 import com.ssafy.jobis.presentation.chat.ChatRepository
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
+import com.ssafy.jobis.presentation.study.StudyRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,11 +36,12 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     var chooseFileName = ""
     private var isFirstTime = false
 
-    private val repo = ChatRepository(application)
+    private val chatRepo = ChatRepository(application)
+    private val studyRepo = StudyRepository(application)
 
     init {
         Log.d("현재 스터디", currentStudyId)
-        _studyWithChats = repo.getChatList(currentStudyId)!!
+        _studyWithChats = chatRepo.getChatList(currentStudyId)!!
         uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         FirebaseFirestore.getInstance().collection("users").document(uid).get().addOnSuccessListener {
             nickname = it["nickname"].toString()
@@ -53,7 +55,7 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     fun sendMessage(studyId: String, content: String, fileName: String = "") {
 
         val date = Date()
-        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm").format(date)
+        val createdAt = SimpleDateFormat("yyyy-MM-dd a hh:mm").format(date)
 
         saveMessage(studyId, content, fileName, createdAt)
         uploadMessage(studyId, content, fileName, createdAt)
@@ -61,14 +63,14 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
 
     fun saveMessage(studyId: String, content: String, fileName: String, createdAt: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            repo.saveMessage(studyId, uid, true, nickname, content, fileName, createdAt)
+            chatRepo.saveMessage(studyId, uid, true, nickname, content, fileName, createdAt)
         }
     }
 
     fun uploadMessage(studyId: String, content: String, fileName: String, createdAt: String) {
         if (uid=="") return
         CoroutineScope(Dispatchers.IO).launch {
-            repo.uploadMessage(studyId, uid, false, nickname, content, fileName, createdAt)
+            chatRepo.uploadMessage(studyId, uid, false, nickname, content, fileName, createdAt)
         }
     }
 
@@ -77,10 +79,16 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         if (uid=="") return
         Log.d("닉네임", nickname)
         val date = Date()
-        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm").format(date)
+        val createdAt = SimpleDateFormat("yyyy-MM-dd a hh:mm").format(date)
 
         CoroutineScope(Dispatchers.IO).launch {
-            repo.entrance(studyId, uid, nickname, createdAt)
+            chatRepo.entrance(studyId, uid, nickname, createdAt)
+        }
+    }
+
+    fun readAllChat() {
+        CoroutineScope(Dispatchers.IO).launch {
+            studyRepo.readAllChat(currentStudyId)
         }
     }
 
