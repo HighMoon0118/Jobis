@@ -12,10 +12,12 @@ class ChatViewHolder(view: View): RecyclerView.ViewHolder(view) {
     private val chatText: TextView = view.findViewById(R.id.tv_chat_msg)
     private val chatDate: TextView = view.findViewById(R.id.tv_chat_date)
 
-    fun bind(chat: Chat, isSameTime: Boolean, nowTime: String) {
+    fun bind(chat: Chat, isSameTime: Boolean, nowTime: String, startChat: Boolean) {
 
         chatText.text = chat.content
         chatName.text = chat.nickname
+        chatName.visibility = View.VISIBLE
+        if(!startChat && isSameTime) chatName.visibility = View.GONE
         if (!isSameTime) chatDate.text = nowTime
     }
 }

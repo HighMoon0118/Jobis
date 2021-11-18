@@ -135,7 +135,7 @@ class CreateStudy : AppCompatActivity() {
         content:String? = null,
         location:String? = null,
         topic:String?,
-        max_user:Int? = null,
+        max_user:Int = 1,
         current_user:Int = 1,
         user_list:MutableList<Crew>? = null,
         created_at:String,
