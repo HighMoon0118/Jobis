@@ -4,7 +4,10 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
+import com.ssafy.jobis.data.response.PostResponse
+import com.ssafy.jobis.data.response.PostResponseList
 import com.ssafy.jobis.data.response.ReportResponse
 import com.ssafy.jobis.data.response.UserResponse
 import kotlinx.coroutines.tasks.await
@@ -51,6 +54,26 @@ class AdminRepository {
         } catch (e: Throwable) {
             e.printStackTrace()
             reportList
+        }
+    }
+
+    suspend fun loadReportedPosts(reportList: MutableList<ReportResponse>): PostResponseList {
+        var postList = PostResponseList()
+        return try {
+            db.runTransaction { transaction ->
+                for (item in reportList) {
+                    db.collection("posts").document(item.post_id)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            result.data?.let { postList.add(PostResponse.from(it, result.id)) }
+                        }
+                }
+            }
+                .await()
+            postList
+        } catch(e: Throwable) {
+            e.printStackTrace()
+            postList
         }
     }
 

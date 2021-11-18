@@ -175,7 +175,7 @@ class ChatScheduleAddActivity : AppCompatActivity() {
             db.collection("study_schedules")
                 .add(newSchedule)
                 .addOnSuccessListener {
-                    println("success!")
+                    println("success!" + it.id)
                     returnChatScheduleActivity()
                 }
                 .addOnFailureListener { exception ->
@@ -184,8 +184,6 @@ class ChatScheduleAddActivity : AppCompatActivity() {
 
 
         }
-        // 파이어베이스에 추가하고 나서 원래 액티비티로 돌아가는 코드
-//
     }
    fun dayOfWeekToString(dayOfWeek: Int): String {
         var dayOfWeekString = ""

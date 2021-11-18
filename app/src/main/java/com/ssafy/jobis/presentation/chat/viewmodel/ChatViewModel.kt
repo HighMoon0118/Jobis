@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.ssafy.jobis.data.model.study.StudyWithChats
+import com.ssafy.jobis.presentation.chat.ChatActivity
 import com.ssafy.jobis.presentation.chat.ChatRepository
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import kotlinx.coroutines.CoroutineScope
@@ -25,12 +26,14 @@ import java.util.*
 
 class ChatViewModel(application: Application): AndroidViewModel(application) {
 
+
     private val _studyWithChats: LiveData<StudyWithChats>
     val studyWithChats: LiveData<StudyWithChats> get() = _studyWithChats
     var uid: String = ""
     var nickname: String = ""
     var fileReference: String = ""
     var chooseFileName = ""
+    private var isFirstTime = false
 
     private val repo = ChatRepository(application)
 
@@ -40,6 +43,9 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         FirebaseFirestore.getInstance().collection("users").document(uid).get().addOnSuccessListener {
             nickname = it["nickname"].toString()
+            if( isFirstTime) {
+                entrance(currentStudyId)
+            }
         }
     }
 
@@ -66,4 +72,19 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun entrance(studyId: String) {
+        if (uid=="") return
+        Log.d("닉네임", nickname)
+        val date = Date()
+        val createdAt = SimpleDateFormat("yyyy-MM-dd hh:mm").format(date)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            repo.entrance(studyId, uid, nickname, createdAt)
+        }
+    }
+
+    fun setFirstTime() {
+        isFirstTime = true
+    }
 }
