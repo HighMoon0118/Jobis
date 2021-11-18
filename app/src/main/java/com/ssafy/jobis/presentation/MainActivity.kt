@@ -57,13 +57,13 @@ class MainActivity : AppCompatActivity() {
         val communityFragment = CommunityFragment()
         val myPageFragment = MyPageFragment()
 
-        supportFragmentManager.beginTransaction().add(R.id.frame_main, calendarFragment).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frame_main, myStudyFragment).commit()
 
         binding.btmNavi.run {
             setOnNavigationItemSelectedListener {
                 when(it.itemId) {
                     R.id.item_calendar -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, calendarFragment).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frame_main, myStudyFragment).commit()
                     }
                     R.id.item_study -> {
                         supportFragmentManager.beginTransaction().replace(R.id.frame_main, myStudyFragment).commit()
