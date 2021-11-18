@@ -139,7 +139,7 @@ class CreateStudy : AppCompatActivity() {
         current_user:Int = 1,
         user_list:MutableList<Crew>? = null,
         created_at:String,
-    unread_chat_cnt:Int? = 0) {
+        unread_chat_cnt:Int = 0) {
 
 
         val a = Study(

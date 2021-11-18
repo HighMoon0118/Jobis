@@ -40,22 +40,25 @@ class ChatAdapter(val uid: String, val chatList: List<Chat>?, val map: HashMap<I
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (chatList == null) return
         var isSameTime = false
-        val (nowDate, nowTime) = chatList[position].created_at.split(" ")
+        val (nowDate, noon, nowTime) = chatList[position].created_at.split(" ")
         val nowUid = chatList[position].user_id
+
         if (position < chatList.size-1) {
-            val (postDate, postTime) = chatList[position+1].created_at.split(" ")
+            val (postDate, noon, postTime) = chatList[position+1].created_at.split(" ")
             val postUid = chatList[position+1].user_id
             if ( nowTime == postTime && nowUid == postUid && nowDate == postDate) {
                 isSameTime = true
             }
         }
 
+        val time = "$noon $nowTime"
+
         when (holder) {
             is ChatEntranceViewHolder -> holder.bind(chatList[position])
-            is ChatMyViewHolder -> holder.bind(chatList[position], isSameTime, nowTime)
-            is ChatViewHolder -> holder.bind(chatList[position], isSameTime, nowTime)
-            is ChatMyGIFViewHolder -> holder.bind(map[position], isSameTime, nowTime)
-            is ChatGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, nowTime)
+            is ChatMyViewHolder -> holder.bind(chatList[position], isSameTime, time)
+            is ChatViewHolder -> holder.bind(chatList[position], isSameTime, time)
+            is ChatMyGIFViewHolder -> holder.bind(map[position], isSameTime, time)
+            is ChatGIFViewHolder -> holder.bind(map[position], chatList[position].nickname, isSameTime, time)
         }
     }
 
