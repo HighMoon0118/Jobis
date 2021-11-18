@@ -25,6 +25,7 @@ class MyStudyViewHolder(val view: View, val context: Context): RecyclerView.View
         view.setOnClickListener{
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("study_id", study.id)
+            intent.putExtra("study_title", study.title)
             context.startActivity(intent)
         }
     }

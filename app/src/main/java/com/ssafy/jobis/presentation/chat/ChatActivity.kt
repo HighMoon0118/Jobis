@@ -72,7 +72,8 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
-
+        val currentStudyTitle = intent.getStringExtra("study_title")
+        binding.tvTbTitle.text = currentStudyTitle
         model = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application)).get(ChatViewModel::class.java)
 
         val isFirstTime = intent.getBooleanExtra("isFirstTime", false)
