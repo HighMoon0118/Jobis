@@ -17,10 +17,21 @@ class StudyRepository(context: Context) {
         return dao?.getAllStudy()
     }
 
-    fun addUnreadChat(studyId: String) {
+    fun updateStudyInfo(studyId: String, lastChat: String, lastDate: String) {
         if (dao == null) return
         val study = dao.getStudy(studyId)
-        study.unread_chat_cnt ++
+        study.apply {
+            last_chat = lastChat
+            last_date = lastDate
+            unread_chat_cnt ++
+        }
+        dao.updateStudy(study)
+    }
+
+    fun readAllChat(studyId: String) {
+        if (dao == null) return
+        val study = dao.getStudy(studyId)
+        study.unread_chat_cnt = 0
         dao.updateStudy(study)
     }
 }

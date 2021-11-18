@@ -25,12 +25,12 @@ class MyFCMService: FirebaseMessagingService() {
     }
     private lateinit var mNotificationManager: NotificationManager
     private lateinit var mNotificationChannel: NotificationChannel
-    private lateinit var ChatRepo: ChatRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
-    private lateinit var StudyRepo: StudyRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
+    private lateinit var chatRepo: ChatRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
+    private lateinit var studyRepo: StudyRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
 
     override fun onCreate() {
-        ChatRepo = ChatRepository(this)
-        StudyRepo = StudyRepository(this)
+        chatRepo = ChatRepository(this)
+        studyRepo = StudyRepository(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -63,7 +63,7 @@ class MyFCMService: FirebaseMessagingService() {
                 createdAt = it.data["created_at"].toString()
             }
             if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
-                ChatRepo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt, true)
+                chatRepo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt, true)
             }
         } else {
 
@@ -79,10 +79,11 @@ class MyFCMService: FirebaseMessagingService() {
                     createdAt = it.data["created_at"].toString()
                 }
 
-                StudyRepo.addUnreadChat(studyId)
+                studyRepo.updateStudyInfo(studyId, content, createdAt)
+                if (studyId == currentStudyId) studyRepo.readAllChat(studyId)
 
                 if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
-                    ChatRepo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt)
+                    chatRepo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt)
                 }
 
             }
@@ -99,7 +100,8 @@ class MyFCMService: FirebaseMessagingService() {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
 
-                mNotificationManager.notify(NOTIFICATION_ID, builder.build())
+
+                mNotificationManager.notify(studyId.hashCode(), builder.build())
             }
         }
     }
