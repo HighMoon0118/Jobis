@@ -488,14 +488,12 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
                         if (removeStudy) {
                             Firebase.database.reference.child("Study").child(currentStudyId).removeValue()
                         }
-                    }.addOnSuccessListener {
-
-                        Firebase.messaging.unsubscribeFromTopic(currentStudyId)
-                        model.studyWithChats.removeObservers(this)
-                        model.exitStudy(currentStudyId)
-                        finish()
                     }
                 }
+                Firebase.messaging.unsubscribeFromTopic(currentStudyId)
+                model.studyWithChats.removeObservers(this)
+                model.exitStudy(currentStudyId)
+                finish()
             }
         }
         return true
