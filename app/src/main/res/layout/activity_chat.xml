@@ -203,11 +203,12 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/chat_navigation"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_chat_navi"
-        app:menu="@menu/menu_chat_navi"/>
+        app:menu="@menu/menu_chat_navi">
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

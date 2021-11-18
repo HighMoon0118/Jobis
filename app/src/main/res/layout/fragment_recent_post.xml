@@ -36,13 +36,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inputType="none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:dropDownHeight="200dp"
-                tools:text="전체"/>
+                android:inputType="none"
+                android:textSize="14sp"
+                tools:text="전체" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>

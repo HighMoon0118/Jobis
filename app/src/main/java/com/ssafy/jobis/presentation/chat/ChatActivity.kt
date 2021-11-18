@@ -75,6 +75,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         setContentView(binding.root)
 
         currentStudyId = intent.getStringExtra("study_id").toString()
+
         currentStudyTitle = intent.getStringExtra("study_title").toString()
         binding.tvTbTitle.text = currentStudyTitle
 
@@ -209,6 +210,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
             imgCloseGif.setOnClickListener(this@ChatActivity)
             gifProgressChat.setOnClickListener(this@ChatActivity)
             chatNavigation.setNavigationItemSelectedListener(this@ChatActivity)
+            chatNavigation.menu.getItem(0).setActionView(R.layout.menu_image)
         }
     }
 

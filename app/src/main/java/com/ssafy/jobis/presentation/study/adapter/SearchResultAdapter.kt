@@ -1,5 +1,6 @@
 package com.ssafy.jobis.presentation.study.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
@@ -111,11 +112,18 @@ class SearchResultAdapter(val context: Context, val searchResultList: ArrayList<
         val startday = itemView.findViewById<TextView>(R.id.tv_startday_value)  // 스터디 시작일
         val population = itemView.findViewById<TextView>(R.id.tv_population_value)  // 스터디 인원
 
+        @SuppressLint("SetTextI18n")
         fun bind(study: Study) {
+            var startDateInfo = study.created_at
+            var startYear = startDateInfo.substring(0,4)
+            var startMonth =startDateInfo.substring(6,8)
+            var startDay = startDateInfo.substring(10,12)
+            var startDayChangeFormat = "$startYear.$startMonth.$startDay"
+
             title.text = study.title
             describe.text = study.content
-            startday.text = study.created_at
-            population.text = study.current_user.toString()
+            startday.text = startDayChangeFormat
+            population.text = study.current_user.toString() + "/" + study.max_user.toString()
         }
 
     }

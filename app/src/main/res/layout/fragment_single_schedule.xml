@@ -13,6 +13,7 @@
         android:orientation="vertical"
         android:layout_margin="0dp"
         android:padding="0dp"
+        android:background="@color/white"
         >
 
         <LinearLayout
@@ -30,8 +31,10 @@
                 android:layout_height="wrap_content"
                 android:text="날짜"
                 android:textColor="@color/black"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="10dp"
+                />
             <Button
+                android:elevation="4dp"
                 android:id="@+id/startDateBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,6 +50,8 @@
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
+                android:layout_margin="1dp"
+
                 />
         </LinearLayout>
         <LinearLayout
@@ -79,7 +84,12 @@
 <!--                android:paddingBottom="0dp"-->
 <!--                android:paddingLeft="8dp"-->
 <!--                android:paddingRight="8dp"/>-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="20dp">
             <Button
+                android:elevation="20dp"
                 android:id="@+id/startTimeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,13 +104,16 @@
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp" />
+                android:paddingRight="8dp"
+                android:layout_margin="1dp"/>
+            </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="~"
                 android:layout_marginHorizontal="5dp"/>
             <Button
+                android:elevation="20dp"
                 android:id="@+id/endTimeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -115,7 +128,8 @@
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp"/>
+                android:paddingRight="8dp"
+                android:layout_margin="1dp"/>
         </LinearLayout>
         <EditText
             android:id="@+id/scheduleTitleEditText"
