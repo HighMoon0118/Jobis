@@ -51,35 +51,43 @@ class MyFCMService: FirebaseMessagingService() {
         var fileName = ""
         var createdAt = ""
 
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d("값이 들어왔나요?", remoteMessage.data.toString())
+        if (remoteMessage.data.containsKey("is_Entrance")) {
             remoteMessage.let {
                 studyId = it.data["study_id"].toString()
                 userId = it.data["user_id"].toString()
-                isMe = it.data["is_me"].toBoolean()
-                nickname = it.data["nickname"].toString()
                 content = it.data["content"].toString()
-                fileName = it.data["file_name"].toString()
                 createdAt = it.data["created_at"].toString()
             }
             if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
-                repo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt)
+                repo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt, true)
             }
+        } else {
 
-        }
+            if (remoteMessage.data.isNotEmpty()) {
+                Log.d("값이 들어왔나요?", remoteMessage.data.toString())
+                remoteMessage.let {
+                    studyId = it.data["study_id"].toString()
+                    userId = it.data["user_id"].toString()
+                    isMe = it.data["is_me"].toBoolean()
+                    nickname = it.data["nickname"].toString()
+                    content = it.data["content"].toString()
+                    fileName = it.data["file_name"].toString()
+                    createdAt = it.data["created_at"].toString()
+                }
+                if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId) {
+                    repo.saveMessage(studyId, userId, isMe, nickname, content, fileName, createdAt)
+                }
 
+            }
+            if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId && currentStudyId == "") {
+                val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("메세지가 도착했습니다.")
+                    .setContentText(content)
+                    .setSmallIcon(R.mipmap.ic_main)
+                    .setVibrate(longArrayOf(1000, 0, 0))
 
-
-        if (FirebaseAuth.getInstance().currentUser?.uid ?: "" != userId && currentStudyId == "") {
-            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("메세지가 도착했습니다.")
-                .setContentText(content)
-                .setSmallIcon(R.mipmap.ic_main)
-                .setVibrate(longArrayOf(1000, 0, 0))
-
-            mNotificationManager.notify(NOTIFICATION_ID, builder.build())
+                mNotificationManager.notify(NOTIFICATION_ID, builder.build())
+            }
         }
     }
-
-
 }
