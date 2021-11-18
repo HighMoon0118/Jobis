@@ -17,7 +17,6 @@ class SignupDataSource {
     lateinit var auth: FirebaseAuth
     suspend fun saveAccount(username: String, nickname: String, password: String): Result<String>? {
         auth = Firebase.auth
-        Log.d("test", "saveAccount!! ${auth.currentUser?.uid}")
         return try {
             var result: Result<String>? = null
             var firestore = FirebaseFirestore.getInstance()
