@@ -1,96 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AndroidLayouts">
-    <shared>
-      <config />
-    </shared>
-  </component>
-  <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
-  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="666c13a8-e495-47b4-9637-fe69a9f5af22" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+    <list default="true" id="5198c5cc-7198-4f00-ab24-19d535d5ff4d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/data/model/study/Study.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/data/model/study/Study.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/MyFCMService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/MyFCMService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/adapter/ChatAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/adapter/ChatAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatGIFViewHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatGIFViewHolder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatScheduleAddActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/ChatScheduleAddActivity.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatScheduleViewHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatScheduleViewHolder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatViewHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewholder/ChatViewHolder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewmodel/ChatViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/chat/viewmodel/ChatViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/CreateStudy.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/CreateStudy.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/StudyRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/StudyRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/adapter/SearchResultAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/adapter/SearchResultAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/viewholder/MyStudyViewHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/viewholder/MyStudyViewHolder.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/view_my_chat_border.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/view_my_chat_border.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/header_chat_navi.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/header_chat_navi.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_chat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_entrance.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_entrance.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_gif.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_gif.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_gif_me.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_chat_gif_me.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_my_study.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_my_study.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/itme_chat_me.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/itme_chat_me.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/MyStudyFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/ssafy/jobis/presentation/study/MyStudyFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\multicampus\.android\avd\Pixel_4_API_30.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
   </component>
-  <component name="ExternalProjectsManager">
-    <system id="GRADLE">
-      <state>
-        <projects_view>
-          <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Jobis" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Jobis" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Jobis" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-              </path>
-            </expand>
-            <select />
-          </tree_state>
-        </projects_view>
-      </state>
-    </system>
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-        <option value="layoutResourceFile_vertical" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="215E72GwnlZG6ieqpQmDgRu2sCw" />
+  <component name="ProjectId" id="216fZ4HnYzRoMDR6gCm3svHtA30" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -98,9 +34,6 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="android-custom-viewC:/Users/soyoung/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.1.0/f2bdf79e1977939817f54a9d3e2f6bc52b63bdd0/recyclerview-1.1.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_RecyclerView_DIMENSIONS" value="1080&#10;1920" />
-    <property name="android-custom-viewC:/Users/soyoung/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.1.0/f2bdf79e1977939817f54a9d3e2f6bc52b63bdd0/recyclerview-1.1.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED" value="RecyclerView" />
   </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
@@ -165,24 +98,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="666c13a8-e495-47b4-9637-fe69a9f5af22" name="Default Changelist" comment="" />
-      <created>1637222378724</created>
+      <changelist id="5198c5cc-7198-4f00-ab24-19d535d5ff4d" name="Default Changelist" comment="" />
+      <created>1637266513004</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1637222378724</updated>
+      <updated>1637266513004</updated>
     </task>
     <servers />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
