@@ -46,7 +46,7 @@ class MyStudyFragment(val myContext: Context): Fragment() {
             ).get(StudyViewModel::class.java)
 
         }
-
+        isFabOpen = false
 
         viewModel.studyList.observe(viewLifecycleOwner, {
             fetchSchedule()
@@ -61,12 +61,14 @@ class MyStudyFragment(val myContext: Context): Fragment() {
         }
 
         binding.fabCreateStudy.setOnClickListener {
+            isFabOpen = !isFabOpen
             Toast.makeText(activity, "생성", Toast.LENGTH_SHORT).show()
             val intent = Intent(context, CreateStudy::class.java)
             startActivity(intent)
         }
 
         binding.fabSearchStudy.setOnClickListener {
+            isFabOpen = !isFabOpen
             Toast.makeText(activity, "검색", Toast.LENGTH_SHORT).show()
             val intent = Intent(context, SearchStudy::class.java)
             startActivity(intent)
@@ -88,7 +90,7 @@ class MyStudyFragment(val myContext: Context): Fragment() {
         if (isFabOpen) {
             ObjectAnimator.ofFloat(binding.fabSearchStudy, "translationY", 0f).apply { start() }
             ObjectAnimator.ofFloat(binding.fabCreateStudy, "translationY", 0f).apply { start() }
-            binding.fabMyStudy.setImageResource(R.drawable.ic_baseline_check_24_white)
+            binding.fabMyStudy.setImageResource(R.drawable.ic_add_24)
         } else {
             ObjectAnimator.ofFloat(binding.fabSearchStudy, "translationY", -130f).apply { start() }
             ObjectAnimator.ofFloat(binding.fabCreateStudy, "translationY", -260f).apply { start() }
