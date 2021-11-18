@@ -22,7 +22,7 @@ class ChatScheduleViewHolder(view: View, private val chatScheduleActivity: ChatS
         var year = item.year
         var month = item.month
         var day = item.day
-        var txt = "${year}년 ${month+1}월 ${day}일"
+        var txt = "${year}년 ${month}월 ${day}일"
         var title = item.title
         var content = item.content
         var time = "${item.start_time} to ${item.end_time}"
