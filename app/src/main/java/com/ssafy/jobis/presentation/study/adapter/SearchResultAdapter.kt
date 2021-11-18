@@ -25,8 +25,6 @@ import com.ssafy.jobis.data.model.study.Crew
 
 class SearchResultAdapter(val context: Context, val searchResultList: ArrayList<Study>?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val handler = Handler()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.result_item, parent, false)
         return CustomViewHolder(view)

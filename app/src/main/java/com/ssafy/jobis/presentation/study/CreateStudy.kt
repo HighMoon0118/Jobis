@@ -27,6 +27,10 @@ class CreateStudy : AppCompatActivity() {
     private var mBinding: ActivityCreateStudyBinding? = null
     private val binding get() = mBinding!!
 
+    private var location:String? = "서울"
+    private var topic: String? = "IT"
+    private var max_user:Any? = 1
+
     private val mAuth = FirebaseAuth.getInstance().currentUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,32 +41,82 @@ class CreateStudy : AppCompatActivity() {
         val region_list = resources.getStringArray(R.array.study_region)
         val region_adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,region_list)
 
+
         val topic_list = resources.getStringArray(R.array.study_topic)
         val topic_adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,topic_list)
 
         val population_list = resources.getStringArray(R.array.study_population)
         val population_adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,population_list)
 
+
+        region_adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
         binding.spRegion.adapter = region_adapter
+
+        topic_adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
         binding.spTopic.adapter = topic_adapter
+
+
+        population_adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
         binding.spPopulation.adapter = population_adapter
 
+        binding.spRegion.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                location = binding.spRegion.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
+        binding.spTopic.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                topic = binding.spTopic.getItemAtPosition(position).toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+        }
+
+        binding.spPopulation.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                max_user = binding.spPopulation.getItemAtPosition(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+        }
 
         binding.btnSubmit.setOnClickListener {
             val title = binding.etTitle.text.toString()
             val content = binding.etDescribe.text.toString()
-//            val location = binding.spRegion.text.toString()
-//            val topic = binding.spTopic.text.toString()
-//            val max_user = binding.spPopulation.text.
-            val location = "지역1"
-            val topic = "주제1"
+
+            val location = location
+            val topic = topic
             val max_user = 5
             val current_user = 1
 
             val username = Crew(mAuth!!.uid.toString())
             val user_list = mutableListOf(username)
             val curTime = Calendar.getInstance().time
-            val sdf = SimpleDateFormat("hh:mm a")
+            val sdf = SimpleDateFormat("yyyy년 MM월 dd일 hh:mm a")
+//            val sdf = SimpleDateFormat("hh:mm a")
             val time = sdf.format(curTime)
 
 
@@ -77,7 +131,7 @@ class CreateStudy : AppCompatActivity() {
         title:String,
         content:String? = null,
         location:String? = null,
-        topic:String,
+        topic:String?,
         max_user:Int? = null,
         current_user:Int = 1,
         user_list:MutableList<Crew>? = null,
@@ -133,5 +187,8 @@ class CreateStudy : AppCompatActivity() {
                     Log.d("스터디 만들기 실패", "실패 실패 실패")
                 }
         }
+
+
     }
+
 
