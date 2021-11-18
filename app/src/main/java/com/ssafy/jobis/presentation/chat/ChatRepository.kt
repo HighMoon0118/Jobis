@@ -22,7 +22,6 @@ class ChatRepository(context: Context) {
     }
 
     fun saveMessage(studyId: String, userId: String, isMe: Boolean, nickname: String, content: String, fileName: String, createdAt: String, isEntrance: Boolean = false) {
-        Log.d("saveMessage", "데이터 들어옴")
         val chat = Chat(
             study_id = studyId,
             user_id = userId,
@@ -76,7 +75,6 @@ class ChatRepository(context: Context) {
     }
 
     fun sendFCM(root: JSONObject) {
-        Log.d("FCM으로 데이터 보냄", "ㅇㅇㅇ")
         val url = URL("https://fcm.googleapis.com/fcm/send")
         val httpConnect = url.openConnection() as HttpURLConnection
         httpConnect.apply {
