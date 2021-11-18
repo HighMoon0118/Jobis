@@ -31,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:text="날짜"
                 android:textColor="@color/black"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="10dp"
+                />
             <Button
                 android:elevation="4dp"
                 android:id="@+id/startDateBtn"
@@ -49,6 +50,8 @@
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
+                android:layout_margin="1dp"
+
                 />
         </LinearLayout>
         <LinearLayout
@@ -101,7 +104,8 @@
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp" />
+                android:paddingRight="8dp"
+                android:layout_margin="1dp"/>
             </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
@@ -124,7 +128,8 @@
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:paddingLeft="8dp"
-                android:paddingRight="8dp"/>
+                android:paddingRight="8dp"
+                android:layout_margin="1dp"/>
         </LinearLayout>
         <EditText
             android:id="@+id/scheduleTitleEditText"
