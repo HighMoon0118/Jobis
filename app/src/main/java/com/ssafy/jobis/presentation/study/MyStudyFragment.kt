@@ -161,7 +161,7 @@ class MyStudyFragment(val myContext: Context): Fragment() {
                         d_day = day - this_day.toInt()
 
                         if (d_day <= 0){
-                            d_day += (this_month.toInt()-1 - month)*30
+                            d_day += (this_month.toInt() - (month+1))*30
                         }
 
                         if (dDayList[i] == null) {
