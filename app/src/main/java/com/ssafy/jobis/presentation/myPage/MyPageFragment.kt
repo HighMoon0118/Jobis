@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -129,19 +130,25 @@ class MyPageFragment: Fragment() {
             Jobis.prefs.setString("nickname", "??")
             mainActivity?.goUserActivity()
         }
+        var jobTextView = binding.jobExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var likeTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var postTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+        var commentTextView = binding.commentExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
 
         binding.jobExpandableLayout.parentLayout.setOnClickListener {
             val checked = binding.jobExpandableLayout.isExpanded
             if (checked) {
                 binding.jobExpandableLayout.collapse()
-                myPageViewModel.loadMyJobList(requireContext())
+                jobTextView.visibility = View.GONE
             } else {
+                myPageViewModel.loadMyJobList(requireContext())
                 binding.jobExpandableLayout.expand()
             }
         }
         binding.likeExpandableLayout.parentLayout.setOnClickListener {
             val checked = binding.likeExpandableLayout.isExpanded
             if (checked) {
+                likeTextView.visibility = View.GONE
                 binding.likeExpandableLayout.collapse()
             } else {
                 myPageViewModel.loadMyLikeList(uid!!)
@@ -151,53 +158,23 @@ class MyPageFragment: Fragment() {
         binding.postExpandableLayout.parentLayout.setOnClickListener {
             val checked = binding.postExpandableLayout.isExpanded
             if (checked) {
-                myPageViewModel.loadMyPostList(uid!!)
+                postTextView.visibility = View.GONE
                 binding.postExpandableLayout.collapse()
             } else {
+                myPageViewModel.loadMyPostList(uid!!)
                 binding.postExpandableLayout.expand()
             }
         }
         binding.commentExpandableLayout.parentLayout.setOnClickListener {
             val checked = binding.commentExpandableLayout.isExpanded
             if (checked) {
-                myPageViewModel.loadMyCommentList(uid!!)
+                commentTextView.visibility = View.GONE
                 binding.commentExpandableLayout.collapse()
             } else {
+                myPageViewModel.loadMyCommentList(uid!!)
                 binding.commentExpandableLayout.expand()
             }
         }
-
-//        binding.likeToggleButton.setOnClickListener {
-//            val isChecked = binding.likeToggleButton.isChecked
-//            // 체크되어있으면 리사이클러뷰를 활성화시킨다.
-//            myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
-//            if (isChecked) {
-//                binding.myLikeRecyclerView.visibility = View.VISIBLE
-//                myPageViewModel.loadMyLikeList(auth.currentUser!!.uid)
-//            } else {
-//                binding.myLikeRecyclerView.visibility = View.GONE
-//            }
-//        }
-//
-//        binding.postToggleButton.setOnClickListener {
-//            val isChecked = binding.postToggleButton.isChecked
-//            if (isChecked) {
-//                binding.myPostRecyclerView.visibility = View.VISIBLE
-//                myPageViewModel.loadMyPostList(auth.currentUser!!.uid)
-//            } else {
-//                binding.myPostRecyclerView.visibility = View.GONE
-//            }
-//        }
-//
-//        binding.commentToggleButton.setOnClickListener {
-//            val isChecked = binding.commentToggleButton.isChecked
-//            if (isChecked) {
-//                myPageViewModel.loadMyCommentList(auth.currentUser!!.uid)
-//                binding.myCommentRecyclerView.visibility = View.VISIBLE
-//            } else {
-//                binding.myCommentRecyclerView.visibility = View.GONE
-//            }
-//        }
 
         binding.nickNameEditButton.setOnClickListener {
             openEditDialog()
@@ -233,6 +210,10 @@ class MyPageFragment: Fragment() {
     }
 
     fun updateMyLike(postList: PostResponseList) {
+        if (postList.size == 0) {
+            var likeTextView = binding.likeExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            likeTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomPostAdapter()
         adapter.listData = postList
         adapter.setOnItemClickListener(object: CustomPostAdapter.OnItemClickListener{
@@ -254,6 +235,10 @@ class MyPageFragment: Fragment() {
     }
 
     fun updateMyPost(postList: PostResponseList) {
+        if (postList.size == 0) {
+            var postTextView = binding.postExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            postTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomPostAdapter()
         adapter.listData = postList
         adapter.setOnItemClickListener(object: CustomPostAdapter.OnItemClickListener{
@@ -271,6 +256,10 @@ class MyPageFragment: Fragment() {
     }
 
     fun updateMyComment(commentList: MutableList<Comment>) {
+        if (commentList.size == 0) {
+            var commentTextView = binding.commentExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            commentTextView.visibility = View.VISIBLE
+        }
         val adapter = CustomCommentAdapter()
         adapter.listData = commentList
         adapter.setOnItemClickListener(object: CustomCommentAdapter.OnItemClickListener{
@@ -287,6 +276,10 @@ class MyPageFragment: Fragment() {
     }
 
     fun updateMyJob(jobList: List<Schedule>) {
+        if (jobList.size == 0) {
+            var jobTextView = binding.jobExpandableLayout.secondLayout.findViewById<TextView>(R.id.nothingView)
+            jobTextView.visibility = View.VISIBLE
+        }
         val adapter = JobScheduleAdapter()
         adapter.listData = jobList
         adapter.setOnItemClickListener(object: JobScheduleAdapter.OnItemClickListener{
