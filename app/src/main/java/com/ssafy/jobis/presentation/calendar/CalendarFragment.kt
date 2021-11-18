@@ -158,7 +158,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                 var user_list = data["user_list"] as ArrayList<HashMap<*, *>>
                 for (k in 0..user_list.size-1) {
                     if (uid == user_list[k]["id"]) {
-                        println("일치: " + key)
+
                         study_id_list.add(key.toString())
                     }
                 }
@@ -203,7 +203,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
         val calc = Calendar.getInstance()
         calc.set(year, month, day)
 
-        println("year, month, day: " + year + month + day)
         var lastDay = calc.getActualMaximum(Calendar.DAY_OF_MONTH)
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -246,7 +245,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                         }
                     }
                 }
-                println("temp schedule: " + temp_schedule)
 
                 // 단일 일정 처리
                 // calendarDates의 원소를 하나하나 만들어 넣을 것임
@@ -269,7 +267,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
         // coroutine이 끝나고 나서 뷰페이저를 구성해야 빈 화면이 보이지 않으므로..
         while (calendarDates.size == 0) {
-            println("아직 coroutine")
         }
 
         return calendarDates
@@ -287,7 +284,7 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     var dot_year = scheduleList[i].year
                     var dot_month = scheduleList[i].month
                     var dot_day = scheduleList[i].day
-                    println("DB결과: " + scheduleList[i])
+
                     // 점 찍기 => 여러 날에 표시하려고 days를 구성해서 추가해주는 방식..
                     // 달력에 표시할 날짜 가져오기
                     var date = Calendar.getInstance()
@@ -347,7 +344,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             for (v: Int in 0..routineDates.size-1) {
                 calendar!!.addDecorator(EventDecorator(Color.parseColor("#3f51b5"), routineDates[v])) // 점 찍기
             }
-            println("study_dates: " + study_dates)
             calendar.addDecorator(EventDecorator(Color.parseColor("#ff4e7e"), study_dates))
         }, 0)
     }
@@ -360,6 +356,8 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
 
 
     override fun onMonthChanged(widget: MaterialCalendarView?, date: CalendarDay?) {
+        val dialog = LoadingDialog(requireContext())
+        dialog.show()
         // 달을 바꿨을 때 "yyyy년 yy월" 형태로 표기하기
         widget?.setTitleFormatter(TitleFormatter {
             val simpleDateFormat = SimpleDateFormat("yyyy년 MM월", Locale.KOREA)
@@ -396,7 +394,6 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             withContext(Dispatchers.Main) {
             binding.calendarViewpager.adapter =
                 CalendarPagerAdapter(viewPagerInfo, this@CalendarFragment) // 뷰 페이저 만들어주기
-                println("출력3")
 
 
             binding.calendarViewpager.registerOnPageChangeCallback(object :
@@ -406,9 +403,10 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
                     calc.set(year, month, position + 1) // position은 0부터 시작, 날짜는 1부터 시작하므로
                     // you are on the first page
                     binding.calendarView.setSelectedDate(calc)
-                    println("출력4")
+
                 }
             })
+                dialog.dismiss()
                 dotDecorator(widget, scheduleDatabase, routineScheduleDatabase, totalStudySchedule)
             }
         }
@@ -445,13 +443,11 @@ class CalendarFragment: Fragment(), OnMonthChangedListener, OnDateSelectedListen
             builder.setTitle("안내")
             builder.setMessage("스터디 일정은 개인 캘린더에서 삭제할 수 없습니다.")
             builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                println("확인 버튼")
             })
         } else {
             builder.setTitle("일정")
             builder.setMessage("일정을 삭제하시겠습니까?")
             builder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                println("삭제 시작")
                 CoroutineScope(Dispatchers.IO).launch {
                     launch {
                         if (schedule.group_id == 0) {
