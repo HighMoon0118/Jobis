@@ -24,7 +24,6 @@ class MyFCMService: FirebaseMessagingService() {
     private lateinit var repo: ChatRepository  // oncreate밖에서 context를 가져오면 null 오류 발생
 
     override fun onCreate() {
-        Log.d("파이어베이스 메시징 서비스", "onCreate")
         repo = ChatRepository(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -41,7 +40,6 @@ class MyFCMService: FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d("안녕하세요", "안녕하시려니까")
 
         var studyId = ""
         var isMe = false
@@ -51,7 +49,7 @@ class MyFCMService: FirebaseMessagingService() {
         var fileName = ""
         var createdAt = ""
 
-        if (remoteMessage.data.containsKey("is_Entrance")) {
+        if (remoteMessage.data.containsKey("is_entrance")) {
             remoteMessage.let {
                 studyId = it.data["study_id"].toString()
                 userId = it.data["user_id"].toString()
@@ -84,7 +82,7 @@ class MyFCMService: FirebaseMessagingService() {
                     .setContentTitle("메세지가 도착했습니다.")
                     .setContentText(content)
                     .setSmallIcon(R.mipmap.ic_main)
-                    .setVibrate(longArrayOf(1000, 0, 0))
+                    .setVibrate(longArrayOf(1000))
 
                 mNotificationManager.notify(NOTIFICATION_ID, builder.build())
             }
