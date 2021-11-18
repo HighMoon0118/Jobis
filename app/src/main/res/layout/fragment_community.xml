@@ -97,6 +97,8 @@
         android:clickable="true"
         android:src="@drawable/ic_add_24"
         app:backgroundTint="#3F51B5"
+        app:tint="@android:color/white"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
