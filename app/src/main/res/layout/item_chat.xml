@@ -13,8 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12dp"
-        android:textStyle="bold"
-        android:text="스터디원1"/>
+        android:textStyle="bold"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_chat_msg"
@@ -26,8 +25,7 @@
         android:paddingHorizontal="8dp"
         android:layout_marginTop="2dp"
         android:background="@drawable/view_other_chat_border"
-        android:textSize="16dp"
-        android:text="안녕하세요"/>
+        android:textSize="16dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_chat_date"
@@ -36,7 +34,6 @@
         app:layout_constraintLeft_toRightOf="@id/tv_chat_msg"
         app:layout_constraintBottom_toBottomOf="@id/tv_chat_msg"
         android:paddingHorizontal="2dp"
-        android:textSize="12dp"
-        android:text="오후 3:53"/>
+        android:textSize="12dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

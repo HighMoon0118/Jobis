@@ -48,10 +48,4 @@ class CalendarPagerAdapter(private var dates: ArrayList<ArrayList<Schedule>>, pr
     override fun getItemCount(): Int {
         return dates.size
     }
-
-    fun setData(new_dates: ArrayList<ArrayList<Schedule>>) {
-        dates = new_dates
-        notifyDataSetChanged()
-    }
-
 }
