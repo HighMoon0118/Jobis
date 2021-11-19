@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.util.Linkify
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.ssafy.jobis.databinding.FragmentSignupBinding
 import com.ssafy.jobis.presentation.login.UserActivity
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class SignupFragment : Fragment() {
     private var userActivty: UserActivity? = null
@@ -128,6 +131,18 @@ class SignupFragment : Fragment() {
         binding.signupBackButton.setOnClickListener {
             userActivty?.goLogin()
         }
+
+        val pattern = Pattern.compile("개인정보처리방침")
+        val transformFilter = Linkify.TransformFilter(object: Linkify.TransformFilter, (Matcher, String) -> String {
+            override fun transformUrl(p0: Matcher?, p1: String?): String {
+                return ""
+            }
+
+            override fun invoke(p1: Matcher, p2: String): String {
+                return ""
+            }
+        })
+        Linkify.addLinks(binding.textView10, pattern, "https://sites.google.com/view/jobis-policy", null, transformFilter)
     }
 
     private fun updateUiWithUser(model: SignedUpUserView) {

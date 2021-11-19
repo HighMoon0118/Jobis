@@ -77,7 +77,9 @@ class SearchStudy : AppCompatActivity() {
 
                         // 와 이게되네...
                         val study = info.getValue(Study::class.java)
-                        if (study!!.title.contains(query)) {
+                        val lowerTitle = study!!.title.lowercase()
+                        val lowerquery = query.lowercase()
+                        if (lowerTitle.contains(lowerquery)) {
                             studyList?.add(study!!)
                         }
                     }
