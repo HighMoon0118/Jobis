@@ -29,12 +29,12 @@ class ChatMyGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
             drawable.repeatCount = 4
             drawable.start()
             imgChat.isMoved = true
-
+        }
+        if (drawable  is AnimatedImageDrawable) {
             img.setOnClickListener {
                 drawable.repeatCount = 4
                 drawable.start()
             }
         }
-
     }
 }
