@@ -23,8 +23,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="스터디"/>
+        android:textSize="18dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_my_study_person"
@@ -34,8 +33,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tv_my_study_msg"
         app:layout_constraintLeft_toRightOf="@id/tv_my_study_title"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_my_study_title"
-        android:text="5/5"/>
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_my_study_title"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_my_study_msg"
@@ -48,9 +46,7 @@
         android:paddingHorizontal="10dp"
         android:maxLines="2"
         android:ellipsize="end"
-        android:textSize="14dp"
-        android:text="새 메세지"
-        />
+        android:textSize="14dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_my_study_date"
@@ -63,8 +59,7 @@
         app:layout_constraintHorizontal_weight="1"
         android:gravity="bottom|right"
         android:paddingHorizontal="5dp"
-        android:textSize="10dp"
-        android:text="오전 11:21"/>
+        android:textSize="10dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_my_study_msg_cnt"
@@ -77,8 +72,7 @@
         android:paddingHorizontal="8dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/white"
-        android:textSize="12dp"
-        android:text="5"/>
+        android:textSize="12dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_my_study_dday"
@@ -94,7 +88,6 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:textSize="16dp"
-        android:text="D-3"/>
+        android:textSize="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

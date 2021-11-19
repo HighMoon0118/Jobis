@@ -163,7 +163,6 @@ class CreateStudy : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     Log.d("스터디 업로드 완료", "스터디 업로드 완료")
                     if (task.isSuccessful) {
-                        Toast.makeText(applicationContext, pushedStudy.key , Toast.LENGTH_SHORT).show()
 
 
                         // 로컬에 만들어주고
@@ -178,6 +177,7 @@ class CreateStudy : AppCompatActivity() {
                             // 나중에 방 만들면 바로 넘어가는거 구현
                             var intent = Intent(applicationContext, ChatActivity::class.java)
                             intent.putExtra("study_id", a.id)
+                            intent.putExtra("study_title", a.title)
                             startActivity(intent)
                         }
 

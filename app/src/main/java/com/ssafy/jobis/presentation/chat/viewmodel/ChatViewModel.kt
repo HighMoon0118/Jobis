@@ -97,7 +97,10 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         isFirstTime = true
     }
 
-    fun getImg() {
-
+    fun exitStudy(studyId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            chatRepo.removeChat(studyId)
+            studyRepo.removeStudy(studyId)
+        }
     }
 }
