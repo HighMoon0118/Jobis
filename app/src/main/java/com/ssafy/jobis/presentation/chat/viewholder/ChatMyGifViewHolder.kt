@@ -14,7 +14,12 @@ class ChatMyGIFViewHolder(view: View): RecyclerView.ViewHolder(view) {
     private val date: TextView = view.findViewById(R.id.tv_my_gif_date)
 
     fun bind(imgChat: ImgChat?, isSameTime: Boolean, nowTime: String) {
-        if (imgChat == null) return
+        if (imgChat == null) {
+            img.visibility = View.GONE
+            return
+        }
+        img.visibility = View.VISIBLE
+
         if (!isSameTime) date.text = nowTime
 
         val drawable = imgChat.drawable

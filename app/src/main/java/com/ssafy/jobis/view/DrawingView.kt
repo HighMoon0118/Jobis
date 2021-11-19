@@ -5,6 +5,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
     companion object {
@@ -20,10 +22,14 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
     private var path: Path? = null
     private var paint: Paint? = null
     private val lineList = ArrayList<Line>()
+    private val stack = Stack<Line>()
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
+
+                stack.clear()
+
                 path = Path()
                 sX = event.x.toInt()
                 sY = event.y.toInt()
@@ -64,6 +70,23 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
         }
         if (paint != null && path != null) {
             canvas?.drawPath(path!!, paint!!)
+        }
+    }
+
+    fun unDo() {
+        if (lineList.isNotEmpty()) {
+            val line = lineList.last()
+            lineList.remove(line)
+            stack.push(line)
+            invalidate()
+        }
+    }
+
+    fun reDo() {
+        if (stack.isNotEmpty()) {
+            val line = stack.pop()
+            lineList.add(line)
+            invalidate()
         }
     }
 

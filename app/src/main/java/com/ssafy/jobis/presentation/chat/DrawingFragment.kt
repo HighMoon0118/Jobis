@@ -48,6 +48,15 @@ class DrawingFragment : Fragment() {
         canvas.draw(tmp)
         return bitmap
     }
+
+    fun unDo() {
+        canvas.unDo()
+    }
+    fun reDo() {
+        canvas.reDo()
+    }
+
+
 //        bitmapList.add(bitmap)
 //        Log.d("비트맵 개수", bitmapList.size.toString())
 //        val date = System.currentTimeMillis().toString()

@@ -41,4 +41,10 @@ class StudyRepository(context: Context) {
         study.unread_chat_cnt = 0
         dao.updateStudy(study)
     }
+
+    fun removeStudy(studyId: String) {
+        if (dao == null) return
+
+        dao.removeStudy(studyId)
+    }
 }

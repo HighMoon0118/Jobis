@@ -52,6 +52,12 @@ class ViewPagerAdapter(private val fragmentActivity: FragmentActivity) : Fragmen
     fun removeView(position: Int) {
         used[position] = false
     }
+    fun unDo(position: Int) {
+        canvasList[position].unDo()
+    }
+    fun reDo(position: Int) {
+        canvasList[position].reDo()
+    }
 
     @SuppressLint("ShowToast", "CommitPrefEdits")
     suspend fun saveView() {
