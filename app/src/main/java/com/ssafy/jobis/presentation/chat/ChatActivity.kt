@@ -105,7 +105,7 @@ class ChatActivity: AppCompatActivity(), View.OnClickListener, ColorPickerDialog
         }
 
         // 파이어 스토어에서 값을 가져오느라고 빈 이미지가 생기고나서 채워지는데 LiveData를 하나더 사용하면 바로 될줄 알았는데
-        // 결국 이미지는 하나씩 받아오는 거임. 근데 어차피 채팅도 하나씩 들어오자네? 모르것다 일단 다른것부터 하자.
+        // 결국 이미지는 하나씩 받아오는 거임. 근데 어차피 채팅도 하나씩 들어와지네? 모르것다 일단 다른것부터 하자.
         model.studyWithChats.observe(this, {
             val chatList = it.chats
             val storageRef = Firebase.storage.reference

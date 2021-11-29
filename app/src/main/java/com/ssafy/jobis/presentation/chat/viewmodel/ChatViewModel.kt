@@ -2,19 +2,13 @@ package com.ssafy.jobis.presentation.chat.viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.ssafy.jobis.data.model.study.StudyWithChats
-import com.ssafy.jobis.presentation.chat.ChatActivity
-import com.ssafy.jobis.presentation.chat.ChatRepository
+import com.ssafy.jobis.data.repository.ChatRepository
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyId
 import com.ssafy.jobis.presentation.chat.MyFCMService.Companion.currentStudyTitle
 import com.ssafy.jobis.presentation.study.StudyRepository
@@ -22,8 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class ChatViewModel(application: Application): AndroidViewModel(application) {
