@@ -2,6 +2,26 @@
 
 SSAFY 5기 대전 2반 B204 안드팀
 
+### 0. 프로젝트 실행 방법
+
+1) [안드로이드 스튜디오 설치](https://developer.android.com/studio?hl=ko&gclid=Cj0KCQiA-eeMBhCpARIsAAZfxZDN0SXk2TsTTOr64AQue5G_-HoNmQyLfqbxzq7TraPXxQasdui0wcoaApdqEALw_wcB&gclsrc=aw.ds)
+
+   - 특별한 설정 할 것 없음
+
+2) 클론한 폴더를 File - Open 에서 열기(폴더 경로에 한글이 있으면 안됨) - Trust Project
+
+3) Tools - AVD Manager 혹은 상단의 실행 부분에서 AVD Manager 들어가기
+
+   ![image-20211122162335920](README.assets/image-20211122162335920.png)
+
+4) Create Virtual Device 선택 후 플레이스토어가 있는 가상 디바이스 선택(ex. Pixel4) - Next
+
+   ![image-20211122162443916](README.assets/image-20211122162443916.png)
+
+5) R 버전 Download 후 Next
+
+6) Finish 후 실행 (shift + F10 혹은 처음 그림의 초록 화살표 클릭)
+
 ### 1. 프로젝트 개요
 
 현재 출시된 채용공고 관련 앱을 살펴보면 맞춤 채용정보, 관심 기업 서비스를 제공하고 일부 앱만 채팅 기능이 추가돼 있다. 하지만 취준생들에겐 취업공고 뿐만 아니라 커뮤니티를 통해 서로 정보를 공유하는 것도 굉장히 중요하다. 
@@ -67,6 +87,13 @@ SSAFY 5기 대전 2반 B204 안드팀
 - 반복 일정의 경우 주단위, 요일 별로 설정 가능
 
 ### 4) 스터디
+
+<img src="README.assets/image-20211122161414060.png" alt="image-20211122161414060" style="zoom:67%;" />
+
+![image-20211122161426975](README.assets/image-20211122161426975.png)
+
+- 스터디 방 생성 / 검색 / 입장 가능
+- 스터디 방 내에서 채팅, 이모티콘 생성 및 전송 가능
 
 
 
