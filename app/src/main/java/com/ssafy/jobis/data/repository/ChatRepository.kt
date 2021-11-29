@@ -1,4 +1,4 @@
-package com.ssafy.jobis.presentation.chat
+package com.ssafy.jobis.data.repository
 
 import android.content.Context
 import android.util.Log
@@ -83,7 +83,7 @@ class ChatRepository(context: Context) {
             doOutput = true
             doInput = true
             // 서버 키는 받아서 사용
-            addRequestProperty("Authorization", "key=AAAAyi-siU4:APA91bH-r-bKju0IKHUADgXlDlpIZLEo1blM7TaYHW_k_DWQZzwwRgxlLvqLdkMoTnSAOD1NXiDWf2tBb15eY3K4AqFXeY7HYk4n21rn1UqEweNOU6TXjMh9E7vQRJCDM1dj17CmAcIv")
+            addRequestProperty("Authorization", "key=서버키")
             setRequestProperty("Accept", "application/json")
             setRequestProperty("Content-type", "application/json")
         }
